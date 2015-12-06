@@ -1028,7 +1028,14 @@ class DayTwoCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('part2')) {
+            $allRibbonNeeded = 0;
+            foreach (preg_split("/\n/", $this->input_string) as $line) {
+                $dimensions = preg_split("/x/", $line);
 
+                $allRibbonNeeded += $this->calculateRibbonNeededForPackage( $dimensions );
+                $allRibbonNeeded += $this->calculateRibbonNeededForBow( $dimensions );
+            }
+            $result = $allRibbonNeeded;
         } else {
             $allWrappingPaperNeeded = 0;
             foreach (preg_split("/\n/", $this->input_string) as $line) {
@@ -1047,13 +1054,13 @@ class DayTwoCommand extends Command
         $w = $dimensions[1];
         $h = $dimensions[2];
 
-        $extraWrapping = $this->getSmallestSide($l, $w, $h);
+        $extraWrapping = $this->getAreaOfSmallestSide($l, $w, $h);
         $wrappingPaperNeeded = (2 * $l * $w) + (2 * $w * $h) + (2 * $h * $l) + $extraWrapping;
 
         return $wrappingPaperNeeded;
     }
 
-    private function getSmallestSide( $l, $w, $h )
+    private function getAreaOfSmallestSide( $l, $w, $h )
     {
         $side1 = $l * $w;
         $side2 = $w * $h;
@@ -1061,4 +1068,38 @@ class DayTwoCommand extends Command
 
         return min($side1, $side2, $side3);
     }
+
+    private function calculateRibbonNeededForPackage( $dimensions )
+    {
+        $sides = $this->getTwoSmallestSides($dimensions);
+        $l = $sides[0];
+        $w = $sides[1];
+
+        return ($l + $l + $w + $w);
+    }
+
+    private function getTwoSmallestSides( $dimensions )
+    {
+        $l = $dimensions[0];
+        $w = $dimensions[1];
+        $h = $dimensions[2];
+
+        $sides = [$l, $w, $h];
+
+        sort($sides, SORT_NUMERIC);
+        array_pop($sides);
+
+        return $sides;
+    }
+
+    private function calculateRibbonNeededForBow( $dimensions )
+    {
+        $l = $dimensions[0];
+        $w = $dimensions[1];
+        $h = $dimensions[2];
+
+        return ($l * $w * $h);
+    }
+
+
 }
