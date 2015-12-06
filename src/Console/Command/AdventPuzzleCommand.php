@@ -9,7 +9,7 @@
 namespace Acme\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,18 +22,40 @@ class AdventPuzzleCommand extends Command
         $this
             ->setName('advent')
             ->setDescription('Solve the advent puzzle')
+            ->addOption(
+                'seek',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'If set, the task will seek the position of the given floor'
+            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $lefts = array();
-        $rights = array();
+        if ($input->getOption('seek')) {
+            $currentFloor = 0;
+            $stringLength = strlen($this->input_string);
+            for($i=0; $i<$stringLength && !isset($text); $i++) {
+                if ($this->input_string[$i] == "(") {
+                    $currentFloor++;
+                } elseif ($this->input_string[$i] == ")") {
+                    $currentFloor--;
+                }
+                if ($currentFloor == -1) {
+                    $text = $i + 1;
+                }
+            }
 
-        preg_match_all('/\(/', $this->input_string, $lefts);
-        preg_match_all('/\)/', $this->input_string, $rights);
+        } else {
+            $lefts = array();
+            $rights = array();
 
-        $text = count($lefts[0]) - count($rights[0]);
+            preg_match_all('/\(/', $this->input_string, $lefts);
+            preg_match_all('/\)/', $this->input_string, $rights);
+
+            $text = count($lefts[0]) - count($rights[0]);
+        }
 
         $output->writeln("result = " . $text);
     }
