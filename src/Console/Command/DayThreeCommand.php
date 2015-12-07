@@ -39,10 +39,22 @@ class DayThreeCommand extends Command
         $this->houses[0][0] = 1;
         $pos = [0, 0];
 
-        if ($input->getOption('part2')) {
+        $chars = str_split($this->input_string);
 
+        if ($input->getOption('part2')) {
+            $num = count($chars);
+            $pos1 = $pos2 = $pos;
+
+            for ($i=0; $i < $num; $i=($i+2)) {
+                $pos1 = $this->makeAMove($pos1, $chars[$i]);
+                $pos2 = $this->makeAMove($pos2, $chars[$i+1]);
+            }
+
+            $visitedHouses = $this->arrayValuesRecursive($this->houses);
+
+            $result = count($visitedHouses);
         } else {
-            $chars = str_split($this->input_string);
+
             foreach($chars as $step) {
                 $pos = $this->makeAMove($pos, $step);
             }
@@ -85,6 +97,4 @@ class DayThreeCommand extends Command
 
         return $pos;
     }
-
-
 }
