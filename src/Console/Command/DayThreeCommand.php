@@ -28,24 +28,12 @@ class DayThreeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-//        $houses = array_fill(-1, 20, array_fill(-1, 20, 0));
         $houses[0][0] = 1;
-//        $houses[-2] = array_fill(-1, 20, 0);
-//        $houses[-2][-2] = 0;
         $pos = [0, 0];
 
         if ($input->getOption('part2')) {
-//            $allRibbonNeeded = 0;
-//            foreach (preg_split("/\n/", $this->input_string) as $line) {
-//                $dimensions = preg_split("/x/", $line);
-//
-//                $allRibbonNeeded += $this->calculateRibbonNeededForPackage( $dimensions );
-//                $allRibbonNeeded += $this->calculateRibbonNeededForBow( $dimensions );
-//            }
-//            $result = $allRibbonNeeded;
-        } else {
-//            die(var_dump($houses));
 
+        } else {
             $chars = str_split($this->input_string);
             foreach($chars as $step) {
                 if ($step == '^') {
@@ -68,11 +56,8 @@ class DayThreeCommand extends Command
             }
 
             $visitedHouses = $this->arrayValuesRecursive($houses);
-// array_filter($houses, function($v, $k) {
-//                return ($v > 0);
-//            }, ARRAY_FILTER_USE_BOTH);
 
-            die(var_dump(count($visitedHouses)));
+            $result = count($visitedHouses);
         }
 
         $output->writeln("result = " . $result);
