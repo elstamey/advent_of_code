@@ -9,6 +9,7 @@ use Acme\Console\Command\GreetCommand;
 use Acme\Console\Command\DayTwoCommand;
 use Acme\Console\Command\DayThreeCommand;
 use Acme\Console\Command\DayFourCommand;
+use Acme\Console\Command\DayFiveCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
@@ -17,4 +18,5 @@ $application->add(new AdventPuzzleCommand());
 $application->add(new DayTwoCommand());
 $application->add(new DayThreeCommand());
 $application->add(new DayFourCommand());
+$application->add(new DayFiveCommand());
 $application->run();
