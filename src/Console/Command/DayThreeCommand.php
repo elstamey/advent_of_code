@@ -30,8 +30,7 @@ class DayThreeCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'If set, the part two puzzle will be solved'
-            )
-        ;
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
