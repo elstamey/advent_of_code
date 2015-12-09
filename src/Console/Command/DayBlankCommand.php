@@ -26,6 +26,7 @@ class DayBlankCommand extends Command
         $this
             ->setName('dayblank')
             ->setDescription('The Ideal Stocking Stuffer')
+            ->addArgument('inputFile', null, 'newFile', 'dayblank.txt')
             ->addOption(
                 'part2',
                 null,
@@ -42,7 +43,7 @@ class DayBlankCommand extends Command
         } else {
 
         }
-
+        $result = file_get_contents($input->getArgument('inputFile'));
         $output->writeln("result = " . $result);
     }
 
