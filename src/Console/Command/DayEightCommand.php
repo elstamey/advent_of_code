@@ -40,12 +40,13 @@ class DayEightCommand extends Command
         $this->input_string = file_get_contents( $input->getArgument( 'inputFile' ) );
 
         if ($input->getOption( 'part2' )) {
+            $lengthDifference = 0;
             foreach (preg_split( "/\n/", $this->input_string ) as $line) {
                 if (isset( $line ) && ( $line != "" )) {
-                    
+                    $lengthDifference += (strlen(addslashes($line)) + 2) - strlen($line);
                 }
             }
-            $result = '';
+            $result = $lengthDifference;
         } else {
             $lengthDifference = 0;
             foreach (preg_split( "/\n/", $this->input_string ) as $line) {
