@@ -21,15 +21,12 @@ class DayEightCommand extends Command
      */
     var $input_string = 'bgvyzdsv';
 
-    var $stringLength = 0;
-    var $codeLength = 0;
-
     protected function configure()
     {
         $this
-            ->setName('day8')
-            ->setDescription('The Ideal Stocking Stuffer')
-            ->addArgument('inputFile', null, 'newFile', 'day8.txt')
+            ->setName( 'day8' )
+            ->setDescription( 'The Ideal Stocking Stuffer' )
+            ->addArgument( 'inputFile', null, 'newFile', 'day8.txt' )
             ->addOption(
                 'part2',
                 null,
@@ -38,41 +35,27 @@ class DayEightCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute( InputInterface $input, OutputInterface $output )
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->input_string = file_get_contents( $input->getArgument( 'inputFile' ) );
 
-        if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
+        if ($input->getOption( 'part2' )) {
+            foreach (preg_split( "/\n/", $this->input_string ) as $line) {
+                if (isset( $line ) && ( $line != "" )) {
+                    
                 }
             }
             $result = '';
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->codeLength += (strlen($line) - 2);
-                    $this->stringLength += $this->countStringLiteralChars($line);
+            $lengthDifference = 0;
+            foreach (preg_split( "/\n/", $this->input_string ) as $line) {
+                if (isset( $line ) && ( $line != "" )) {
+                    eval( '$str = ' . $line . ';' );
+                    $lengthDifference += strlen( $line ) - strlen( $str );
                 }
             }
-            $result = $this->stringLength - $this->codeLength;
+            $result = $lengthDifference;
         }
-        $output->writeln("result = " . $result);
+        $output->writeln( "result = " . $result );
     }
-
-    private function countStringLiteralChars( $line )
-    {
-        preg_replace("/\\\\/"," ", $line);
-        preg_replace("/\\\"/"," ", $line);
-        $line = $this->replaceHexChars($line);
-
-        return strlen($line);
-    }
-
-    private function replaceHexChars( $line )
-    {
-        preg_replace("/\\[x][0-9][0-9]/", "/X/", $line);
-        return $line;
-    }
-
 }
