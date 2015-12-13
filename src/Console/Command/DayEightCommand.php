@@ -21,6 +21,9 @@ class DayEightCommand extends Command
      */
     var $input_string = 'bgvyzdsv';
 
+    var $stringLength = 0;
+    var $codeLength = 0;
+
     protected function configure()
     {
         $this
@@ -44,14 +47,32 @@ class DayEightCommand extends Command
                 if (isset($line) && ($line != "")) {
                 }
             }
+            $result = '';
         } else {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
+                    $this->codeLength += (strlen($line) - 2);
+                    $this->stringLength += $this->countStringLiteralChars($line);
                 }
             }
+            $result = $this->stringLength - $this->codeLength;
         }
-        $result = '';
         $output->writeln("result = " . $result);
+    }
+
+    private function countStringLiteralChars( $line )
+    {
+        preg_replace("/\\\\/"," ", $line);
+        preg_replace("/\\\"/"," ", $line);
+        $line = $this->replaceHexChars($line);
+
+        return strlen($line);
+    }
+
+    private function replaceHexChars( $line )
+    {
+        preg_replace("/\\[x][0-9][0-9]/", "/X/", $line);
+        return $line;
     }
 
 }
