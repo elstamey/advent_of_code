@@ -25,7 +25,7 @@ class DayEightCommand extends Command
     {
         $this
             ->setName( 'day8' )
-            ->setDescription( 'The Ideal Stocking Stuffer' )
+            ->setDescription( 'Matchsticks' )
             ->addArgument( 'inputFile', null, 'newFile', 'day8.txt' )
             ->addOption(
                 'part2',

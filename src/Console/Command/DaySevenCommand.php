@@ -25,7 +25,7 @@ class DaySevenCommand extends Command
     {
         $this
             ->setName('day7')
-            ->setDescription('The Ideal Stocking Stuffer')
+            ->setDescription('Some Assembly Required')
             ->addArgument('inputFile', null, 'newFile', 'day7.txt')
             ->addOption(
                 'part2',
