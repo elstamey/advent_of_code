@@ -14,19 +14,23 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DayEightCommand extends Command
+class DayNineCommand extends Command
 {
     /**
      * @var string
      */
     var $input_string = 'bgvyzdsv';
 
+    var $locations = [];
+
+    var $distances = [];
+
     protected function configure()
     {
         $this
-            ->setName( 'day8' )
-            ->setDescription( 'Matchsticks' )
-            ->addArgument( 'inputFile', null, 'newFile', 'day8.txt' )
+            ->setName( 'day9' )
+            ->setDescription( 'All in a Single Night' )
+            ->addArgument( 'inputFile', null, 'newFile', 'day9.txt' )
             ->addOption(
                 'part2',
                 null,
@@ -40,23 +44,39 @@ class DayEightCommand extends Command
         $this->input_string = file_get_contents( $input->getArgument( 'inputFile' ) );
 
         if ($input->getOption( 'part2' )) {
-            $lengthDifference = 0;
             foreach (preg_split( "/\n/", $this->input_string ) as $line) {
                 if (isset( $line ) && ( $line != "" )) {
-                    $lengthDifference += (strlen(addslashes($line)) + 2) - strlen($line);
                 }
             }
-            $result = $lengthDifference;
         } else {
-            $lengthDifference = 0;
             foreach (preg_split( "/\n/", $this->input_string ) as $line) {
                 if (isset( $line ) && ( $line != "" )) {
-                    eval( '$str = ' . $line . ';' );
-                    $lengthDifference += strlen( $line ) - strlen( $str );
+                    $lArray = preg_split("/[\ \=]+/", $line);
+                    print($lArray[0]." ".$lArray[2]." ".$lArray[3]."\n");
+                    $loc1 = $lArray[0];
+                    $loc2 = $lArray[2];
+                    $dist = $lArray[3];
+                    $this->setLocations($loc1, $loc2);
+                    $this->saveDistance($loc1, $loc2, $dist);
                 }
             }
-            $result = $lengthDifference;
         }
-        $output->writeln( "result = " . $result );
+//        $output->writeln( "result = " . $result );
+    }
+
+    private function setLocations( $loc1, $loc2 )
+    {
+        if (!in_array($loc1, $this->locations)) {
+            array_push($this->locations, $loc1);
+        }
+        if (!in_array($loc2, $this->locations)) {
+            array_push($this->locations, $loc2);
+        }
+    }
+
+    private function saveDistance( $loc1, $loc2, $dist )
+    {
+        $this->distances[$loc1][$loc2] = $dist;
+        $this->distances[$loc2][$loc1] = $dist;
     }
 }

@@ -33,7 +33,7 @@ class DaySixCommand extends Command
 
         $this
             ->setName('day6')
-            ->setDescription('The Ideal Stocking Stuffer')
+            ->setDescription('Probably a Fire Hazard')
             ->addArgument('inputFile', null, 'newFile', 'day6.txt')
             ->addOption(
                 'part2',
