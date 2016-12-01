@@ -1,6 +1,6 @@
 {
     "require": {
-        "symfony/console": "^2.7"
+        "symfony/console": "^3.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.5",

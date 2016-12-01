@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DayTwoCommand extends Command
+class DayOneCommand extends Command
 {
 
     var $input_string = '';
@@ -16,9 +16,9 @@ class DayTwoCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('day2')
-            ->setDescription('I was told there would be no math')
-            ->addArgument('inputFile', null, 'newFile', 'day2.txt')
+            ->setName('day1')
+            ->setDescription('No Time for a Taxicab')
+            ->addArgument('inputFile', null, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
                 null,
@@ -48,7 +48,7 @@ class DayTwoCommand extends Command
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
                     $dimensions = preg_split( "/x/", $line );
-                    $allWrappingPaperNeeded += $this->calculateWrappingPaperNeeded( $dimensions );
+//                    $allWrappingPaperNeeded += $this->calculateWrappingPaperNeeded( $dimensions );
                 }
             }
             $result = $allWrappingPaperNeeded;
@@ -57,58 +57,7 @@ class DayTwoCommand extends Command
         $output->writeln("result = " . $result);
     }
 
-    private function calculateWrappingPaperNeeded( $dimensions )
-    {
-        $l = $dimensions[0];
-        $w = $dimensions[1];
-        $h = $dimensions[2];
 
-        $extraWrapping = $this->getAreaOfSmallestSide($l, $w, $h);
-        $wrappingPaperNeeded = (2 * $l * $w) + (2 * $w * $h) + (2 * $h * $l) + $extraWrapping;
-
-        return $wrappingPaperNeeded;
-    }
-
-    private function getAreaOfSmallestSide( $l, $w, $h )
-    {
-        $side1 = $l * $w;
-        $side2 = $w * $h;
-        $side3 = $h * $l;
-
-        return min($side1, $side2, $side3);
-    }
-
-    private function calculateRibbonNeededForPackage( $dimensions )
-    {
-        $sides = $this->getTwoSmallestSides($dimensions);
-        $l = $sides[0];
-        $w = $sides[1];
-
-        return ($l + $l + $w + $w);
-    }
-
-    private function getTwoSmallestSides( $dimensions )
-    {
-        $l = $dimensions[0];
-        $w = $dimensions[1];
-        $h = $dimensions[2];
-
-        $sides = [$l, $w, $h];
-
-        sort($sides, SORT_NUMERIC);
-        array_pop($sides);
-
-        return $sides;
-    }
-
-    private function calculateRibbonNeededForBow( $dimensions )
-    {
-        $l = $dimensions[0];
-        $w = $dimensions[1];
-        $h = $dimensions[2];
-
-        return ($l * $w * $h);
-    }
 
 
 }
