@@ -33,31 +33,42 @@ class DayOneCommand extends Command
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            $allRibbonNeeded = 0;
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $dimensions = preg_split( "/x/", $line );
-
-                    $allRibbonNeeded += $this->calculateRibbonNeededForPackage( $dimensions );
-                    $allRibbonNeeded += $this->calculateRibbonNeededForBow( $dimensions );
-                }
+            $newLocation = [0,0];
+            if (isset($this->input_string)) {
+                $newLocation = $this->calculateNewLocation( $this->input_string );
             }
-            $result = $allRibbonNeeded;
+            $result = $newLocation;
         } else {
-            $allWrappingPaperNeeded = 0;
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $dimensions = preg_split( "/x/", $line );
-//                    $allWrappingPaperNeeded += $this->calculateWrappingPaperNeeded( $dimensions );
-                }
+            if (isset($this->input_string)) {
+                $newLocation = $this->calculateNewLocation( $this->input_string );
             }
-            $result = $allWrappingPaperNeeded;
+            $result = $newLocation;
         }
 
         $output->writeln("result = " . $result);
     }
 
+    private function calculateNewLocation($input_string)
+    {
+        $newLocation = 0;
+        foreach (preg_split("/, /", $this->input_string) as $dir) {
+            if (isset($dir) && ($dir != "")) {
+                $direction = substr($dir, 0 , 1);
+                $distance = substr($dir, 1);
 
+                switch ($direction) {
+                    case 'L':
+                        $newLocation -= $distance;
+                    case 'R':
+                        $newLocation += $distance;
+                }
+
+//                $newLocation .= $dir."\n";
+            }
+        }
+
+        return $newLocation;
+    }
 
 
 }
