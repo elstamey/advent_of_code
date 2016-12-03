@@ -43,7 +43,7 @@ class DayTwoCommand extends Command
             array_push($keys, $this->decodeKeyPress($line));
         }
 
-        print("keys: " . implode('', $keys) ."\n");
+//        print("keys: " . implode('', $keys) ."\n");
 
         return implode('', $keys);
     }
@@ -53,8 +53,8 @@ class DayTwoCommand extends Command
         $x = $this->position[0];
         $y = $this->position[1];
 
-        if (isset($line) && ($line != "")) {
-            print $line;
+        if (isset($line) && (rtrim($line) != "") && (rtrim($line) != "\n")) {
+//            print $line . "\n";
 
             $matches = str_split($line, 1);
 
@@ -62,35 +62,39 @@ class DayTwoCommand extends Command
 
                 switch ($m) {
                     case 'U':
-                        $y--;
-                        if ($y < 0) {
-                            $y = 0;
-                        }
-                        break;
-                    case 'D':
-                        $y++;
-                        if ($y > 2) {
-                            $y = 2;
-                        }
-                        break;
-                    case 'L':
                         $x--;
                         if ($x < 0) {
                             $x = 0;
                         }
                         break;
-                    case 'R':
+                    case 'D':
                         $x++;
                         if ($x > 2) {
                             $x = 2;
                         }
                         break;
+                    case 'L':
+                        $y--;
+                        if ($y < 0) {
+                            $y = 0;
+                        }
+                        break;
+                    case 'R':
+                        $y++;
+                        if ($y > 2) {
+                            $y = 2;
+                        }
+                        break;
                 }
+//                print "(".$x. "," . $y . ") = ". $this->keypad[$x][$y];
+                $this->position = [$x, $y];
             }
+
+
+//        print "key: " . $this->keypad[$x][$y] . "\n";
+            return $this->keypad[$x][$y];
         }
 
-        print "key: " . $this->keypad[$x][$y] . "\n";
-        return $this->keypad[$x][$y];
     }
 
 }
