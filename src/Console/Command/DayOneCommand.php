@@ -11,16 +11,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayOneCommand extends Command
 {
+    private $positionX = 0;
+    private $positionY = 0;
+    private $oriented = 1;
 
-    var $input_string = '';
+    const NORTH = 1;
+    const EAST = 2;
+    const SOUTH = 3;
+    const WEST = 4;
 
-    protected $oriented = [
-        'aim' => 'N',
-        'N' => 0,
-        'S' => 0,
-        'E' => 0,
-        'W' => 0
-    ];
+    private $input_string = '';
+
 
     protected function configure()
     {
@@ -53,85 +54,79 @@ class DayOneCommand extends Command
     }
 
     /**
-     * @param $input_string
+     * @param string $input_string
      *
-     * @return array
+     * @return int
      */
     private function calculateNewLocation($input_string)
     {
-        foreach (preg_split("/, /", $input_string) as $dir) {
-            if (isset($dir) && ($dir != "")) {
-                $direction = substr($dir, 0 , 1);
-                $distance = substr($dir, 1);
+        $moves = explode(', ', $input_string);
+        foreach ($moves as $move) {
+            preg_match('#([R|L])(\d+)#', $move, $matches);
+            $direction = $matches[1];
+            $distance = $matches[2];
 
-                switch ($direction) {
-                    case 'L':
-                        $this->turnLeft($this->oriented, $distance);
-                    case 'R':
-                        $this->turnRight($this->oriented, $distance);
-                }
+            print "input: " . $move . "  split: " . $direction . " " . $distance . "    \n";
+            $this->turn($direction, $distance);
 
-            }
+            print "(" . $this->positionX . ", " . $this->positionY . ")\n";
         }
 
-        $x = $this->oriented['N'] - $this->oriented['S'];
-        $y = $this->oriented['E'] - $this->oriented['W'];
-
-        print $x . " + " . $y . "\n";
-        return abs($x) + abs($y);
-    }
-
-    private function turnLeft($newLocation, $distance)
-    {
-        return $this->turn(-90, $newLocation, $distance);
-    }
-
-    private function turnRight($newLocation, $distance)
-    {
-        return $this->turn(90, $newLocation, $distance);
+        return (abs($this->positionX) + abs($this->positionY));
     }
 
     /**
-     * @param $turnAmount
-     * @param String[] $origLocation
+     * @param int $turnDirection
      * @param int $distance
      *
+     * @internal param $turnAmount
      */
-    private function turn($turnAmount, $origLocation, $distance)
+    private function turn($turnDirection, $distance)
     {
-        $this->oriented['aim'] = $this->aimMe($turnAmount);
 
-        $this->oriented[$this->oriented['aim']] += $distance;
+        $this->oriented = $this->aimMe($turnDirection);
 
-        var_dump($this->oriented);
-
+        switch ($this->oriented) {
+            case self::NORTH:
+                $this->positionY = $this->positionY + $distance;
+                break;
+            case self::SOUTH:
+                $this->positionY = $this->positionY - $distance;
+                break;
+            case self::EAST:
+                $this->positionX = $this->positionX + $distance;
+                break;
+            case self::WEST:
+                $this->positionX = $this->positionX - $distance;
+                break;
+        }
     }
 
-    private function aimMe($turnAmount)
+    private function aimMe($turnDirection)
     {
-        if ($turnAmount == -90) {
-            switch ($this->oriented['aim']) {
-                case 'N':
-                    return 'W';
-                case 'S':
-                    return 'E';
-                case 'E':
-                    return 'N';
-                case 'W':
-                    return 'S';
-            }
-        } else {
-            switch ($this->oriented['aim']) {
-                case 'N':
-                    return 'E';
-                case 'S':
-                    return 'W';
-                case 'E':
-                    return 'S';
-                case 'W':
-                    return 'N';
-            }
+
+        $turnAmount = 0;
+        switch ($turnDirection) {
+            case 'L':
+                $turnAmount = 0-1;
+                break;
+            case 'R':
+                $turnAmount = 1;
+                break;
         }
+
+        $newDirection = $this->oriented + $turnAmount;
+
+        if ($newDirection > 4) {
+            $newDirection = 1;
+        } elseif ($newDirection < 1) {
+            $newDirection = 4;
+        }
+
+        print("currAim: " . $this->oriented . " turnDir ".$turnDirection . " amt: " . $turnAmount . " newDir " . $newDirection . "\n");
+
+
+        return $newDirection;
     }
 
 }
