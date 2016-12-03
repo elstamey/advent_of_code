@@ -53,8 +53,8 @@ class DayTwoCommand extends Command
         $x = $this->position[0];
         $y = $this->position[1];
 
-        if (isset($line) && ($line != "")) {
-            print $line;
+        if (isset($line) && (rtrim($line) != "") && (rtrim($line) != "\n")) {
+//            print $line . "\n";
 
             $matches = str_split($line, 1);
 
