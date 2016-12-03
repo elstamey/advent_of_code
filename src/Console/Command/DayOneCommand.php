@@ -28,26 +28,15 @@ class DayOneCommand extends Command
         $this
             ->setName('day1')
             ->setDescription('No Time for a Taxicab')
-            ->addArgument('inputFile', null, 'newFile', 'day1.txt')
-            ->addOption(
-                'part2',
-                null,
-                InputOption::VALUE_NONE,
-                'If set, the part two puzzle will be solved'
-            )
-        ;
+            ->addArgument('inputFile', null, 'newFile', 'day1.txt');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
-        if ($input->getOption('part2')) {
-
-        } else {
-            if (isset($this->input_string)) {
-                $result = $this->calculateNewLocation( $this->input_string );
-            }
+        if (isset($this->input_string)) {
+            $result = $this->calculateNewLocation( $this->input_string );
         }
 
         $output->writeln("result = " . $result);
