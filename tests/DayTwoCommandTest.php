@@ -19,7 +19,7 @@ class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
             'command'  => $command->getName(),
 
             // pass arguments to the helper
-            'inputFile' => 'day2.txt',
+            'inputFile' => 'testday2.txt',
 
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
@@ -28,7 +28,7 @@ class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result', $output);
+        $this->assertContains('result = 1985', $output);
     }
 
 }

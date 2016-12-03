@@ -15,6 +15,8 @@ class DayTwoCommand extends Command
         [ 7, 8, 9 ]
     ];
 
+    private $position = [1, 1];
+
     protected function configure()
     {
         $this
@@ -27,14 +29,68 @@ class DayTwoCommand extends Command
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
-        foreach (preg_split("/\n/", $this->input_string) as $line) {
-            if (isset($line) && ($line != "")) {
+        $result = $this->decode($this->input_string);
 
+        $output->writeln("result = ".$result);
+    }
+
+    private function decode($input_string)
+    {
+        $keys = [];
+
+        foreach (preg_split("/\n/", $input_string) as $line) {
+
+            array_push($keys, $this->decodeKeyPress($line));
+        }
+
+        print("keys: " . implode('', $keys) ."\n");
+
+        return implode('', $keys);
+    }
+
+    private function decodeKeyPress($line)
+    {
+        $x = $this->position[0];
+        $y = $this->position[1];
+
+        if (isset($line) && ($line != "")) {
+            print $line;
+
+            $matches = str_split($line, 1);
+
+            foreach ($matches as $m) {
+
+                switch ($m) {
+                    case 'U':
+                        $y--;
+                        if ($y < 0) {
+                            $y = 0;
+                        }
+                        break;
+                    case 'D':
+                        $y++;
+                        if ($y > 2) {
+                            $y = 2;
+                        }
+                        break;
+                    case 'L':
+                        $x--;
+                        if ($x < 0) {
+                            $x = 0;
+                        }
+                        break;
+                    case 'R':
+                        $x++;
+                        if ($x > 2) {
+                            $x = 2;
+                        }
+                        break;
+                }
             }
         }
 
-        $result = '';
-        $output->writeln("result = " . $result);
+        print "key: " . $this->keypad[$x][$y] . "\n";
+        return $this->keypad[$x][$y];
     }
 
 }
