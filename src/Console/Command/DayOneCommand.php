@@ -14,7 +14,13 @@ class DayOneCommand extends Command
 
     var $input_string = '';
 
-    protected $oriented = 0;
+    protected $oriented = [
+        'aim' => 'N',
+        'N' => 0,
+        'S' => 0,
+        'E' => 0,
+        'W' => 0
+    ];
 
     protected function configure()
     {
@@ -39,9 +45,8 @@ class DayOneCommand extends Command
 
         } else {
             if (isset($this->input_string)) {
-                $newLocation = $this->calculateNewLocation( $this->input_string );
+                $result = $this->calculateNewLocation( $this->input_string );
             }
-            $result = abs($newLocation[0]) + abs($newLocation[1]);
         }
 
         $output->writeln("result = " . $result);
@@ -54,7 +59,6 @@ class DayOneCommand extends Command
      */
     private function calculateNewLocation($input_string)
     {
-        $newLocation = ["0","0"];
         foreach (preg_split("/, /", $input_string) as $dir) {
             if (isset($dir) && ($dir != "")) {
                 $direction = substr($dir, 0 , 1);
@@ -62,15 +66,19 @@ class DayOneCommand extends Command
 
                 switch ($direction) {
                     case 'L':
-                        $newLocation = $this->turnLeft($newLocation, $distance);
+                        $this->turnLeft($this->oriented, $distance);
                     case 'R':
-                        $newLocation = $this->turnRight($newLocation, $distance);
+                        $this->turnRight($this->oriented, $distance);
                 }
 
             }
         }
 
-        return $newLocation;
+        $x = $this->oriented['N'] - $this->oriented['S'];
+        $y = $this->oriented['E'] - $this->oriented['W'];
+
+        print $x . " + " . $y . "\n";
+        return abs($x) + abs($y);
     }
 
     private function turnLeft($newLocation, $distance)
@@ -88,54 +96,42 @@ class DayOneCommand extends Command
      * @param String[] $origLocation
      * @param int $distance
      *
-     * @return array
      */
     private function turn($turnAmount, $origLocation, $distance)
     {
-        print $origLocation[0] . "," . $origLocation[1]. " ". $this->oriented . " + ".$turnAmount. " + ". $distance;
+        $this->oriented['aim'] = $this->aimMe($turnAmount);
 
-        $newLocation = $origLocation;
+        $this->oriented[$this->oriented['aim']] += $distance;
 
-        $this->oriented = $this->aimMe($turnAmount);
-
-        print("oriented" . $this->oriented . "\n");
-
-        switch ($this->oriented) {
-            case 0:
-                $newLocation[1] = bcadd($origLocation[1], $distance);
-            case 90:
-                $newLocation[0] = bcadd($origLocation[0], $distance);
-            case -90:
-                $newLocation[0] = bcsub($origLocation[0], $distance);
-            case 180:
-                $newLocation[1] = bcsub($origLocation[1], $distance);
-            case -180:
-                $newLocation[1] = bcadd($origLocation[1], $distance);
-        }
-
-        print $newLocation[0] . "," . $newLocation[1] . "\n\n";
-
-        return $newLocation;
+        var_dump($this->oriented);
 
     }
 
     private function aimMe($turnAmount)
     {
-        $oriented = $this->oriented + $turnAmount;
-
-        if ($oriented >= 360)
-            $oriented -= 360;
-        elseif ($oriented <= -360)
-            $oriented += 360;
-
-        if ($oriented == 270)
-            $oriented = -90;
-        elseif ($oriented == -270)
-            $oriented = 90;
-
-        return $oriented;
+        if ($turnAmount == -90) {
+            switch ($this->oriented['aim']) {
+                case 'N':
+                    return 'W';
+                case 'S':
+                    return 'E';
+                case 'E':
+                    return 'N';
+                case 'W':
+                    return 'S';
+            }
+        } else {
+            switch ($this->oriented['aim']) {
+                case 'N':
+                    return 'E';
+                case 'S':
+                    return 'W';
+                case 'E':
+                    return 'S';
+                case 'W':
+                    return 'N';
+            }
+        }
     }
-
-
 
 }
