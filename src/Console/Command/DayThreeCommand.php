@@ -24,9 +24,12 @@ class DayThreeCommand extends Command
 
         foreach (preg_split("/\n/", $this->input_string) as $line) {
             if (isset($line) && ($line != "")) {
-                $coords = preg_split("/[\s]/", $line);
+                $coords = preg_split("/[\s]+/", $line);
 
-                $this->testValidTriangle($coords[0], $coords[1], $coords[2]);
+//                var_dump($coords);
+//                print "\n";
+
+                $this->testValidTriangle($coords[1], $coords[2], $coords[3]);
             }
         }
 
@@ -34,18 +37,30 @@ class DayThreeCommand extends Command
         $output->writeln("result = " . $result);
     }
 
-    private function testValidTriangle($a, $b, $c)
+    /**
+     * @param int $a
+     * @param int $b
+     * @param int $c
+     */
+    public function testValidTriangle($a, $b, $c)
     {
-        if ($this->triangleMath($a, $b, $c) &&
-            $this->triangleMath($b, $c, $a) &&
-            $this->triangleMath($c, $a, $b) ) {
+        if ($this->isTriangle($a, $b, $c) &&
+            $this->isTriangle($b, $c, $a) &&
+            $this->isTriangle($c, $a, $b) ) {
             $this->validTriangles++;
         }
     }
 
-    private function triangleMath($a, $b, $c)
+    /**
+     * @param int $a
+     * @param int $b
+     * @param int $c
+     *
+     * @return bool
+     */
+    public function isTriangle($a, $b, $c)
     {
-        return (($a + $b) <= $c);
+        return (($a + $b) > $c);
     }
 
 }
