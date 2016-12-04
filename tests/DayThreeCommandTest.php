@@ -45,10 +45,10 @@ class DayThreeCommandTest extends \PHPUnit_Framework_TestCase
             // pass arguments to the helper
             'inputFile' => 'testday3.txt',
 
-            '--part2' => true,
-
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
+            '--part2' => true,
+
         ));
 
 
