@@ -4,16 +4,13 @@ namespace Acme\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DayTwoCommand extends Command
 {
 
-    private $keypad = [
-        [ 1, 2, 3 ],
-        [ 4, 5, 6 ],
-        [ 7, 8, 9 ]
-    ];
+    private $keypad = [];
 
     private $position = [1, 1];
 
@@ -22,14 +19,42 @@ class DayTwoCommand extends Command
         $this
             ->setName('day2')
             ->setDescription('Day 2: Bathroom Security')
-            ->addArgument('inputFile', null, 'newFile', 'day2.txt');
+            ->addArgument('inputFile', null, 'newFile', 'day2.txt')
+            ->addOption(
+                'part2',
+                null,
+                InputOption::VALUE_NONE,
+                'If set, the part two puzzle will be solved'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
-        $result = $this->decode($this->input_string);
+        if ($input->getOption('part2')) {
+            $this->keypad = [
+                [ null, null, 1, null, null ],
+                [ null, 2, 3, 4, null ],
+                [ 5, 6, 7, 8, 9 ],
+                [ null, 'A', 'B', 'C', null ],
+                [ null, null, 'D', null, null ],
+            ];
+
+            $this->position = [2, 0];
+
+            $result = $this->decode($this->input_string);
+        } else {
+            $this->keypad = [
+                [ 1, 2, 3 ],
+                [ 4, 5, 6 ],
+                [ 7, 8, 9 ]
+            ];
+
+            $this->position = [1, 1];
+
+            $result = $this->decode($this->input_string);
+        }
 
         $output->writeln("result = ".$result);
     }
@@ -62,27 +87,23 @@ class DayTwoCommand extends Command
 
                 switch ($m) {
                     case 'U':
-                        $x--;
-                        if ($x < 0) {
-                            $x = 0;
+                        if (isset($this->keypad[$x-1][$y])) {
+                            $x--;
                         }
                         break;
                     case 'D':
-                        $x++;
-                        if ($x > 2) {
-                            $x = 2;
+                        if (isset($this->keypad[$x+1][$y])) {
+                            $x++;
                         }
                         break;
                     case 'L':
-                        $y--;
-                        if ($y < 0) {
-                            $y = 0;
+                        if (isset($this->keypad[$x][$y-1])) {
+                            $y--;
                         }
                         break;
                     case 'R':
-                        $y++;
-                        if ($y > 2) {
-                            $y = 2;
+                        if (isset($this->keypad[$x][$y+1])) {
+                            $y++;
                         }
                         break;
                 }
