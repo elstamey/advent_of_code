@@ -48,7 +48,7 @@ class DayFourCommand extends Command
                         preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $line, $matches);
 
 //                        var_dump($matches);
-                        $result = $matches[2];
+                        $result = $matches[2] . " " . $name;
                     }
                 }
             }
