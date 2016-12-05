@@ -36,13 +36,24 @@ class DayFourCommand extends Command
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
+            $result = '';
+
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "") && $this->isRealRoom($line)) {
-                    print $this->decryptName($line) . "\n";
+                    $name = $this->decryptName($line) . "\n";
+
+                    print $name . "\n";
+
+                    if (strpos($name, 'north') !== false) {
+                        preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $line, $matches);
+
+//                        var_dump($matches);
+                        $result = $matches[2];
+                    }
                 }
             }
 
-            $result = '';
+
         } else {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
@@ -117,10 +128,11 @@ class DayFourCommand extends Command
 
 //        var_dump($words, $sectorId);
 
+        $shiftAmount = $this->calculateShiftAmount($sectorId);
         $decryptedName = '';
         foreach ($words as $word) {
             foreach ( str_split($word, 1) as $letter ) {
-                $decryptedName .= $this->letterForward($letter, $sectorId);
+                $decryptedName .= $this->shiftCipher($letter, $shiftAmount);
 
             }
             $decryptedName .= ' ';
@@ -129,19 +141,28 @@ class DayFourCommand extends Command
         return $decryptedName;
     }
 
-    public function letterForward($letter, $sectorId)
+    public function shiftCipher($letter, $moveAmount)
     {
         $alphabet = str_split('abcdefghijklmnopqrstuvwxyz', 1);
-        $moveAmount = $sectorId % 26;
+//        die(var_dump($alphabet));
 
         $key = array_search($letter, $alphabet);
         $moveAmount += $key;
 
         if ($moveAmount > 25) {
-            $moveAmount -= 25;
+            $moveAmount -= 26;
         }
 
+//        var_dump($letter, $key);
+
         return $alphabet[$moveAmount];
+    }
+
+    private function calculateShiftAmount($sectorId)
+    {
+        $moveAmount = $sectorId % 26;
+
+        return $moveAmount;
     }
 
 }
