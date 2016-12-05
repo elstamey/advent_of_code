@@ -37,9 +37,12 @@ class DayFourCommand extends Command
 
         if ($input->getOption('part2')) {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
+                if (isset($line) && ($line != "") && $this->isRealRoom($line)) {
+                    print $this->decryptName($line) . "\n";
                 }
             }
+
+            $result = '';
         } else {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
@@ -48,8 +51,10 @@ class DayFourCommand extends Command
 //                    print "Sector Sum: " . $this->getSectorSum() . "\n";
                 }
             }
+
+            $result = $this->getSectorSum();
         }
-        $result = $this->getSectorSum();
+
         $output->writeln("result = " . $result);
     }
 
@@ -99,5 +104,44 @@ class DayFourCommand extends Command
     }
 
 
+    /**
+     * @param string $encryptedName
+     *
+     * @return string
+     */
+    public function decryptName($encryptedName)
+    {
+        preg_match('#([\w\-]+)([\d]{3})#', $encryptedName, $matches);
+        $words = preg_split("/-/", $matches[1]);
+        $sectorId = $matches[2];
+
+//        var_dump($words, $sectorId);
+
+        $decryptedName = '';
+        foreach ($words as $word) {
+            foreach ( str_split($word, 1) as $letter ) {
+                $decryptedName .= $this->letterForward($letter, $sectorId);
+
+            }
+            $decryptedName .= ' ';
+        }
+
+        return $decryptedName;
+    }
+
+    public function letterForward($letter, $sectorId)
+    {
+        $alphabet = str_split('abcdefghijklmnopqrstuvwxyz', 1);
+        $moveAmount = $sectorId % 26;
+
+        $key = array_search($letter, $alphabet);
+        $moveAmount += $key;
+
+        if ($moveAmount > 25) {
+            $moveAmount -= 25;
+        }
+
+        return $alphabet[$moveAmount];
+    }
 
 }

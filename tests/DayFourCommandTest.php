@@ -58,7 +58,7 @@ class DayFourCommandTest extends \PHPUnit_Framework_TestCase
 //    }
 
 //    /** @test */
-//    function testIsRealRoom()
+//    public function testIsRealRoom()
 //    {
 //        $this->assertTrue(DayFourCommand::isRealRoom('aaaaa-bbb-z-y-x-123[abxyz]'), 'Did not return true, expecting real room');
 //        $this->assertTrue(DayFourCommand::isRealRoom('a-b-c-d-e-f-g-h-987[abcde]'), 'Did not return true, expecting real room');
@@ -67,5 +67,12 @@ class DayFourCommandTest extends \PHPUnit_Framework_TestCase
 //
 ////        $this->assertEquals(1514, DayFourCommand::getSectorSum(), 'Returned a Sum that did not match expectations');
 //    }
+
+    /** @test */
+    public function testDecryptName()
+    {
+        $this->assertEquals('very encrypted name', DayFourCommand::decryptName('qzmt-zixmtkozy-ivhz-343'), 'Did not see the name decrypted');
+
+    }
 
 }
