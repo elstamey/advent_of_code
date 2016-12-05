@@ -45,7 +45,7 @@ class DayFourCommand extends Command
                 if (isset($line) && ($line != "")) {
                     $this->isRealRoom($line);
 
-                    print "Sector Sum: " . $this->getSectorSum() . "\n";
+//                    print "Sector Sum: " . $this->getSectorSum() . "\n";
                 }
             }
         }
@@ -68,9 +68,7 @@ class DayFourCommand extends Command
 
         $roomNameParts = str_split($roomName, 1);
         $reduce = array_count_values($roomNameParts);
-        asort($reduce);
-
-        var_dump($reduce);
+        array_multisort(array_values($reduce), SORT_DESC, array_keys($reduce), SORT_ASC, $reduce);
 
         $reduce = array_slice($reduce, 0, 5);
         $roomNameParts = array_keys($reduce);
@@ -79,17 +77,14 @@ class DayFourCommand extends Command
 
         $checkSumArray = str_split($checksum, 1);
 
-//        var_dump($roomNameParts, $checkSumArray);
-//        print "\n";
-
         if ( count(array_intersect($roomNameParts, $checkSumArray)) === 5) {
-            print "sector id: " . $sectorId . "\n";
+//            print "sector id: " . $sectorId . "\n";
             $this->sumOfSectorIds += $sectorId;
             return true;
         } else {
-            print "NOT REAL!!!! ------\n";
-            var_dump($reduce, $roomNameParts, $checkSumArray);
-            print "\n";
+//            print "NOT REAL!!!! ------\n";
+//            var_dump($reduce, $roomNameParts, $checkSumArray);
+//            print "\n";
             return false;
         }
 
