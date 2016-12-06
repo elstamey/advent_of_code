@@ -15,6 +15,8 @@ class DayOneCommand extends Command
     private $positionY = 0;
     private $oriented = 1;
 
+    private $previousPositions = ["(0,0)"];
+
     const NORTH = 1;
     const EAST = 2;
     const SOUTH = 3;
@@ -28,15 +30,27 @@ class DayOneCommand extends Command
         $this
             ->setName('day1')
             ->setDescription('No Time for a Taxicab')
-            ->addArgument('inputFile', null, 'newFile', 'day1.txt');
+            ->addArgument('inputFile', null, 'newFile', 'day1.txt')
+            ->addOption(
+                'part2',
+                null,
+                InputOption::VALUE_NONE,
+                'If set, the part two puzzle will be solved'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
-        if (isset($this->input_string)) {
-            $result = $this->calculateNewLocation( $this->input_string );
+        if ($input->getOption('part2')) {
+            if (isset($this->input_string)) {
+                $result = $this->calculateRepeatVisits( $this->input_string );
+            }
+        } else {
+            if (isset($this->input_string)) {
+                $result = $this->calculateNewLocation( $this->input_string );
+            }
         }
 
         $output->writeln("result = " . $result);
@@ -64,6 +78,31 @@ class DayOneCommand extends Command
         return (abs($this->positionX) + abs($this->positionY));
     }
 
+
+    /**
+     * @param string $input_string
+     *
+     * @return int
+     */
+    private function calculateRepeatVisits($input_string)
+    {
+        $moves = explode(', ', $input_string);
+        foreach ($moves as $move) {
+            preg_match('#([R|L])(\d+)#', $move, $matches);
+            $direction = $matches[1];
+            $distance = $matches[2];
+
+            print "input: " . $move . "  split: " . $direction . " " . $distance . "    \n";
+            $this->turn($direction, $distance);
+
+            print "(" . $this->positionX . ", " . $this->positionY . ")\n";
+
+            var_dump($this->previousPositions);
+        }
+
+        return (abs($this->positionX) + abs($this->positionY));
+    }
+
     /**
      * @param int $turnDirection
      * @param int $distance
@@ -75,21 +114,29 @@ class DayOneCommand extends Command
 
         $this->oriented = $this->aimMe($turnDirection);
 
-        switch ($this->oriented) {
-            case self::NORTH:
-                $this->positionY = $this->positionY + $distance;
-                break;
-            case self::SOUTH:
-                $this->positionY = $this->positionY - $distance;
-                break;
-            case self::EAST:
-                $this->positionX = $this->positionX + $distance;
-                break;
-            case self::WEST:
-                $this->positionX = $this->positionX - $distance;
-                break;
+        while (($distance > 0) && $this->hasNotVisited($this->positionX, $this->positionY)) {
+
+            switch ($this->oriented) {
+                case self::NORTH:
+                    $this->positionY = $this->positionY + 1;
+                    break;
+                case self::SOUTH:
+                    $this->positionY = $this->positionY - 1;
+                    break;
+                case self::EAST:
+                    $this->positionX = $this->positionX + 1;
+                    break;
+                case self::WEST:
+                    $this->positionX = $this->positionX - 1;
+                    break;
+            }
+
+            $distance--;
+
+            var_dump($this->previousPositions);
         }
     }
+
 
     private function aimMe($turnDirection)
     {
@@ -116,6 +163,15 @@ class DayOneCommand extends Command
 
 
         return $newDirection;
+    }
+
+    private function hasNotVisited($positionX, $positionY)
+    {
+        $searchString = "(" . $this->positionX . ", " . $this->positionY . ")";
+        $returnValue = (array_search($searchString, $this->previousPositions) === false);
+        array_push($this->previousPositions, "(" . $this->positionX . ", " . $this->positionY . ")");
+
+        return $returnValue;
     }
 
 }
