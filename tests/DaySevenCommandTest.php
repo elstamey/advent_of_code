@@ -27,7 +27,7 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = d4cd2ee1', $output);
+        $this->assertContains('result = ', $output);
     }
 
     /** @test */
@@ -51,22 +51,35 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = f2c730e5', $output);
+        $this->assertContains('result = ', $output);
     }
-
-
 
     public function testIsAbba()
     {
-        $testAbbaStrings = ['abba', 'poop'];
-        $testNotAbbaStrings = ['dogs', 'test'];
+        $testAbbaStrings = ['abba', 'poop','ioxxoj'];
+        $testNotAbbaStrings = ['dogs', 'test', 'aaaa'];
 
         foreach ($testAbbaStrings as $test) {
-            $this->assertTrue(DaySevenCommand::isAbba($test), 'expected string to pass');
+            $this->assertTrue(DaySevenCommand::isAbba($test), 'expected string to pass '.$test);
         }
 
         foreach ($testNotAbbaStrings as $test) {
-            $this->assertFalse(DaySevenCommand::isAbba($test), 'expected string to fail');
+            $this->assertFalse(DaySevenCommand::isAbba($test), 'expected string to fail '.$test);
         }
     }
+
+    public function testSupportsTls()
+    {
+        $passingLines = ['abba[mnop]qrst','ioxxoj[asdfgh]zxcvbn'];
+        $failingLines = ['abcd[bddb]xyyx', 'aaaa[qwer]tyui'];
+
+        foreach ($passingLines as $passLine) {
+            $this->assertTrue(DaySevenCommand::supportsTLS($passLine), 'expecting string to pass '.$passLine);
+        }
+
+        foreach ($failingLines as $failLine) {
+            $this->assertFalse(DaySevenCommand::supportsTLS($failLine), 'expecting string to fail '.$failLine);
+        }
+    }
+
 }

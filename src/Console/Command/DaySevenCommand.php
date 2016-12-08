@@ -15,6 +15,7 @@ class DaySevenCommand extends Command
      */
     var $input_string = 'bgvyzdsv';
 
+
     protected function configure()
     {
         $this
@@ -50,9 +51,26 @@ class DaySevenCommand extends Command
 
     public function isAbba($textString)
     {
-        $splitString = str_split($textString, 1);
+        preg_match('/.*(\w)(\w)\2\1.*/', $textString);
 
-        return (($splitString[0].$splitString[1])  === ($splitString[3].$splitString[2]));
+//        $splitString = str_split($textString, (strlen($textString)/2));
+//
+//        print $textString. " is ". intval($splitString[0]  === strrev($splitString[1])). " \n";
+//        return ($splitString[0]  === strrev($splitString[1]));
+
+//        print $textString. " " . var_dump($matches). "\n";
+        return (preg_match('/.*(\w)(\w)\2\1.*/', $textString) === 1);
+    }
+
+    public static function supportsTLS($failLine)
+    {
+        preg_match_all('/(?P<seq>\w+)\[(?P<hypernet>\w+)\]/', $failLine, $out, PREG_PATTERN_ORDER);
+
+//        var_dump($out);
+
+        print $failLine . " is ". (((DaySevenCommand::isAbba($out['seq'][0]) == true) && (DaySevenCommand::isAbba($out['hypernet'][0]) == false))) . " \n";
+
+        return (((DaySevenCommand::isAbba($out['seq'][0]) == true) && (DaySevenCommand::isAbba($out['hypernet'][0]) == false)));
 
     }
 
