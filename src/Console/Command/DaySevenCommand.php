@@ -37,17 +37,18 @@ class DaySevenCommand extends Command
         if ($input->getOption('part2')) {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
+                    $this->total += intval($this->supportsSSL($line));
                 }
             }
-            $result = '';
         } else {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
                     $this->total += intval($this->supportsTLS($line));
                 }
             }
-            $result = $this->total;
         }
+
+        $result = $this->total;
         $output->writeln("result = " . $result);
     }
 
@@ -77,55 +78,88 @@ class DaySevenCommand extends Command
     }
 
 
-    public function getAbasFromString($line)
+    public function getAbasFromString($net)
     {
         $returnArray = [];
 
-        preg_match('/(\w+)\[\w+\](\w+)/', $line, $superNets);
-        unset($superNets[0]);
-
-//        var_dump($superNets);
-
-        foreach($superNets as $superNet) {
-            $letters = str_split($superNet,1);
+            $letters = str_split($net,1);
             for ($i=0; $i < (count($letters) - 2); $i++) {
 
-                $myString = substr($superNet, $i, 3);
+                $myString = substr($net, $i, 3);
                 if (($letters[$i] !== $letters[$i+1]) && ($letters[$i] === $letters[$i+2])) {
                     array_push($returnArray, $myString);
                 }
 
             }
-        }
 //        var_dump($returnArray);
 
         return $returnArray;
     }
 
-    public function getBabsFromString($line)
+
+    private function supportsSSL($line)
     {
-        $returnArray = [];
+        $supernets = $this->getSupernetsFromString($line);
+        $hypernets = $this->getHypernetsFromString($line);
 
-        preg_match('/\w+\[(\w+)\]\w+/', $line, $hyperNets);
-        unset($hyperNets[0]);
+//        var_dump($supernets, $hypernets);
 
-//        var_dump($superNets);
-
-        foreach($hyperNets as $hyperNet) {
-            $letters = str_split($hyperNet,1);
-            for ($i=0; $i < (count($letters) - 2); $i++) {
-
-                $myString = substr($hyperNet, $i, 3);
-                if (($letters[$i] !== $letters[$i+1]) && ($letters[$i] === $letters[$i+2])) {
-                    array_push($returnArray, $myString);
-                }
-
+        $abas = [];
+        foreach ($supernets as $supernet) {
+            foreach ($this->getAbasFromString($supernet) as $aba) {
+                array_push($abas, $aba);
             }
         }
-//        var_dump($returnArray);
 
-        return $returnArray;
+        $babs = [];
+        foreach ($hypernets as $hypernet) {
+            foreach ($this->getAbasFromString($hypernet) as $bab) {
+                array_push($babs, $bab);
+            }
+        }
+
+//        var_dump($abas, $babs);
+
+        if (!empty($abas) && !empty($babs)) {
+
+            foreach ($abas as $aba) {
+                preg_match('/(\w)(\w)\1/', $aba, $out);
+                $bab = $out[2] . $out[1] . $out[2];
+
+//                var_dump($aba,$bab, $babs);
+
+
+                if (array_search($bab, $babs) !== false) {
+//                    print "match\n";
+                    return true;
+                }
+//                print "\n";
+            }
+        }
+
+        return false;
     }
+
+    private function getSupernetsFromString($line)
+    {
+        preg_match_all('/([a-zA-Z]+)\[[a-zA-Z]+\]([a-zA-Z]+)/', $line, $supernets);
+//        unset($supernets[0]);
+
+
+        return array_merge($supernets[1], $supernets[2]);
+    }
+
+    private function getHypernetsFromString($line)
+    {
+        preg_match_all('/\w+\[(\w+)\]\w+/', $line, $hypernets);
+        unset($hypernets[0]);
+
+//        var_dump($hypernets);
+
+
+        return $hypernets[1];
+    }
+
 
 
 }
