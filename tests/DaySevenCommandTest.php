@@ -20,6 +20,9 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
         $commandTester->execute(array(
             'command'  => $command->getName(),
 
+            // pass arguments to the helper
+            'inputFile' => 'testday7.txt',
+
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
         ));
@@ -27,7 +30,7 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = ', $output);
+        $this->assertContains('result = 2', $output);
     }
 
     /** @test */
@@ -59,12 +62,14 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
         $testAbbaStrings = ['abba', 'poop','ioxxoj'];
         $testNotAbbaStrings = ['dogs', 'test', 'aaaa'];
 
+        $command = new DaySevenCommand();
+
         foreach ($testAbbaStrings as $test) {
-            $this->assertTrue(DaySevenCommand::isAbba($test), 'expected string to pass '.$test);
+            $this->assertTrue($command->isAbba($test), 'expected string to pass '.$test);
         }
 
         foreach ($testNotAbbaStrings as $test) {
-            $this->assertFalse(DaySevenCommand::isAbba($test), 'expected string to fail '.$test);
+            $this->assertFalse($command->isAbba($test), 'expected string to fail '.$test);
         }
     }
 
@@ -73,12 +78,14 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
         $passingLines = ['abba[mnop]qrst','ioxxoj[asdfgh]zxcvbn'];
         $failingLines = ['abcd[bddb]xyyx', 'aaaa[qwer]tyui'];
 
+        $command = new DaySevenCommand();
+
         foreach ($passingLines as $passLine) {
-            $this->assertTrue(DaySevenCommand::supportsTLS($passLine), 'expecting string to pass '.$passLine);
+            $this->assertTrue($command->supportsTLS($passLine), 'expecting string to pass '.$passLine);
         }
 
         foreach ($failingLines as $failLine) {
-            $this->assertFalse(DaySevenCommand::supportsTLS($failLine), 'expecting string to fail '.$failLine);
+            $this->assertFalse($command->supportsTLS($failLine), 'expecting string to fail '.$failLine);
         }
     }
 

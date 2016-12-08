@@ -11,9 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DaySevenCommand extends Command
 {
     /**
-     * @var string
+     * @var int
      */
-    var $input_string = 'bgvyzdsv';
+    var $total = 0;
 
 
     protected function configure()
@@ -39,38 +39,51 @@ class DaySevenCommand extends Command
                 if (isset($line) && ($line != "")) {
                 }
             }
+            $result = '';
         } else {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
+                    $this->total += intval($this->supportsTLS($line));
                 }
             }
+            $result = $this->total;
         }
-        $result = '';
         $output->writeln("result = " . $result);
     }
 
     public function isAbba($textString)
     {
-        preg_match('/.*(\w)(\w)\2\1.*/', $textString);
-
-//        $splitString = str_split($textString, (strlen($textString)/2));
-//
-//        print $textString. " is ". intval($splitString[0]  === strrev($splitString[1])). " \n";
-//        return ($splitString[0]  === strrev($splitString[1]));
-
-//        print $textString. " " . var_dump($matches). "\n";
-        return (preg_match('/.*(\w)(\w)\2\1.*/', $textString) === 1);
-    }
-
-    public static function supportsTLS($failLine)
-    {
-        preg_match_all('/(?P<seq>\w+)\[(?P<hypernet>\w+)\]/', $failLine, $out, PREG_PATTERN_ORDER);
-
+        preg_match('/(\w)(\w)\2\1/', $textString, $out);
 //        var_dump($out);
 
-        print $failLine . " is ". (((DaySevenCommand::isAbba($out['seq'][0]) == true) && (DaySevenCommand::isAbba($out['hypernet'][0]) == false))) . " \n";
+//        print $textString. " " . intval((preg_match('/.*(\w)(\w)\2\1.*/', $textString) === 1) && ($out[1] !== $out[2])). "\n";
+        return (preg_match('/(\w)(\w)\2\1/', $textString) === 1) && ($out[1] !== $out[2]);
+    }
 
-        return (((DaySevenCommand::isAbba($out['seq'][0]) == true) && (DaySevenCommand::isAbba($out['hypernet'][0]) == false)));
+    public function supportsTLS($wholeLine)
+    {
+        if ( ! $this->isAbba($wholeLine)) {
+            return false;
+        }
+
+        preg_match_all('/\[([a-zA-Z]+)\]/', $wholeLine, $hypernets);
+
+        foreach ($hypernets[1] as $hypernet) {
+            if ($this->isAbba($hypernet))
+                return false;
+        };
+
+        return true;
+    }
+
+
+//        print $failLine . " is ". (((DaySevenCommand::isAbba($out['seq'][0]) == true) && (DaySevenCommand::isAbba($out['hypernet'][0]) == false))) . " \n";
+
+        $hyperNetBool = array_filter($out['hypernet'], function($v) { return (DaySevenCommand::isAbba($v) === false); });
+        $sequenceBool = array_filter($out['seq'], function($v) { return (DaySevenCommand::isAbba($v) === true); });
+
+
+        return ( $sequenceBool && $hyperNetBool);
 
     }
 
