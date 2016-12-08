@@ -77,14 +77,55 @@ class DaySevenCommand extends Command
     }
 
 
-//        print $failLine . " is ". (((DaySevenCommand::isAbba($out['seq'][0]) == true) && (DaySevenCommand::isAbba($out['hypernet'][0]) == false))) . " \n";
+    public function getAbasFromString($line)
+    {
+        $returnArray = [];
 
-        $hyperNetBool = array_filter($out['hypernet'], function($v) { return (DaySevenCommand::isAbba($v) === false); });
-        $sequenceBool = array_filter($out['seq'], function($v) { return (DaySevenCommand::isAbba($v) === true); });
+        preg_match('/(\w+)\[\w+\](\w+)/', $line, $superNets);
+        unset($superNets[0]);
 
+//        var_dump($superNets);
 
-        return ( $sequenceBool && $hyperNetBool);
+        foreach($superNets as $superNet) {
+            $letters = str_split($superNet,1);
+            for ($i=0; $i < (count($letters) - 2); $i++) {
 
+                $myString = substr($superNet, $i, 3);
+                if (($letters[$i] !== $letters[$i+1]) && ($letters[$i] === $letters[$i+2])) {
+                    array_push($returnArray, $myString);
+                }
+
+            }
+        }
+//        var_dump($returnArray);
+
+        return $returnArray;
     }
+
+    public function getBabsFromString($line)
+    {
+        $returnArray = [];
+
+        preg_match('/\w+\[(\w+)\]\w+/', $line, $hyperNets);
+        unset($hyperNets[0]);
+
+//        var_dump($superNets);
+
+        foreach($hyperNets as $hyperNet) {
+            $letters = str_split($hyperNet,1);
+            for ($i=0; $i < (count($letters) - 2); $i++) {
+
+                $myString = substr($hyperNet, $i, 3);
+                if (($letters[$i] !== $letters[$i+1]) && ($letters[$i] === $letters[$i+2])) {
+                    array_push($returnArray, $myString);
+                }
+
+            }
+        }
+//        var_dump($returnArray);
+
+        return $returnArray;
+    }
+
 
 }
