@@ -86,9 +86,12 @@ class DayEightCommand extends Command
         $command = preg_split('/[\s]+/', $line, 2);
 
         if ($command[0] === 'rect') {
-//            var_dump($command);
+
 //            print strtoupper($command[0])." ".$command[1];
             $this->drawRectangle($command[1]);
+        } elseif ($command[0] === 'rotate') {
+//            var_dump($command);
+            $this->rotate($command[1]);
         }
     }
 
@@ -96,17 +99,17 @@ class DayEightCommand extends Command
     {
 //        var_dump($restOfLine);
         $coords = preg_split('/x/', $restOfLine);
-        print "RECT " . $coords[0] . " x " . $coords[1] . "\n";
+//        print "RECT " . $coords[0] . " x " . $coords[1] . "\n";
         $x = $coords[0];
         $y = $coords[1];
 
-        foreach ($this->rectangle as $keyY => $row) {
+        foreach ($this->rectangle as $keyA => $row) {
 //            print implode(' ', $row) . "\n";
-            if ($keyY < $y) {
-                foreach ($row as $keyX => $space) {
-                    if ($keyX < $x) {
-                        print $keyY."," . $keyX. "    ". $x .",".$y. "\n";
-                        $this->rectangle[$keyY][$keyX] = '#';
+            if ($keyA < $y) {
+                foreach ($row as $keyB => $space) {
+                    if ($keyB < $x) {
+//                        print $keyA."," . $keyB. "    ". $x .",".$y. "\n";
+                        $this->rectangle[$keyA][$keyB] = '#';
                     }
                 }
             }
@@ -115,6 +118,25 @@ class DayEightCommand extends Command
 
         $this->printRectangle();
 //        die();
+    }
+
+    private function rotate($restOfLine)
+    {
+//        row y=0 by 2
+        $command = preg_split('/[\s]/', $restOfLine);
+        var_dump($command);
+        $rowOrColumn = $command[0];
+        $position = $command[1];
+        $rotateAmount = $command[3];
+
+        switch ($rowOrColumn) {
+            case 'row':
+                print "ROW ".$position." by ".$rotateAmount;
+                break;
+            case 'column':
+                print "COLUMN ".$position." by ".$rotateAmount;
+                break;
+        }
     }
 
 }
