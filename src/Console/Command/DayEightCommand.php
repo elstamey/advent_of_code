@@ -58,7 +58,7 @@ class DayEightCommand extends Command
                 }
             }
         }
-        $result = '';
+        $result = $this->countLights();
         $output->writeln("result = " . $result);
     }
 
@@ -70,6 +70,7 @@ class DayEightCommand extends Command
             }
             print "\n";
         }
+        print "\n";
     }
 
     private function initializeRectangle()
@@ -131,12 +132,71 @@ class DayEightCommand extends Command
 
         switch ($rowOrColumn) {
             case 'row':
-                print "ROW ".$position." by ".$rotateAmount;
+                print "ROW ".$position." by ".$rotateAmount . "\n";
+                $position = preg_split('/\=/', $position);
+                $this->shiftRow($position[1], $rotateAmount);
                 break;
             case 'column':
-                print "COLUMN ".$position." by ".$rotateAmount;
+                print "COLUMN ".$position." by ".$rotateAmount . "\n";
+                $position = preg_split('/\=/', $position);
+                $this->shiftColumn($position[1], $rotateAmount);
                 break;
         }
+    }
+
+    private function shiftRow($y, $rotateAmount)
+    {
+        $tempRow = array_pad([], 50, '');
+
+        foreach ($this->rectangle[$y] as $key => $item) {
+            $cnt = $key + $rotateAmount;
+            if ( $cnt >= 50 ) {
+                $cnt -= 50;
+            }
+            $tempRow[$cnt] = $item;
+        }
+
+//        print "row to shift" . implode(' ', $tempRow) ."\n";
+
+        $this->rectangle[$y] = $tempRow;
+        $this->printRectangle();
+    }
+
+    private function shiftColumn($x, $rotateAmount)
+    {
+        $tempColumn = array_pad([], 6, '');
+
+
+        foreach ($this->rectangle as $key => $item) {
+            $cnt = $key + $rotateAmount;
+            if ( $cnt >= 6) {
+                $cnt -= 6;
+            }
+            $tempColumn[$cnt] = $item[$x];
+        }
+
+        foreach ($this->rectangle as $key => $item) {
+            $this->rectangle[$key][$x] = $tempColumn[$key];
+        }
+
+        $this->printRectangle();
+    }
+
+    private function countLights()
+    {
+        $numberOfLights = 0;
+//        $wholeArray = [];
+//
+        foreach ($this->rectangle as $key => $item) {
+//            $numberOfLights += array_walk($item, function($value) {
+//                return ($item[$key] === '#');
+//            });
+            foreach ($item as $item2) {
+                $numberOfLights += ($item2 === '#');
+            }
+        }
+
+        return $numberOfLights;
     }
 
 }
