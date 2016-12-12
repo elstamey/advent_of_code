@@ -46,13 +46,13 @@ class DayFiveCommand extends Command
 
             ksort($this->passwordArray, SORT_NUMERIC);
 
-            var_dump($this->passwordArray);
+//            var_dump($this->passwordArray);
 
             $this->password = implode('', $this->passwordArray);
 
         } else {
             while (strlen($this->password) < 8) {
-                $this->hashIt($this->doorId, $this->currentIndex);
+                $this->password .= $this->hashIt($this->doorId, $this->currentIndex);
 
                 $this->currentIndex++;
             }
@@ -69,10 +69,12 @@ class DayFiveCommand extends Command
 
             $passwordCharacter = substr($hashedString, 5,1);
 
-            var_dump($passwordCharacter, $hashedString);
+//            var_dump($passwordCharacter, $hashedString);
 
-            $this->password = $this->password . $passwordCharacter;
+            return $passwordCharacter;
         }
+
+        return '';
     }
 
     public function hashItPositionally($door, $input)
@@ -86,7 +88,7 @@ class DayFiveCommand extends Command
                 $position = intval($position);
                 $passwordCharacter = substr($hashedString, 6, 1);
 
-                var_dump($hashedString, $position, $passwordCharacter);
+//                var_dump($hashedString, $position, $passwordCharacter);
 
                 $this->passwordArray[$position] = $passwordCharacter;
             }
