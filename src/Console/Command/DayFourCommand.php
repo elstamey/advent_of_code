@@ -74,7 +74,7 @@ class DayFourCommand extends Command
      *
      * @return bool
      */
-    protected function isRealRoom($roomInfo)
+    public function isRealRoom($roomInfo)
     {
         preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $roomInfo, $matches);
 

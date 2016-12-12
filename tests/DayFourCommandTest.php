@@ -57,16 +57,16 @@ class DayFourCommandTest extends \PHPUnit_Framework_TestCase
 //        $this->assertContains('result = 6', $output);
 //    }
 
-//    /** @test */
-//    public function testIsRealRoom()
-//    {
-//        $this->assertTrue(DayFourCommand::isRealRoom('aaaaa-bbb-z-y-x-123[abxyz]'), 'Did not return true, expecting real room');
-//        $this->assertTrue(DayFourCommand::isRealRoom('a-b-c-d-e-f-g-h-987[abcde]'), 'Did not return true, expecting real room');
-//        $this->assertTrue(DayFourCommand::isRealRoom('not-a-real-room-404[oarel]'), 'Did not return true, expecting real room');
-//        $this->assertFalse(DayFourCommand::isRealRoom('totally-real-room-200[decoy]'), 'Got real room, expecting not real');
-//
-////        $this->assertEquals(1514, DayFourCommand::getSectorSum(), 'Returned a Sum that did not match expectations');
-//    }
+    /** @test */
+    public function testIsRealRoom()
+    {
+        $this->assertTrue(DayFourCommand::isRealRoom('aaaaa-bbb-z-y-x-123[abxyz]'), 'Did not return true, expecting real room');
+        $this->assertTrue(DayFourCommand::isRealRoom('a-b-c-d-e-f-g-h-987[abcde]'), 'Did not return true, expecting real room');
+        $this->assertTrue(DayFourCommand::isRealRoom('not-a-real-room-404[oarel]'), 'Did not return true, expecting real room');
+        $this->assertFalse(DayFourCommand::isRealRoom('totally-real-room-200[decoy]'), 'Got real room, expecting not real');
+
+        $this->assertEquals(1514, DayFourCommand::getSectorSum(), 'Returned a Sum that did not match expectations');
+    }
 
     /** @test */
     public function testDecryptName()
