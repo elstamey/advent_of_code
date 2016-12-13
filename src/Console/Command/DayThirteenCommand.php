@@ -59,4 +59,13 @@ class DayThirteenCommand extends Command
     {
         return decbin($number);
     }
+
+    public function countOnesInBinaryString($binaryString)
+    {
+        $bits = str_split(strval($binaryString));
+
+        $countedBits = array_count_values($bits);
+
+        return $countedBits[1];
+    }
 }

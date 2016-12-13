@@ -24,4 +24,13 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('101', $command->convertToBinary(5), 'Did not receive the expected binary string');
 
     }
+
+    public function testCountOnesInBinaryStringMethod()
+    {
+        $command = new DayThirteenCommand();
+
+        $this->assertEquals(2, $command->countOnesInBinaryString('101'), 'Did not receive the expected number of ones in string');
+    }
+
+
 }
