@@ -94,20 +94,13 @@ class DaySevenCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new DaySevenCommand();
 
-        $this->assertEquals(['aba'], $command->getAbasFromString('aba[bab]xyz'), 'Did not find matching aba');
-        $this->assertEquals(['xyx','xyx'], $command->getAbasFromString('xyx[xyx]xyx'), 'Did not find matching xyx');
-        $this->assertEquals(['eke'], $command->getAbasFromString('aaa[kek]eke'), 'Did not find matching eke');
-        $this->assertEquals(['zaz','zbz'], $command->getAbasFromString('zazbz[bzb]cdb'), 'Did not find matching zbz in zazbz');
-    }
-
-    public function testGetBabsFromString()
-    {
-        $command = new DaySevenCommand();
-
-        $this->assertEquals(['bab'], $command->getBabsFromString('aba[bab]xyz'), 'Did not find matching bab');
-        $this->assertEquals(['xyx'], $command->getBabsFromString('xyx[xyx]xyx'), 'Did not find matching xyx');
-        $this->assertEquals(['kek'], $command->getBabsFromString('aaa[kek]eke'), 'Did not find matching kek');
-        $this->assertEquals(['bzb'], $command->getBabsFromString('zazbz[bzb]cdb'), 'Did not find matching bzb in zazbz');
+        $this->assertEquals(['aba'], $command->getAbasFromString('aba'.'xyz'), 'Did not find matching aba');
+        $this->assertEquals(['bab'], $command->getAbasFromString('bab'), 'Did not find matching bab');
+        $this->assertEquals(['xyx','xyx'], $command->getAbasFromString('xyx'.'xyx'), 'Did not find matching xyx');
+        $this->assertEquals(['eke'], $command->getAbasFromString('aaa'.'eke'), 'Did not find matching eke');
+        $this->assertEquals(['kek'], $command->getAbasFromString('kek'), 'Did not find matching kek');
+        $this->assertEquals(['zaz','zbz'], $command->getAbasFromString('zazbz'.'cdb'), 'Did not find matching zbz and zaz in zazbz');
+        $this->assertEquals(['bzb'], $command->getAbasFromString('bzb'), 'Did not find matching bzb');
     }
 
 }

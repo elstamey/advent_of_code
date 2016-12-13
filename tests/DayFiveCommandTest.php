@@ -62,8 +62,10 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
         $currentIndex = 3231929;
         $password = '';
 
+        $command = new DayFiveCommand();
+
         while (strlen($password) < 8) {
-            $password .= DayFiveCommand::hashIt($doorId, $currentIndex);
+            $password .= $command->hashIt($doorId, $currentIndex);
 
             $currentIndex++;
         }

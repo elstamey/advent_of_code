@@ -59,10 +59,12 @@ class DayThreeCommandTest extends \PHPUnit_Framework_TestCase
     /** @test */
     function testIsTriangle()
     {
-        $this->assertTrue(DayThreeCommand::isTriangle(1, 2, 2), 'Did not get valid triangle, expecting valid');
-        $this->assertTrue(DayThreeCommand::isTriangle(7, 10, 5), 'Did not get valid triangle, expecting valid');
-        $this->assertFalse(DayThreeCommand::isTriangle(5, 10, 25), 'Got valid triangle, expecting not valid');
-        $this->assertFalse(DayThreeCommand::isTriangle(3, 5, 8), 'Got valid triangle, expecting not valid');
+        $command = new DayThreeCommand();
+
+        $this->assertTrue($command->isTriangle(1, 2, 2), 'Did not get valid triangle, expecting valid');
+        $this->assertTrue($command->isTriangle(7, 10, 5), 'Did not get valid triangle, expecting valid');
+        $this->assertFalse($command->isTriangle(5, 10, 25), 'Got valid triangle, expecting not valid');
+        $this->assertFalse($command->isTriangle(3, 5, 8), 'Got valid triangle, expecting not valid');
     }
 
 }
