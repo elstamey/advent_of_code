@@ -38,11 +38,11 @@ class DaySevenCommand extends Command
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
                     $this->total += intval($this->supportsSSL($line));
-                    if ($this->supportsSSL($line)) {
-
-                    } else {
-                        print $line. " does not match\n";
-                    }
+//                    if ($this->supportsSSL($line)) {
+//
+//                    } else {
+//                        print $line. " does not match\n";
+//                    }
                 }
             }
         } else {
@@ -131,12 +131,14 @@ class DaySevenCommand extends Command
                 $out = str_split($aba, 1);
                 $bab = $out[1]. $out[0] . $out[1];
 
-                var_dump($aba,$bab, $babs);
+
 
                 if (array_search($bab, $babs, true) !== false) {
-//                    print "match\n";
+                    print "match\n";
                     return true;
+
                 }
+                var_dump($aba,$bab, $babs);
 //                print "\n";
             }
         }
