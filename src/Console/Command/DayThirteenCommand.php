@@ -16,6 +16,7 @@ class DayThirteenCommand extends Command
     var $inputString = '1364';
 
     private $initialSpace = [1,1];
+    private $floor = [];
 
 
     protected function configure()
@@ -40,10 +41,10 @@ class DayThirteenCommand extends Command
                 }
             }
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                }
-            }
+            $this->initializeFloor(40);
+            $this->displayFloor();
+
+            $this->shortestPathBetween($this->initialSpace, [31,39]);
         }
         $result = '';
         $output->writeln("result = " . $result);
@@ -51,7 +52,8 @@ class DayThirteenCommand extends Command
 
     public function calculate($x, $y)
     {
-        return (($x*$x) + (2*$x*$y) + $y + ($y*$y));
+        $calculation = (($x*$x) + (2*$x*$y) + $y + ($y*$y)) + $this->inputString;
+        return $calculation;
     }
 
 
@@ -72,6 +74,37 @@ class DayThirteenCommand extends Command
     public function getRoomMarker($onesCount)
     {
         return (($onesCount % 2) === 0) ? '#' : '.';
+    }
+
+    public function getRoomMarkerFor($x, $y)
+    {
+        return $this->getRoomMarker($this->countOnesInBinaryString($this->convertToBinary($this->calculate($x, $y))));
+    }
+
+    public function initializeFloor($count)
+    {
+        $x = [];
+        $y = [];
+        $x = array_pad($x, $count, '');
+        $y = array_pad($y, $count, $x);
+
+        foreach ($y as $key1 => $row) {
+            foreach ($row as $key2 => $space) {
+                $y[$key1][$key2] = $this->getRoomMarkerFor($key1,$key2);
+            }
+        }
+
+        $this->floor = $y;
+    }
+
+    public function displayFloor()
+    {
+        foreach ($this->floor as $row) {
+            foreach ($row as $space) {
+                print $space . " ";
+            }
+            print "\n";
+        }
     }
 
 }
