@@ -32,5 +32,13 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(2, $command->countOnesInBinaryString('101'), 'Did not receive the expected number of ones in string');
     }
 
+    public function testGetRoomMarkerMethod()
+    {
+        $command = new DayThirteenCommand();
+
+        $this->assertEquals('#', $command->getRoomMarker(4), 'Did not get wall "." room marker');
+        $this->assertEquals('.', $command->getRoomMarker(7), 'Did not get open space "#" room marker');
+    }
+
 
 }

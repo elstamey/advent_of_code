@@ -68,4 +68,10 @@ class DayThirteenCommand extends Command
 
         return $countedBits[1];
     }
+
+    public function getRoomMarker($onesCount)
+    {
+        return (($onesCount % 2) === 0) ? '#' : '.';
+    }
+
 }
