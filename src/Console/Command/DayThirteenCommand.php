@@ -13,7 +13,10 @@ class DayThirteenCommand extends Command
     /**
      * @var string
      */
-    var $input_string = 'DayBlankCommand.php';
+    var $inputString = '1364';
+
+    private $initialSpace = [1,1];
+
 
     protected function configure()
     {
@@ -31,8 +34,6 @@ class DayThirteenCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
-
         if ($input->getOption('part2')) {
             foreach (preg_split("/\n/", $this->input_string) as $line) {
                 if (isset($line) && ($line != "")) {
@@ -48,4 +49,14 @@ class DayThirteenCommand extends Command
         $output->writeln("result = " . $result);
     }
 
+    public function calculate($x, $y)
+    {
+        return (($x*$x) + (2*$x*$y) + $y + ($y*$y));
+    }
+
+
+    public function convertToBinary($number)
+    {
+        return decbin($number);
+    }
 }
