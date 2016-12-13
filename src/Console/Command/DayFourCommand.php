@@ -74,7 +74,7 @@ class DayFourCommand extends Command
      *
      * @return bool
      */
-    protected function isRealRoom($roomInfo)
+    public function isRealRoom($roomInfo)
     {
         preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $roomInfo, $matches);
 
@@ -131,11 +131,13 @@ class DayFourCommand extends Command
         $shiftAmount = $this->calculateShiftAmount($sectorId);
         $decryptedName = '';
         foreach ($words as $word) {
-            foreach ( str_split($word, 1) as $letter ) {
-                $decryptedName .= $this->shiftCipher($letter, $shiftAmount);
+            if (!is_numeric($word)) {
+                foreach ( str_split($word, 1) as $letter ) {
+                    $decryptedName .= $this->shiftCipher($letter, $shiftAmount);
 
+                }
+                $decryptedName .= ' ';
             }
-            $decryptedName .= ' ';
         }
 
         return $decryptedName;
