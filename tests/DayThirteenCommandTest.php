@@ -12,9 +12,10 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
         $x = 1;
         $y = 1;
         $command = new DayThirteenCommand();
+        $favNumber = 1364;
 
 
-        $this->assertEquals(1369, $command->calculate($x, $y), 'Did not receive expected calculated value');
+        $this->assertEquals(1369, $command->calculate($x, $y, $favNumber), 'Did not receive expected calculated value');
     }
 
     public function testConvertToBinaryMethod()
@@ -36,8 +37,37 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
     {
         $command = new DayThirteenCommand();
 
-        $this->assertEquals('#', $command->getRoomMarker(4), 'Did not get wall "." room marker');
-        $this->assertEquals('.', $command->getRoomMarker(7), 'Did not get open space "#" room marker');
+        $this->assertEquals('.', $command->getRoomMarker(4), 'Did not get wall "." room marker');
+        $this->assertEquals('#', $command->getRoomMarker(7), 'Did not get open space "#" room marker');
+    }
+
+
+    public function testGetPathsBetweenMethod()
+    {
+        $command = new DayThirteenCommand();
+        $command->inputString = 10;
+        $command->initialSpace = [0,0];
+
+        $command->initializeFloor(10,7);
+
+        $paths = $command->getPathsBetween([0,0], [7,4]);
+
+        $command->displayFloor();
+
+        print "\n\nDUMP\n";
+        var_dump($paths);
+    }
+
+    public function testGetRoomMarkerForMethod()
+    {
+        $command = new DayThirteenCommand();
+        $command->inputString = 10;
+        $command->initialSpace = [0,0];
+
+        $key1 = 2;
+        $key2 = 0;
+
+        $this->assertEquals('.', $command->getRoomMarkerFor($key1,$key2));
     }
 
 
