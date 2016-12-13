@@ -56,10 +56,17 @@ class DayTwelveCommand extends Command
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
+            $this->c = 1;
+            $this->lines = preg_split("/\n/", $this->input_string);
+            for ($this->key=0; $this->key < count($this->lines); $this->key++) {
+                if (isset($this->lines[$this->key]) && ($this->lines[$this->key] != "")) {
+                    print "\n\n" . $this->lines[$this->key] . "\n";
+                    var_dump($this->a, $this->b, $this->c, $this->d);
+                    $this->handleCommand($this->lines[$this->key]);
                 }
             }
+
+            var_dump($this->a, $this->b, $this->c, $this->d);
         } else {
             $this->lines = preg_split("/\n/", $this->input_string);
             for ($this->key=0; $this->key < count($this->lines); $this->key++) {
