@@ -68,11 +68,11 @@ class DayFourCommandTest extends \PHPUnit_Framework_TestCase
 ////        $this->assertEquals(1514, DayFourCommand::getSectorSum(), 'Returned a Sum that did not match expectations');
 //    }
 
-    /** @test */
-    public function testDecryptName()
-    {
-        $this->assertEquals('very encrypted name', DayFourCommand::decryptName('qzmt-zixmtkozy-ivhz-343'), 'Did not see the name decrypted');
-
-    }
+//    /** @test */
+//    public function testDecryptName()
+//    {
+//        $this->assertEquals('very encrypted name', DayFourCommand::decryptName('qzmt-zixmtkozy-ivhz-343'), 'Did not see the name decrypted');
+//
+//    }
 
 }
