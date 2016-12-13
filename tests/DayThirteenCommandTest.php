@@ -14,14 +14,14 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
         $command = new DayThirteenCommand();
 
 
-        $this->assertEquals(5, $command->calculate($x, $y), 'Did not receive expected calculated value');
+        $this->assertEquals(1369, $command->calculate($x, $y), 'Did not receive expected calculated value');
     }
 
     public function testConvertToBinaryMethod()
     {
         $command = new DayThirteenCommand();
 
-        $this->assertEquals('101', $command->convertToBinary(5), 'Did not receive the expected binary string');
+        $this->assertEquals('10101011001', $command->convertToBinary(1369), 'Did not receive the expected binary string');
 
     }
 
@@ -29,7 +29,7 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
     {
         $command = new DayThirteenCommand();
 
-        $this->assertEquals(2, $command->countOnesInBinaryString('101'), 'Did not receive the expected number of ones in string');
+        $this->assertEquals(6, $command->countOnesInBinaryString('10101011001'), 'Did not receive the expected number of ones in string');
     }
 
     public function testGetRoomMarkerMethod()
