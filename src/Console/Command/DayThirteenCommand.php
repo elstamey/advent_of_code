@@ -61,7 +61,7 @@ class DayThirteenCommand extends Command
     public function calculate($x, $y, $favoriteNumber)
     {
 //        print "FAV NUM: ".$favoriteNumber."\n\n";
-        $calculation = (($x*$x) + (2*$x*$y) + $y + ($y*$y)) + $favoriteNumber;
+        $calculation = (($x * $x) + (3 * $x) + (2 * $x * $y) + $y + ($y * $y)) + $favoriteNumber;
         return $calculation;
     }
 
