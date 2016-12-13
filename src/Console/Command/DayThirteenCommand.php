@@ -117,11 +117,13 @@ class DayThirteenCommand extends Command
         print "\n";
         print "  0 1 2 3 4 5 6 7 8 9\n";
         foreach ($this->floor as $key => $row) {
-            print $key . " ";
-            foreach ($row as $space) {
-                print $space . " ";
+            if (!empty(array_filter($row, function ($x) { return ($x !== ''); }))) {
+                print $key . " ";
+                foreach ($row as $space) {
+                    print $space . " ";
+                }
+                print "\n";
             }
-            print "\n";
         }
     }
 

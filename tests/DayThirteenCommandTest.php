@@ -64,8 +64,8 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
         $command->inputString = 10;
         $command->initialSpace = [0,0];
 
-        $key1 = 2;
-        $key2 = 0;
+        $key1 = 0;
+        $key2 = 2;
 
         $this->assertEquals('.', $command->getRoomMarkerFor($key1,$key2));
     }
