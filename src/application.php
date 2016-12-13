@@ -13,6 +13,7 @@ use Acme\Console\Command\DayFiveCommand;
 use Acme\Console\Command\DaySixCommand;
 use Acme\Console\Command\DaySevenCommand;
 use Acme\Console\Command\DayEightCommand;
+use Acme\Console\Command\DayTwelveCommand;
 use Acme\Console\Command\DayBlankCommand;
 use Symfony\Component\Console\Application;
 
@@ -26,5 +27,6 @@ $application->add(new DayFiveCommand());
 $application->add(new DaySixCommand());
 $application->add(new DaySevenCommand());
 $application->add(new DayEightCommand());
+$application->add(new DayTwelveCommand());
 $application->add(new DayBlankCommand());
 $application->run();
