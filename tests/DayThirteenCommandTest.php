@@ -6,6 +6,26 @@ use \Symfony\Component\Console\Tester\CommandTester;
 class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
 {
 
+    /** @test */
+    public function testExecute()
+    {
+        $application = new Application();
+        $application->add(new DayThirteenCommand());
+
+        $command = $application->find('day13');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+
+            // prefix the key with a double slash when passing options,
+            // e.g: '--some-option' => 'option_value',
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('result = d4cd2ee1', $output);
+    }
+
 
     public function testCalculationMethod()
     {
@@ -53,8 +73,8 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
 
         $command->displayFloor();
 
-        print "\n\nDUMP\n";
-        var_dump($paths);
+//        print "\n\nDUMP\n";
+//        var_dump($paths);
     }
 
     public function testGetRoomMarkerForMethod()
@@ -68,6 +88,5 @@ class DayThirteenCommandTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('.', $command->getRoomMarkerFor($key2,$key1));
     }
-
 
 }

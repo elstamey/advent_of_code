@@ -3,7 +3,6 @@
 namespace Acme\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,7 +30,6 @@ class DayThirteenCommand extends Command
         $this
             ->setName('day13')
             ->setDescription('The Ideal Stocking Stuffer')
-            ->addArgument('inputFile', null, 'newFile', 'day13.txt')
             ->addOption(
                 'part2',
                 null,
@@ -47,14 +45,15 @@ class DayThirteenCommand extends Command
                 if (isset($line) && ($line != "")) {
                 }
             }
+            $result = 0;
         } else {
             $this->initialSpace = [7,4];
             $this->initializeFloor(40,32);
-            $this->displayFloor();
 
-            $shortestPath = $this->shortestPathBetween($this->initialSpace, [31,39]);
+
+            $result = $this->shortestPathBetween($this->initialSpace, [31,39]);
+            $this->displayFloor();
         }
-        $result = $shortestPath;
         $output->writeln("result = " . $result);
     }
 
@@ -135,13 +134,11 @@ class DayThirteenCommand extends Command
      */
     public function shortestPathBetween($start, $destination)
     {
-        $routeLengths = [];
+        $routes = [];
 
         $routes = $this->getPathsBetween($start, $destination);
 
-        array_push($routeLengths, $routes[0]);
-
-        return min($routeLengths);
+        return (count($routes) - 1);
     }
 
     /**
@@ -154,9 +151,53 @@ class DayThirteenCommand extends Command
     {
         $routes = [];
 
+        $rangeX = range($start[0], $destination[0], 1);
+        $rangeY = range($start[1], $destination[1], 1);
+        $i = min($rangeX);
+        $iMax = max($rangeX);
+        $j = min($rangeY);
+        $jMax = max($rangeY);
 
+        while (($i <= $iMax) && ($j <= $jMax)) {
+            $this->floor[$i][$j] = '0';
+
+            $tempRoutes = $this->findOpenSpaces($i, $j, $iMax, $jMax);
+            if (count($tempRoutes) === 1) {
+                $i = $tempRoutes[0][0];
+                $j = $tempRoutes[0][1];
+            } else {
+                $i++;
+                $j++;
+            }
+            array_push($routes, $tempRoutes);
+        }
 
         return $routes;
+    }
+
+    private function findOpenSpaces($x, $y, $xMax, $yMax)
+    {
+        $returnArray = [];
+        if (isset($this->floor[($x+1)][$y]) && ($this->floor[($x+1)][$y] === '.')) {
+            array_push($returnArray, [($x+1), $y]);
+        }
+
+         if (isset($this->floor[$x][($y+1)]) && ($this->floor[($x)][$y+1] === '.')) {
+             array_push($returnArray, [$x, ($y+1)]);
+         }
+
+        if ($x > $xMax) {
+            if (isset($this->floor[($x-1)][$y]) && ($this->floor[($x-1)][$y]) === '.') {
+                array_push($returnArray, [($x-1), $y]);
+            }
+        }
+        if ($y > $yMax) {
+            if (isset($this->floor[($x)][$y-1]) && ($this->floor[($x)][$y-1] === '.')) {
+                array_push($returnArray, [$x, ($y-1)]);
+            }
+        }
+
+        return $returnArray;
     }
 
 }
