@@ -34,7 +34,7 @@ class DayOneCommand extends Command
 
         if ($input->getOption('part2')) {
             if (isset($this->input_string)) {
-                $result = $this->calculateRepeatVisits( $this->input_string );
+                $result = $this->addHalfwayAroundDigits( $this->input_string );
             }
         } else {
             if (isset($this->input_string)) {
@@ -58,6 +58,31 @@ class DayOneCommand extends Command
 
         for ($i=0; $i < $max; $i++) {
             if ($digits[$i] === $digits[$i+1]) {
+                print($digits[$i] . "\n");
+                $total += $digits[$i];
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     *
+     */
+    public function addHalfwayAroundDigits($inputString)
+    {
+        $total = 0;
+
+        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
+        array_push($digits, $digits[0]);
+        $max = count($digits) - 1;
+        $halfwayDistance = count($digits) / 2;
+
+        for ($i=0; $i < $max; $i++) {
+            $halfwayDigit = $i + $halfwayDistance;
+            $halfwayDigit -= ($halfwayDigit > $max) ? $max : 0;
+
+            if ($digits[$i] === $digits[$halfwayDigit]) {
                 print($digits[$i] . "\n");
                 $total += $digits[$i];
             }
