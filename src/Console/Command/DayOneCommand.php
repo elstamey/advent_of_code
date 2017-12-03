@@ -36,12 +36,11 @@ class DayOneCommand extends Command
             if (isset($this->input_string)) {
                 $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
             }
+        } else {
+            if (isset($this->input_string)) {
+                $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
+            }
         }
-
-        if (isset($this->input_string)) {
-            $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
-        }
-
     }
 
     /**

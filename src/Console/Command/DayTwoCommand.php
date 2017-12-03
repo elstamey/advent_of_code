@@ -31,9 +31,9 @@ class DayTwoCommand extends Command
 
         if ($input->getOption('part2')) {
             $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
+        } else {
+            $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
         }
-
-        $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
     }
 
     private function getDifferenceChecksum($inputString)
