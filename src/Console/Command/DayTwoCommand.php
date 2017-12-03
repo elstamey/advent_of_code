@@ -10,15 +10,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayTwoCommand extends Command
 {
 
-    private $keypad = [];
-
-    private $position = [1, 1];
-
     protected function configure()
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: Bathroom Security')
+            ->setDescription('Day 2: Corruption Checksum')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -33,89 +29,59 @@ class DayTwoCommand extends Command
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            $this->keypad = [
-                [ null, null, 1, null, null ],
-                [ null, 2, 3, 4, null ],
-                [ 5, 6, 7, 8, 9 ],
-                [ null, 'A', 'B', 'C', null ],
-                [ null, null, 'D', null, null ],
-            ];
-
-            $this->position = [2, 0];
 
             $result = $this->decode($this->input_string);
         } else {
-            $this->keypad = [
-                [ 1, 2, 3 ],
-                [ 4, 5, 6 ],
-                [ 7, 8, 9 ]
-            ];
 
-            $this->position = [1, 1];
-
-            $result = $this->decode($this->input_string);
+            $result = $this->getResult($this->input_string);
         }
 
         $output->writeln("result = ".$result);
     }
 
-    private function decode($input_string)
+    private function getResult($input_string)
     {
-        $keys = [];
+        $rowMath = [];
 
-        foreach (preg_split("/\n/", $input_string) as $line) {
+        foreach (preg_split("/\n/", $input_string) as $row) {
 
-            array_push($keys, $this->decodeKeyPress($line));
+            array_push($rowMath, $this->getRowMath($row));
         }
 
-//        print("keys: " . implode('', $keys) ."\n");
-
-        return implode('', $keys);
+        return $this->getChecksum($rowMath);
     }
 
-    private function decodeKeyPress($line)
+    public function getRowMath($row)
     {
-        $x = $this->position[0];
-        $y = $this->position[1];
+        $largest = 0;
+        $smallest = 100000000000000;
 
-        if (isset($line) && (rtrim($line) != "") && (rtrim($line) != "\n")) {
-//            print $line . "\n";
+//        $row = preg_replace('/\s/', '', $row);
 
-            $matches = str_split($line, 1);
+//        print($row . "\n");
 
-            foreach ($matches as $m) {
+        if (!empty($row)) {
 
-                switch ($m) {
-                    case 'U':
-                        if (isset($this->keypad[$x-1][$y])) {
-                            $x--;
-                        }
-                        break;
-                    case 'D':
-                        if (isset($this->keypad[$x+1][$y])) {
-                            $x++;
-                        }
-                        break;
-                    case 'L':
-                        if (isset($this->keypad[$x][$y-1])) {
-                            $y--;
-                        }
-                        break;
-                    case 'R':
-                        if (isset($this->keypad[$x][$y+1])) {
-                            $y++;
-                        }
-                        break;
-                }
-//                print "(".$x. "," . $y . ") = ". $this->keypad[$x][$y];
-                $this->position = [$x, $y];
+            $numbers = preg_split('/\s/', $row);
+
+            foreach ($numbers as $digit) {
+//                print '- ' . $digit . '(' . $largest . ', ' . $smallest . ")\n";
+                $largest = ($digit > $largest) ? $digit : $largest;
+                $smallest = ($digit < $smallest) ? $digit : $smallest;
             }
 
-
-//        print "key: " . $this->keypad[$x][$y] . "\n";
-            return $this->keypad[$x][$y];
+            $rowMath = $largest - $smallest;
+        } else {
+            $rowMath = 0;
         }
 
+//        print 'row math = ' . $rowMath . "\n\n";
+
+        return $rowMath;
     }
 
+    public function getChecksum($rows)
+    {
+        return array_sum($rows);
+    }
 }
