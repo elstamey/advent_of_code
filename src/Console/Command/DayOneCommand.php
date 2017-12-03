@@ -11,17 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayOneCommand extends Command
 {
-    private $positionX = 0;
-    private $positionY = 0;
-    private $oriented = 1;
-
-    private $previousPositions = ["(0,0)"];
-
-    const NORTH = 1;
-    const EAST = 2;
-    const SOUTH = 3;
-    const WEST = 4;
-
     private $input_string = '';
 
 
@@ -29,7 +18,7 @@ class DayOneCommand extends Command
     {
         $this
             ->setName('day1')
-            ->setDescription('No Time for a Taxicab')
+            ->setDescription('Inverse Captcha')
             ->addArgument('inputFile', null, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
@@ -45,133 +34,60 @@ class DayOneCommand extends Command
 
         if ($input->getOption('part2')) {
             if (isset($this->input_string)) {
-                $result = $this->calculateRepeatVisits( $this->input_string );
-            }
-        } else {
-            if (isset($this->input_string)) {
-                $result = $this->calculateNewLocation( $this->input_string );
+                $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
             }
         }
 
-        $output->writeln("result = " . $result);
-    }
-
-    /**
-     * @param string $input_string
-     *
-     * @return int
-     */
-    private function calculateNewLocation($input_string)
-    {
-        $moves = explode(', ', $input_string);
-        foreach ($moves as $move) {
-            preg_match('#([R|L])(\d+)#', $move, $matches);
-            $direction = $matches[1];
-            $distance = $matches[2];
-
-            print "input: " . $move . "  split: " . $direction . " " . $distance . "    \n";
-            $this->turn($direction, $distance);
-
-            print "(" . $this->positionX . ", " . $this->positionY . ")\n";
+        if (isset($this->input_string)) {
+            $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
         }
 
-        return (abs($this->positionX) + abs($this->positionY));
-    }
-
-
-    /**
-     * @param string $input_string
-     *
-     * @return int
-     */
-    private function calculateRepeatVisits($input_string)
-    {
-        $moves = explode(', ', $input_string);
-        foreach ($moves as $move) {
-            preg_match('#([R|L])(\d+)#', $move, $matches);
-            $direction = $matches[1];
-            $distance = $matches[2];
-
-            print "input: " . $move . "  split: " . $direction . " " . $distance . "    \n";
-            $this->turn($direction, $distance);
-
-            print "(" . $this->positionX . ", " . $this->positionY . ")\n";
-
-            var_dump($this->previousPositions);
-        }
-
-        return (abs($this->positionX) + abs($this->positionY));
     }
 
     /**
-     * @param int $turnDirection
-     * @param int $distance
-     *
-     * @internal param $turnAmount
+     *  Method to get the sum of all of the digits that repeat consecutively
      */
-    private function turn($turnDirection, $distance)
+    public function addRepeatDigits($inputString)
     {
+        $total = 0;
 
-        $this->oriented = $this->aimMe($turnDirection);
+        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
+        array_push($digits, $digits[0]);
+        $max = count($digits) - 1;
 
-        while (($distance > 0) && $this->hasNotVisited($this->positionX, $this->positionY)) {
-
-            switch ($this->oriented) {
-                case self::NORTH:
-                    $this->positionY = $this->positionY + 1;
-                    break;
-                case self::SOUTH:
-                    $this->positionY = $this->positionY - 1;
-                    break;
-                case self::EAST:
-                    $this->positionX = $this->positionX + 1;
-                    break;
-                case self::WEST:
-                    $this->positionX = $this->positionX - 1;
-                    break;
+        for ($i=0; $i < $max; $i++) {
+            if ($digits[$i] === $digits[$i+1]) {
+                print($digits[$i] . "\n");
+                $total += $digits[$i];
             }
-
-            $distance--;
-
-            var_dump($this->previousPositions);
         }
+
+        return $total;
     }
 
-
-    private function aimMe($turnDirection)
+    /**
+     * method to get the sum of all of the digits if they repeat/match halfway around the circle
+     */
+    public function addHalfwayAroundDigits($inputString)
     {
+        $total = 0;
 
-        $turnAmount = 0;
-        switch ($turnDirection) {
-            case 'L':
-                $turnAmount = 0-1;
-                break;
-            case 'R':
-                $turnAmount = 1;
-                break;
+        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
+        array_push($digits, $digits[0]);
+        $max = count($digits) - 1;
+        $halfwayDistance = count($digits) / 2;
+
+        for ($i=0; $i < $max; $i++) {
+            $halfwayDigit = $i + $halfwayDistance;
+            $halfwayDigit -= ($halfwayDigit > $max) ? $max : 0;
+
+            if ($digits[$i] === $digits[$halfwayDigit]) {
+                print($digits[$i] . "\n");
+                $total += $digits[$i];
+            }
         }
 
-        $newDirection = $this->oriented + $turnAmount;
-
-        if ($newDirection > 4) {
-            $newDirection = 1;
-        } elseif ($newDirection < 1) {
-            $newDirection = 4;
-        }
-
-        print("currAim: " . $this->oriented . " turnDir ".$turnDirection . " amt: " . $turnAmount . " newDir " . $newDirection . "\n");
-
-
-        return $newDirection;
-    }
-
-    private function hasNotVisited($positionX, $positionY)
-    {
-        $searchString = "(" . $this->positionX . ", " . $this->positionY . ")";
-        $returnValue = (array_search($searchString, $this->previousPositions) === false);
-        array_push($this->previousPositions, "(" . $this->positionX . ", " . $this->positionY . ")");
-
-        return $returnValue;
+        return $total;
     }
 
 }
