@@ -34,19 +34,18 @@ class DayOneCommand extends Command
 
         if ($input->getOption('part2')) {
             if (isset($this->input_string)) {
-                $result = $this->addHalfwayAroundDigits( $this->input_string );
-            }
-        } else {
-            if (isset($this->input_string)) {
-                $result = $this->addRepeatDigits( $this->input_string );
+                $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
             }
         }
 
-        $output->writeln("result = " . $result);
+        if (isset($this->input_string)) {
+            $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
+        }
+
     }
 
     /**
-     *
+     *  Method to get the sum of all of the digits that repeat consecutively
      */
     public function addRepeatDigits($inputString)
     {
@@ -67,7 +66,7 @@ class DayOneCommand extends Command
     }
 
     /**
-     *
+     * method to get the sum of all of the digits if they repeat/match halfway around the circle
      */
     public function addHalfwayAroundDigits($inputString)
     {
