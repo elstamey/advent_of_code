@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayTwoCommand extends Command
 {
+    private $input_string = '';
 
     protected function configure()
     {
@@ -29,14 +30,10 @@ class DayTwoCommand extends Command
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-
-            $result = $this->decode($this->input_string);
-        } else {
-
-            $result = $this->getResult($this->input_string);
+            $output->writeln('result = ' . $this->decode($this->input_string));
         }
 
-        $output->writeln("result = ".$result);
+        $output->writeln('result = ' . $this->getResult($this->input_string));
     }
 
     private function getResult($input_string)
