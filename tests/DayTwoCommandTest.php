@@ -23,4 +23,13 @@ class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $command->getChecksum([5, 3, 2]), 'Expecting to return 10');
     }
 
+    public function testGetDivisibleRow()
+    {
+        $command = new DayTwoCommand();
+
+        $this->assertEquals(4, $command->getDivisibleRow('5 9 2 8'), 'Expected to return 4');
+        $this->assertEquals(3, $command->getDivisibleRow('9 4 7 3'), 'Expected to return 3');
+        $this->assertEquals(2, $command->getDivisibleRow('3 8 6 5'), 'Expected to return 2');
+    }
+
 }

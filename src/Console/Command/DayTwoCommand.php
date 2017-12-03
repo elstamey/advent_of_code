@@ -30,19 +30,31 @@ class DayTwoCommand extends Command
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            $output->writeln('result = ' . $this->decode($this->inputString));
+            $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
         }
 
-        $output->writeln('result = ' . $this->getResult($this->inputString));
+        $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
     }
 
-    private function getResult($inputString)
+    private function getDifferenceChecksum($inputString)
     {
         $rowMath = [];
 
         foreach (preg_split("/\n/", $inputString) as $row) {
 
             array_push($rowMath, $this->getRowMath($row));
+        }
+
+        return $this->getChecksum($rowMath);
+    }
+
+    private function getDivisibleChecksum($inputString)
+    {
+        $rowMath = [];
+
+        foreach (preg_split("/\n/", $inputString) as $row) {
+
+            array_push($rowMath, $this->getDivisibleRow($row));
         }
 
         return $this->getChecksum($rowMath);
@@ -76,5 +88,26 @@ class DayTwoCommand extends Command
     public function getChecksum($rows)
     {
         return array_sum($rows);
+    }
+
+    public function getDivisibleRow($row)
+    {
+        if (!empty($row)) {
+
+            $numbers = preg_split('/\s/', $row);
+
+            foreach ($numbers as $left) {
+                foreach ($numbers as $right) {
+
+                    if (($left > $right) && (($left % $right) == 0)) {
+                        return ($left / $right);
+                    } elseif (($right > $left) && (($right % $left) == 0)) {
+                        return ($right / $left);
+                    }
+                }
+            }
+        }
+
+        return 0;
     }
 }
