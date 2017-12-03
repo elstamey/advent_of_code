@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayTwoCommand extends Command
 {
-    private $input_string = '';
+    private $inputString = '';
 
     protected function configure()
     {
@@ -27,20 +27,20 @@ class DayTwoCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            $output->writeln('result = ' . $this->decode($this->input_string));
+            $output->writeln('result = ' . $this->decode($this->inputString));
         }
 
-        $output->writeln('result = ' . $this->getResult($this->input_string));
+        $output->writeln('result = ' . $this->getResult($this->inputString));
     }
 
-    private function getResult($input_string)
+    private function getResult($inputString)
     {
         $rowMath = [];
 
-        foreach (preg_split("/\n/", $input_string) as $row) {
+        foreach (preg_split("/\n/", $inputString) as $row) {
 
             array_push($rowMath, $this->getRowMath($row));
         }
@@ -67,14 +67,10 @@ class DayTwoCommand extends Command
                 $smallest = ($digit < $smallest) ? $digit : $smallest;
             }
 
-            $rowMath = $largest - $smallest;
-        } else {
-            $rowMath = 0;
+            return ($largest - $smallest);
         }
 
-//        print 'row math = ' . $rowMath . "\n\n";
-
-        return $rowMath;
+        return 0;
     }
 
     public function getChecksum($rows)
