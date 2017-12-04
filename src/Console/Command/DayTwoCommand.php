@@ -98,10 +98,12 @@ class DayTwoCommand extends Command
 
             foreach ($numbers as $left) {
                 foreach ($numbers as $right) {
-                    if (($left > $right) && (($left % $right) === 0)) {
-                        return ($left / $right);
-                    } elseif (($right > $left) && (($right % $left) === 0)) {
-                        return ($right / $left);
+                    if ($left !== $right) {
+                        if (($left > $right) && (($left % $right) === 0)) {
+                            return ($left / $right);
+                        } elseif (($right > $left) && (($right % $left) === 0)) {
+                            return ($right / $left);
+                        }
                     }
                 }
             }
