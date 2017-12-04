@@ -32,15 +32,19 @@ class DayOneCommand extends Command
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
-        if ($input->getOption('part2')) {
-            if (isset($this->input_string)) {
-                $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
-            }
-        } else {
-            if (isset($this->input_string)) {
-                $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
-            }
+        if (isset($this->input_string) && $input->getOption('part2')) {
+
+            $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
+            return;
+
+        } elseif (isset($this->input_string)) {
+
+            $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
+            return;
+
         }
+
+        $output->writeln('<error>Could not execute</error>');
     }
 
     /**

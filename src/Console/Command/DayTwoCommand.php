@@ -29,11 +29,19 @@ class DayTwoCommand extends Command
     {
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-        if ($input->getOption('part2')) {
+        if (isset($this->input_string) && $input->getOption('part2')) {
+
             $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
-        } else {
+            return;
+
+        } elseif (isset($this->input_string)) {
+
             $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
+            return;
+
         }
+
+        $output->writeln('<error>Could not execute</error>');
     }
 
     private function getDifferenceChecksum($inputString)
