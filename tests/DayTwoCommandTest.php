@@ -6,55 +6,30 @@ use \Symfony\Component\Console\Tester\CommandTester;
 
 class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
 {
-
-    /** @test */
-    public function testExecute()
+    public function testGetRowMath()
     {
-        $application = new Application();
-        $application->add(new DayTwoCommand());
+        $command = new DayTwoCommand();
 
-        $command = $application->find('day2');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
-
-            // pass arguments to the helper
-            'inputFile' => 'testday2.txt',
-
-            // prefix the key with a double slash when passing options,
-            // e.g: '--some-option' => 'option_value',
-        ));
-
-
-        // the output of the command in the console
-        $output = $commandTester->getDisplay();
-        $this->assertContains('result = 1985', $output);
+        $this->assertEquals(3, $command->getRowMath('5 3 2'), 'Expecting to return 3');
+        $this->assertEquals(8, $command->getRowMath('5 1 9 5'), 'Expecting to return 8');
+        $this->assertEquals(4, $command->getRowMath('7 5 3'), 'Expecting to return 4');
+        $this->assertEquals(6, $command->getRowMath('2 4 6 8'), 'Expecting to return 6');
     }
 
-    /** @test */
-    public function testExecutePart2()
+    public function testGetChecksum()
     {
-        $application = new Application();
-        $application->add(new DayTwoCommand());
+        $command = new DayTwoCommand();
 
-        $command = $application->find('day2');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(array(
-            'command'  => $command->getName(),
+        $this->assertEquals(10, $command->getChecksum([5, 3, 2]), 'Expecting to return 10');
+    }
 
-            // pass arguments to the helper
-            'inputFile' => 'testday2.txt',
+    public function testGetDivisibleRow()
+    {
+        $command = new DayTwoCommand();
 
-            // prefix the key with a double slash when passing options,
-            // e.g: '--some-option' => 'option_value',
-            '--part2' => true,
-
-        ));
-
-
-        // the output of the command in the console
-        $output = $commandTester->getDisplay();
-        $this->assertContains('result = 5DB3', $output);
+        $this->assertEquals(4, $command->getDivisibleRow('5 9 2 8'), 'Expected to return 4');
+        $this->assertEquals(3, $command->getDivisibleRow('9 4 7 3'), 'Expected to return 3');
+        $this->assertEquals(2, $command->getDivisibleRow('3 8 6 5'), 'Expected to return 2');
     }
 
 }

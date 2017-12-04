@@ -9,16 +9,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayTwoCommand extends Command
 {
-
-    private $keypad = [];
-
-    private $position = [1, 1];
+    private $inputString = '';
 
     protected function configure()
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: Bathroom Security')
+            ->setDescription('Day 2: Corruption Checksum')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -30,92 +27,96 @@ class DayTwoCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-        if ($input->getOption('part2')) {
-            $this->keypad = [
-                [ null, null, 1, null, null ],
-                [ null, 2, 3, 4, null ],
-                [ 5, 6, 7, 8, 9 ],
-                [ null, 'A', 'B', 'C', null ],
-                [ null, null, 'D', null, null ],
-            ];
+        if (isset($this->input_string) && $input->getOption('part2')) {
 
-            $this->position = [2, 0];
+            $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
+            return;
 
-            $result = $this->decode($this->input_string);
-        } else {
-            $this->keypad = [
-                [ 1, 2, 3 ],
-                [ 4, 5, 6 ],
-                [ 7, 8, 9 ]
-            ];
+        } elseif (isset($this->input_string)) {
 
-            $this->position = [1, 1];
+            $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
+            return;
 
-            $result = $this->decode($this->input_string);
         }
 
-        $output->writeln("result = ".$result);
+        $output->writeln('<error>Could not execute</error>');
     }
 
-    private function decode($input_string)
+    private function getDifferenceChecksum($inputString)
     {
-        $keys = [];
+        $rowMath = [];
 
-        foreach (preg_split("/\n/", $input_string) as $line) {
+        foreach (preg_split("/\n/", $inputString) as $row) {
 
-            array_push($keys, $this->decodeKeyPress($line));
+            array_push($rowMath, $this->getRowMath($row));
         }
 
-//        print("keys: " . implode('', $keys) ."\n");
-
-        return implode('', $keys);
+        return $this->getChecksum($rowMath);
     }
 
-    private function decodeKeyPress($line)
+    private function getDivisibleChecksum($inputString)
     {
-        $x = $this->position[0];
-        $y = $this->position[1];
+        $rowMath = [];
 
-        if (isset($line) && (rtrim($line) != "") && (rtrim($line) != "\n")) {
-//            print $line . "\n";
+        foreach (preg_split("/\n/", $inputString) as $row) {
 
-            $matches = str_split($line, 1);
+            array_push($rowMath, $this->getDivisibleRow($row));
+        }
 
-            foreach ($matches as $m) {
+        return $this->getChecksum($rowMath);
+    }
 
-                switch ($m) {
-                    case 'U':
-                        if (isset($this->keypad[$x-1][$y])) {
-                            $x--;
-                        }
-                        break;
-                    case 'D':
-                        if (isset($this->keypad[$x+1][$y])) {
-                            $x++;
-                        }
-                        break;
-                    case 'L':
-                        if (isset($this->keypad[$x][$y-1])) {
-                            $y--;
-                        }
-                        break;
-                    case 'R':
-                        if (isset($this->keypad[$x][$y+1])) {
-                            $y++;
-                        }
-                        break;
-                }
-//                print "(".$x. "," . $y . ") = ". $this->keypad[$x][$y];
-                $this->position = [$x, $y];
+    public function getRowMath($row)
+    {
+        $largest = 0;
+        $smallest = 100000000000000;
+
+//        $row = preg_replace('/\s/', '', $row);
+
+//        print($row . "\n");
+
+        if (!empty($row)) {
+
+            $numbers = preg_split('/\s/', $row);
+
+            foreach ($numbers as $digit) {
+//                print '- ' . $digit . '(' . $largest . ', ' . $smallest . ")\n";
+                $largest = ($digit > $largest) ? $digit : $largest;
+                $smallest = ($digit < $smallest) ? $digit : $smallest;
             }
 
-
-//        print "key: " . $this->keypad[$x][$y] . "\n";
-            return $this->keypad[$x][$y];
+            return ($largest - $smallest);
         }
 
+        return 0;
     }
 
+    public function getChecksum($rows)
+    {
+        return array_sum($rows);
+    }
+
+    public function getDivisibleRow($row)
+    {
+        if (!empty($row)) {
+
+            $numbers = preg_split('/\s/', $row);
+
+            foreach ($numbers as $left) {
+                foreach ($numbers as $right) {
+                    if ($left !== $right) {
+                        if (($left > $right) && (($left % $right) === 0)) {
+                            return ($left / $right);
+                        } elseif (($right > $left) && (($right % $left) === 0)) {
+                            return ($right / $left);
+                        }
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
 }
