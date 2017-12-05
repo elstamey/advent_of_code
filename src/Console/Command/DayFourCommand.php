@@ -11,17 +11,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFourCommand extends Command
 {
 
-    /**
-     * @var int
-     */
-    private $sumOfSectorIds = 0;
-
-
     protected function configure()
     {
         $this
             ->setName('day4')
-            ->setDescription('Day 4: Security Through Obscurity')
+            ->setDescription('Day 4: High-Entropy Passphrases')
             ->addArgument('inputFile', null, 'newFile', 'day4.txt')
             ->addOption(
                 'part2',
@@ -33,138 +27,69 @@ class DayFourCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            $result = '';
+            $result = 0;
 
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "") && $this->isRealRoom($line)) {
-                    $name = $this->decryptName($line) . "\n";
-
-                    print $name . "\n";
-
-                    if (strpos($name, 'north') !== false) {
-                        preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $line, $matches);
-
-//                        var_dump($matches);
-                        $result = $matches[2] . " " . $line;
-                    }
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
+                if (isset($line) && ($line != "")) {
+                    $result += (int) $this->passwordDoesNotContainAnagrams($line);
                 }
             }
-
 
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->isRealRoom($line);
+            $result = 0;
 
-//                    print "Sector Sum: " . $this->getSectorSum() . "\n";
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
+                if (isset($line) && ($line != "")) {
+                    $result += (int) $this->isValidPassword($line);
                 }
             }
-
-            $result = $this->getSectorSum();
         }
 
         $output->writeln("result = " . $result);
     }
 
-    /**
-     * @param string $roomInfo
-     *
-     * @return bool
-     */
-    public function isRealRoom($roomInfo)
+
+    public function isValidPassword($line)
     {
-        preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $roomInfo, $matches);
+//        print "\nTest output: " . $line . "\n";
 
-        $roomName = preg_replace("/-/", "", $matches[1]);
-        $sectorId = $matches[2];
-        $checksum = $matches[3];
+        $words = preg_split('/\s/', $line);
 
-        $roomNameParts = str_split($roomName, 1);
-        $reduce = array_count_values($roomNameParts);
-        array_multisort(array_values($reduce), SORT_DESC, array_keys($reduce), SORT_ASC, $reduce);
-
-        $reduce = array_slice($reduce, 0, 5);
-        $roomNameParts = array_keys($reduce);
-        natsort($roomNameParts);
-
-
-        $checkSumArray = str_split($checksum, 1);
-
-        if ( count(array_intersect($roomNameParts, $checkSumArray)) === 5) {
-//            print "sector id: " . $sectorId . "\n";
-            $this->sumOfSectorIds += $sectorId;
-            return true;
-        } else {
-//            print "NOT REAL!!!! ------\n";
-//            var_dump($reduce, $roomNameParts, $checkSumArray);
-//            print "\n";
-            return false;
-        }
-
-    }
-
-    /**
-     * @return int
-     */
-    public function getSectorSum()
-    {
-        return $this->sumOfSectorIds;
-    }
-
-
-    /**
-     * @param string $encryptedName
-     *
-     * @return string
-     */
-    public function decryptName($encryptedName)
-    {
-        preg_match('#([\w\-]+)([\d]{3})#', $encryptedName, $matches);
-        $words = preg_split("/-/", $matches[1]);
-        $sectorId = $matches[2];
-
-//        var_dump($words, $sectorId);
-
-        $shiftAmount = $this->calculateShiftAmount($sectorId);
-        $decryptedName = '';
+        $searchTheseWords = $words;
         foreach ($words as $word) {
-            if (!is_numeric($word)) {
-                foreach ( str_split($word, 1) as $letter ) {
-                    $decryptedName .= $this->shiftCipher($letter, $shiftAmount);
-
-                }
-                $decryptedName .= ' ';
+//            print "word " . $word . ": " . $line . "\n";
+            array_shift($searchTheseWords);
+            if (in_array($word, $searchTheseWords, true)) {
+                return false;
             }
         }
 
-        return $decryptedName;
+        return true;
     }
 
-    public function shiftCipher($letter, $moveAmount)
+    public function passwordDoesNotContainAnagrams($line)
     {
-        $alphabet = str_split('abcdefghijklmnopqrstuvwxyz', 1);
-//        die(var_dump($alphabet));
+//        print "\nTest output: " . $line . "\n";
 
-        $key = array_search($letter, $alphabet);
-        $moveAmount += $key;
+        $words = preg_split('/\s/', $line);
 
-        if ($moveAmount > 25) {
-            $moveAmount -= 26;
+        $searchTheseWords = $words;
+        foreach ($words as $word) {
+            array_shift($searchTheseWords);
+//            print "word " . $word . ": " . implode(' ', $searchTheseWords) . "\n";
+
+            foreach ($searchTheseWords as $search) {
+                if (count_chars($word,1) === count_chars($search, 1)) {
+//                    print "FALSE! \n";
+                    return false;
+                }
+            }
         }
 
-//        var_dump($letter, $key);
-
-        return $alphabet[$moveAmount];
+//        print "TRUE\n";
+        return true;
     }
-
-    private function calculateShiftAmount($sectorId)
-    {
-        $moveAmount = $sectorId % 26;
-
-        return $moveAmount;
-    }
-
 }
