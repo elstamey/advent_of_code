@@ -11,11 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFourCommand extends Command
 {
 
-    /**
-     * @var int
-     */
-    private $sumOfSectorIds = 0;
-
     protected function configure()
     {
         $this
@@ -77,24 +72,24 @@ class DayFourCommand extends Command
 
     public function passwordDoesNotContainAnagrams($line)
     {
-        print "\nTest output: " . $line . "\n";
+//        print "\nTest output: " . $line . "\n";
 
         $words = preg_split('/\s/', $line);
 
         $searchTheseWords = $words;
         foreach ($words as $word) {
             array_shift($searchTheseWords);
-            print "word " . $word . ": " . implode(' ', $searchTheseWords) . "\n";
+//            print "word " . $word . ": " . implode(' ', $searchTheseWords) . "\n";
 
             foreach ($searchTheseWords as $search) {
-                if (count_chars($word,1) == count_chars($search, 1)) {
-                    print "FALSE! \n";
+                if (count_chars($word,1) === count_chars($search, 1)) {
+//                    print "FALSE! \n";
                     return false;
                 }
             }
         }
 
-        print "TRUE\n";
+//        print "TRUE\n";
         return true;
     }
 }
