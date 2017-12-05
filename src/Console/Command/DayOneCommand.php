@@ -18,7 +18,7 @@ class DayOneCommand extends Command
     {
         $this
             ->setName('day1')
-            ->setDescription('Inverse Captcha')
+            ->setDescription('Day 1: Inverse Captcha')
             ->addArgument('inputFile', null, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
