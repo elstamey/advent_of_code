@@ -19,7 +19,7 @@ class DayThreeCommandTest extends \PHPUnit_Framework_TestCase
             'command'  => $command->getName(),
 
             // pass arguments to the helper
-            'inputFile' => 'testday3.txt',
+            'square' => 1,
 
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
@@ -43,7 +43,7 @@ class DayThreeCommandTest extends \PHPUnit_Framework_TestCase
             'command'  => $command->getName(),
 
             // pass arguments to the helper
-            'inputFile' => 'testday3.txt',
+            'square' => 1,
 
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
@@ -54,17 +54,42 @@ class DayThreeCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = 6', $output);
+        $this->assertContains('result = 0', $output);
     }
+
     /** @test */
-    function testIsTriangle()
+    public function testManhattanDistance()
     {
         $command = new DayThreeCommand();
 
-        $this->assertTrue($command->isTriangle(1, 2, 2), 'Did not get valid triangle, expecting valid');
-        $this->assertTrue($command->isTriangle(7, 10, 5), 'Did not get valid triangle, expecting valid');
-        $this->assertFalse($command->isTriangle(5, 10, 25), 'Got valid triangle, expecting not valid');
-        $this->assertFalse($command->isTriangle(3, 5, 8), 'Got valid triangle, expecting not valid');
+        $this->assertEquals(6, $command->manhattanDistance([0,0], [3,3]), 'Did not get manhattan distance of 6');
     }
 
+
+    /** @test */
+    public function testGetPositionOfSquare()
+    {
+        $command = new DayThreeCommand();
+
+        $this->assertEquals([0,0], $command->getPositionOfSquare(1), 'Did not get position of (0,0)');
+        $this->assertEquals([2,1], $command->getPositionOfSquare(12), 'Did not get position of (2,1)');
+        $this->assertEquals([2,0], $command->getPositionOfSquare(23), 'Did not get position of (2,0)');
+    }
+
+
+    /** @test */
+    public function testBuildGridUpToSquare()
+    {
+        $command = new DayThreeCommand();
+
+        $myGrid = [
+            0 => [17,  16,  15,  14,  13 ],
+            1 => [18,   5,   4,   3,  12 ],
+            2 => [19,   6,   1,   2,  11 ],
+            3 => [20,   7,   8,   9,  10 ],
+            4 => [21,  22,  23 ],
+        ];
+
+        $this->assertEquals($myGrid, $command->buildGridUpToSquare(23), 'Did not build a grid that matched');
+    }
 }

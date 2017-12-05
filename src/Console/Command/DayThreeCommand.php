@@ -3,20 +3,29 @@
 namespace Acme\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DayThreeCommand extends Command
 {
-    protected $validTriangles = 0;
+
+    private $returnFrom = 0;
+
+    public function getPositionOfSquare($square)
+    {
+        $grid = $this->buildGridUpToSquare($square);
+
+        return [0, 0];
+    }
 
     protected function configure()
     {
         $this
             ->setName('day3')
-            ->setDescription('Day 3: Squares With Three Sides')
-            ->addArgument('inputFile', null, 'newFile', 'day3.txt')
+            ->setDescription('Day 3: Spiral Memory')
+            ->addArgument('square', InputArgument::REQUIRED, 'What square do you want to return from?')
             ->addOption(
                 'part2',
                 null,
@@ -27,70 +36,97 @@ class DayThreeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->returnFrom = $input->getArgument('square');
 
         if ($input->getOption('part2')) {
 
-            $this->validTriangles = 0;
-
-            $groups = array_chunk(preg_split("/[\n]/", $this->input_string), 3);
-            foreach ($groups as $group) {
-
-                if (count($group) == 3) {
-                    $g = $group[0] . $group[1] . $group[2];
-
-                    if (isset($g) && ($g != "")) {
-                        $x = preg_split("/[\s]+/", $g);
-
-                        $this->testValidTriangle($x[1], $x[4], $x[7]);
-                        $this->testValidTriangle($x[2], $x[5], $x[8]);
-                        $this->testValidTriangle($x[3], $x[6], $x[9]);
-                    }
-                }
-            }
+            $result = 0;
 
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $coords = preg_split("/[\s]+/", $line);
 
-//                var_dump($coords);
-//                print "\n";
+            $returnFromPosition = [0, 0];
 
-                    $this->testValidTriangle($coords[1], $coords[2], $coords[3]);
-                }
-            }
+            $this->buildGridUpToSquare($this->returnFrom);
+
+            $result = $this->manhattanDistance([0,0], $returnFromPosition);
 
         }
 
-        $result = $this->validTriangles;
+
         $output->writeln("result = " . $result);
     }
 
     /**
-     * @param int $a
-     * @param int $b
-     * @param int $c
+     * Method to solve the Manhattan Distance between two points
+     *
+     * each point is an array containing [x,y]
+     * @param array $pointA
+     * @param array $pointB
+     *
+     * @return float|int
      */
-    public function testValidTriangle($a, $b, $c)
+    public function manhattanDistance($pointA, $pointB)
     {
-        if ($this->isTriangle($a, $b, $c) &&
-            $this->isTriangle($b, $c, $a) &&
-            $this->isTriangle($c, $a, $b) ) {
-            $this->validTriangles++;
+        return abs($pointA[0] - $pointB[0]) + abs($pointA[1] - $pointB[1]);
+    }
+
+    public function buildGridUpToSquare($square)
+    {
+        $rows[][] = 0;
+
+        $value = 1;
+        $steps = 1;
+        $direction = 1;
+        $x = 0;
+        $y = 0;
+
+        while ($value < $square) {
+
+            switch ($direction):
+                case 1:
+                    for ($i=0; $i < $steps; $i++) {
+                        array_push($rows[0], $value);
+                        $value++;
+                    }
+                    $direction++;
+                    break;
+                case 2:
+                    array_unshift($rows, []);
+                    for ($i=0; $i < $steps; $i++) {
+                        array_unshift($rows[0], $value);
+                        $value++;
+                    }
+                    $steps++;
+                    $direction++;
+                    break;
+                case 3:
+                    for ($i=0; $i < $steps; $i++) {
+                        array_unshift($rows[$i], $value);
+                        $value++;
+                    }
+                    $direction++;
+                    break;
+                case 4:
+                    $count = count($rows) - 1;
+                    for ($i=0; $i < $steps; $i++) {
+                        array_push($rows[$count], $value);
+                    }
+                    $steps++;
+                    $direction = 1;
+                    break;
+                endswitch;
+
+        }
+
+        $this->printMatrix($rows);
+        return $rows;
+    }
+
+    private function printMatrix($rows)
+    {
+        foreach ($rows as $row) {
+            $line = implode('  ', $row);
+            print $line . "\n";
         }
     }
-
-    /**
-     * @param int $a
-     * @param int $b
-     * @param int $c
-     *
-     * @return bool
-     */
-    public function isTriangle($a, $b, $c)
-    {
-        return (($a + $b) > $c);
-    }
-
 }
