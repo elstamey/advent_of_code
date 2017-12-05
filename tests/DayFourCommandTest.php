@@ -66,4 +66,15 @@ class DayFourCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($command->isValidPassword('aa bb cc dd aaa'), 'isValidPassword returned invalid');
     }
 
+    public function testPasswordDoesNotContainAnagrams()
+    {
+        $command = new DayFourCommand();
+
+        $this->assertTrue($command->passwordDoesNotContainAnagrams('abcde fghij'), 'passwordDoesNotContainAnagrams returned invalid');
+        $this->assertFalse($command->passwordDoesNotContainAnagrams('abcde xyz ecdab'), 'passwordDoesNotContainAnagrams returned valid');
+        $this->assertTrue($command->passwordDoesNotContainAnagrams('a ab abc abd abf abj'), 'passwordDoesNotContainAnagrams returned invalid');
+        $this->assertTrue($command->passwordDoesNotContainAnagrams('iiii oiii ooii oooi oooo'), 'passwordDoesNotContainAnagrams returned invalid');
+        $this->assertFalse($command->passwordDoesNotContainAnagrams('oiii ioii iioi iiio'), 'passwordDoesNotContainAnagrams returned valid');
+
+    }
 }
