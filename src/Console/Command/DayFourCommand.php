@@ -54,32 +54,29 @@ class DayFourCommand extends Command
 
 
         } else {
+            $result = 0;
+
             foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
-                    $this->isRealRoom($line);
-
-//                    print "Sector Sum: " . $this->getSectorSum() . "\n";
+                    $result += (int) $this->isValidPassword($line);
                 }
             }
 
-            $result = $this->getSectorSum();
         }
 
         $output->writeln("result = " . $result);
     }
 
 
-    public function isValidPassword($string)
+    public function isValidPassword($line)
     {
-        print "\nTest output: " . $string . "\n";
+//        print "\nTest output: " . $line . "\n";
 
-        $words = preg_split('/\s/', $string);
-        $count = count($words);
-        print "count: " . $count . "\n";
+        $words = preg_split('/\s/', $line);
 
         $searchTheseWords = $words;
         foreach ($words as $word) {
-            print "word " . $word . ": " . $string . "\n";
+//            print "word " . $word . ": " . $line . "\n";
             array_shift($searchTheseWords);
             if (in_array($word, $searchTheseWords, true)) {
                 return false;
@@ -89,102 +86,26 @@ class DayFourCommand extends Command
         return true;
     }
 
-    /**
-     * @param string $roomInfo
-     *
-     * @return bool
-     */
-    public function isRealRoom($roomInfo)
+    public function passwordDoesNotContainAnagrams($line)
     {
-        preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $roomInfo, $matches);
+        print "\nTest output: " . $line . "\n";
 
-        $roomName = preg_replace("/-/", "", $matches[1]);
-        $sectorId = $matches[2];
-        $checksum = $matches[3];
+        $words = preg_split('/\s/', $line);
 
-        $roomNameParts = str_split($roomName, 1);
-        $reduce = array_count_values($roomNameParts);
-        array_multisort(array_values($reduce), SORT_DESC, array_keys($reduce), SORT_ASC, $reduce);
-
-        $reduce = array_slice($reduce, 0, 5);
-        $roomNameParts = array_keys($reduce);
-        natsort($roomNameParts);
-
-
-        $checkSumArray = str_split($checksum, 1);
-
-        if ( count(array_intersect($roomNameParts, $checkSumArray)) === 5) {
-//            print "sector id: " . $sectorId . "\n";
-            $this->sumOfSectorIds += $sectorId;
-            return true;
-        } else {
-//            print "NOT REAL!!!! ------\n";
-//            var_dump($reduce, $roomNameParts, $checkSumArray);
-//            print "\n";
-            return false;
-        }
-
-    }
-
-    /**
-     * @return int
-     */
-    public function getSectorSum()
-    {
-        return $this->sumOfSectorIds;
-    }
-
-
-    /**
-     * @param string $encryptedName
-     *
-     * @return string
-     */
-    public function decryptName($encryptedName)
-    {
-        preg_match('#([\w\-]+)([\d]{3})#', $encryptedName, $matches);
-        $words = preg_split("/-/", $matches[1]);
-        $sectorId = $matches[2];
-
-//        var_dump($words, $sectorId);
-
-        $shiftAmount = $this->calculateShiftAmount($sectorId);
-        $decryptedName = '';
+        $searchTheseWords = $words;
         foreach ($words as $word) {
-            if (!is_numeric($word)) {
-                foreach ( str_split($word, 1) as $letter ) {
-                    $decryptedName .= $this->shiftCipher($letter, $shiftAmount);
+            array_shift($searchTheseWords);
+            print "word " . $word . ": " . implode(' ', $searchTheseWords) . "\n";
 
+            foreach ($searchTheseWords as $search) {
+                if (count_chars($word,1) == count_chars($search, 1)) {
+                    print "FALSE! \n";
+                    return false;
                 }
-                $decryptedName .= ' ';
             }
         }
 
-        return $decryptedName;
+        print "TRUE\n";
+        return true;
     }
-
-    public function shiftCipher($letter, $moveAmount)
-    {
-        $alphabet = str_split('abcdefghijklmnopqrstuvwxyz', 1);
-//        die(var_dump($alphabet));
-
-        $key = array_search($letter, $alphabet);
-        $moveAmount += $key;
-
-        if ($moveAmount > 25) {
-            $moveAmount -= 26;
-        }
-
-//        var_dump($letter, $key);
-
-        return $alphabet[$moveAmount];
-    }
-
-    private function calculateShiftAmount($sectorId)
-    {
-        $moveAmount = $sectorId % 26;
-
-        return $moveAmount;
-    }
-
 }
