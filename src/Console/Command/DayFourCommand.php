@@ -35,23 +35,13 @@ class DayFourCommand extends Command
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            $result = '';
+            $result = 0;
 
             foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "") && $this->isRealRoom($line)) {
-                    $name = $this->decryptName($line) . "\n";
-
-                    print $name . "\n";
-
-                    if (strpos($name, 'north') !== false) {
-                        preg_match('#([\w\-]+)([\d]{3})\[([\w]+)\]#', $line, $matches);
-
-//                        var_dump($matches);
-                        $result = $matches[2] . " " . $line;
-                    }
+                if (isset($line) && ($line != "")) {
+                    $result += (int) $this->passwordDoesNotContainAnagrams($line);
                 }
             }
-
 
         } else {
             $result = 0;
@@ -61,7 +51,6 @@ class DayFourCommand extends Command
                     $result += (int) $this->isValidPassword($line);
                 }
             }
-
         }
 
         $output->writeln("result = " . $result);
