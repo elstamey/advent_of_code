@@ -16,12 +16,11 @@ class DayFourCommand extends Command
      */
     private $sumOfSectorIds = 0;
 
-
     protected function configure()
     {
         $this
             ->setName('day4')
-            ->setDescription('Day 4: Security Through Obscurity')
+            ->setDescription('Day 4: High-Entropy Passphrases')
             ->addArgument('inputFile', null, 'newFile', 'day4.txt')
             ->addOption(
                 'part2',
@@ -33,12 +32,12 @@ class DayFourCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
             $result = '';
 
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "") && $this->isRealRoom($line)) {
                     $name = $this->decryptName($line) . "\n";
 
@@ -55,7 +54,7 @@ class DayFourCommand extends Command
 
 
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
                     $this->isRealRoom($line);
 
@@ -67,6 +66,27 @@ class DayFourCommand extends Command
         }
 
         $output->writeln("result = " . $result);
+    }
+
+
+    public function isValidPassword($string)
+    {
+        print "\nTest output: " . $string . "\n";
+
+        $words = preg_split('/\s/', $string);
+        $count = count($words);
+        print "count: " . $count . "\n";
+
+        $searchTheseWords = $words;
+        foreach ($words as $word) {
+            print "word " . $word . ": " . $string . "\n";
+            array_shift($searchTheseWords);
+            if (in_array($word, $searchTheseWords, true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
