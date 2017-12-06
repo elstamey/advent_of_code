@@ -57,7 +57,7 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = 0', $output);
+        $this->assertContains('result = 10', $output);
     }
 
 
