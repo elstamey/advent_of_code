@@ -66,8 +66,13 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new DayFiveCommand();
 
-        $this->assertEquals('5',
+        $this->assertEquals(5,
             $command->traverseJumpInstructions([0, 3, 0, 1, -3]),
+            'Expected traversal to complete in 5 steps');
+
+
+        $this->assertEquals(10,
+            $command->traverseJumpInstructions([0, 3, 0, 1, -3], true),
             'Expected traversal to complete in 5 steps');
     }
 }
