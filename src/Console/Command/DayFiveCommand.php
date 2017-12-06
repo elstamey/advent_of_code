@@ -58,13 +58,9 @@ class DayFiveCommand extends Command
 
     public function replaceOffset($offset, $partTwoRule) {
         if ($partTwoRule && $offset >= 3) {
-            $newOffset = ($offset - 1);
-        } else {
-            $newOffset = ($offset + 1);
+            return ($offset - 1);
         }
 
-        print "offset: " . $offset . " => " . $newOffset . "\n";
-
-        return $newOffset;
+        return ($offset + 1);
     }
 }
