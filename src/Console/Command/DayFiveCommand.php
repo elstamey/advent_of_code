@@ -31,20 +31,14 @@ class DayFiveCommand extends Command
     {
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-        if ($input->getOption('part2')) {
+        $instructions = preg_split("/\n/", $this->inputString, null, PREG_SPLIT_NO_EMPTY);
 
-            $result = 0;
-
-        } else {
-
-            $result = $this->traverseJumpInstructions(preg_split("/\n/", $this->inputString, null, PREG_SPLIT_NO_EMPTY));
-
-        }
+        $result = $this->traverseJumpInstructions($instructions, $input->getOption('part2'));
 
         $output->writeln("result = " . $result);
     }
 
-    public function traverseJumpInstructions($instructions)
+    public function traverseJumpInstructions($instructions, $partTwoRule=false)
     {
         $stepCount = 0;
         $pos = 0;
@@ -52,11 +46,18 @@ class DayFiveCommand extends Command
 
         while (in_array($pos, range(0, $max)) && isset($instructions[$pos])) {
             $jmp = $instructions[$pos];
-            $instructions[$pos]++;
+            $instructions[$pos] = $this->replaceOffset($instructions[$pos], $partTwoRule);
             $pos += $jmp;
             $stepCount++;
         }
 
         return $stepCount;
+    }
+
+    public function replaceOffset($offset, $partTwoRule=false) {
+        if ($partTwoRule && $offset >= 3) {
+            return ($offset - 1);
+        }
+        return ($offset + 1);
     }
 }
