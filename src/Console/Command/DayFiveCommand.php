@@ -44,20 +44,27 @@ class DayFiveCommand extends Command
         $pos = 0;
         $max = count($instructions) - 1;
 
-        while (in_array($pos, range(0, $max)) && isset($instructions[$pos])) {
-            $jmp = $instructions[$pos];
-            $instructions[$pos] = $this->replaceOffset($instructions[$pos], $partTwoRule);
-            $pos += $jmp;
+        while (in_array($pos, range(0, $max), true) && isset($instructions[$pos])) {
+            $offset = $instructions[$pos];
+            $instructions[$pos] = $this->replaceOffset($offset, $partTwoRule);
+            $pos += $offset;
+            print "Jump to " . $pos . "\n";
+            print "Steps = " . $stepCount . "\n";
             $stepCount++;
         }
 
         return $stepCount;
     }
 
-    public function replaceOffset($offset, $partTwoRule=false) {
+    public function replaceOffset($offset, $partTwoRule) {
         if ($partTwoRule && $offset >= 3) {
-            return ($offset - 1);
+            $newOffset = ($offset - 1);
+        } else {
+            $newOffset = ($offset + 1);
         }
-        return ($offset + 1);
+
+        print "offset: " . $offset . " => " . $newOffset . "\n";
+
+        return $newOffset;
     }
 }
