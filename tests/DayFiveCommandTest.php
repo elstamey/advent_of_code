@@ -20,6 +20,9 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
         $commandTester->execute(array(
             'command'  => $command->getName(),
 
+            // pass arguments to the helper
+            'inputFile' => 'testday5.txt',
+
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
         ));
@@ -27,7 +30,7 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = d4cd2ee1', $output);
+        $this->assertContains('result = 5', $output);
     }
 
     /** @test */
@@ -41,6 +44,9 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
         $commandTester->execute(array(
             'command'  => $command->getName(),
 
+            // pass arguments to the helper
+            'inputFile' => 'testday5.txt',
+
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
             '--part2' => true,
@@ -51,25 +57,17 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = f2c730e5', $output);
+        $this->assertContains('result = 0', $output);
     }
 
 
 
-    public function testHashIt()
+    public function testTraverseJumpInstructions()
     {
-        $doorId = 'abc';
-        $currentIndex = 3231929;
-        $password = '';
-
         $command = new DayFiveCommand();
 
-        while (strlen($password) < 8) {
-            $password .= $command->hashIt($doorId, $currentIndex);
-
-            $currentIndex++;
-        }
-
-        $this->assertEquals('18f47a30', $password, 'expected function to return a number that was not returned');
+        $this->assertEquals('5',
+            $command->traverseJumpInstructions([0, 3, 0, 1, -3]),
+            'Expected traversal to complete in 5 steps');
     }
 }
