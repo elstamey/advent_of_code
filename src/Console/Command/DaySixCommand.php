@@ -37,19 +37,27 @@ class DaySixCommand extends Command
 //        print "MB: " . $memoryBanks . "\n";
         $memoryBanks = preg_split('/\s/', $memoryBanks);
 
+        $count = 0;
+
+        while ($this->checkForPreviouslySeenConfig($memoryBanks) !== true) {
+            $memoryBanks = $this->redistribute($memoryBanks);
+            $count++;
+        }
+
         if ($input->getOption('part2')) {
-        } else {
 
-            $count = 0;
+            $count = 1;
 
-            while ($this->checkForPreviouslySeenConfig($memoryBanks) !== true) {
+            $snapshot = implode(' ', $memoryBanks);
+            $memoryBanks = $this->redistribute($memoryBanks);
+
+            while ($this->isSameConfig($snapshot, $memoryBanks) !== true) {
                 $memoryBanks = $this->redistribute($memoryBanks);
                 $count++;
             }
         }
-        $result = $count;
 
-        $output->writeln("result = " . $result);
+        $output->writeln("result = " . $count);
     }
 
     public function redistribute($memoryBanks)
@@ -89,5 +97,12 @@ class DaySixCommand extends Command
         array_push($this->photoAlbum, $snapshot);
 
         return false;
+    }
+
+    public function isSameConfig($snapshot, $memoryBanks)
+    {
+        $current = implode(' ', $memoryBanks);
+
+        return ($snapshot === $current);
     }
 }
