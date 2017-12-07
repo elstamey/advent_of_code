@@ -48,8 +48,6 @@ class DayFiveCommand extends Command
             $offset = $instructions[$pos];
             $instructions[$pos] = $this->replaceOffset($offset, $partTwoRule);
             $pos += $offset;
-            print "Jump to " . $pos . "\n";
-            print "Steps = " . $stepCount . "\n";
             $stepCount++;
         }
 

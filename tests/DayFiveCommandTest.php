@@ -60,8 +60,6 @@ class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('result = 10', $output);
     }
 
-
-
     public function testTraverseJumpInstructions()
     {
         $command = new DayFiveCommand();
