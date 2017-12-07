@@ -11,7 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DaySixCommand extends Command
 {
 
-    var $commonChars = [];
+    private $inputString;
+
+    public $photoAlbum = [];
 
     protected function configure()
     {
@@ -29,71 +31,63 @@ class DaySixCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $lines = preg_split("/\n/", $this->inputString);
+        $memoryBanks = $lines[0];
+//        print "MB: " . $memoryBanks . "\n";
+        $memoryBanks = preg_split('/\s/', $memoryBanks);
 
         if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->buildCommonChars($line);
-                }
-            }
-
-            $result = $this->reallyDecodeMessage($this->commonChars);
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->buildCommonChars($line);
-                }
-            }
 
-            $result = $this->decodeMessage($this->commonChars);
+            $count = 0;
+
+            while ($this->checkForPreviouslySeenConfig($memoryBanks) !== true) {
+                $memoryBanks = $this->redistribute($memoryBanks);
+                $count++;
+            }
         }
+        $result = $count;
+
         $output->writeln("result = " . $result);
     }
 
-    private function buildCommonChars($line)
+    public function redistribute($memoryBanks)
     {
-        $chars = str_split($line, 1);
+        $count = count($memoryBanks);
+        $key = $this->findKeyOfLargest($memoryBanks);
+        $most = $memoryBanks[$key];
+        $memoryBanks[$key] = 0;
 
-        foreach ($chars as $key =>$char) {
-            $this->commonChars[$key] = $this->commonChars[$key] . $char;
+        for ($i=$most; $i > 0; $i--) {
+            $ptr = $key + 1;
+            $key = ($ptr < $count) ? $ptr : ($ptr - $count);
+            $memoryBanks[$key]++;
         }
+
+        return $memoryBanks;
     }
 
-    private function decodeMessage($commonChars)
+    public function findKeyOfLargest($memoryBanks)
     {
-        $message = '';
+        $maxs = array_keys($memoryBanks, max($memoryBanks));
 
-        foreach ($commonChars as $item) {
-            $letters = str_split($item, 1);
-            $countedLetters = array_count_values($letters);
-            array_multisort(array_values($countedLetters), SORT_DESC, array_keys($countedLetters), SORT_ASC, $countedLetters);
-            var_dump($countedLetters);
-            $letter = array_slice($countedLetters, 0, 1);
-
-            var_dump($letter);
-            $message .= array_keys($letter)[0];
-        }
-
-        return $message;
+        return $maxs[0];
     }
 
-
-    private function reallyDecodeMessage($commonChars)
+    public function checkForPreviouslySeenConfig($memoryBanks)
     {
-        $message = '';
+        $snapshot = implode(' ', $memoryBanks);
 
-        foreach ($commonChars as $item) {
-            $letters = str_split($item, 1);
-            $countedLetters = array_count_values($letters);
-            array_multisort(array_values($countedLetters), SORT_ASC, array_keys($countedLetters), SORT_ASC, $countedLetters);
-            var_dump($countedLetters);
-            $letter = array_slice($countedLetters, 0, 1);
-
-            var_dump($letter);
-            $message .= array_keys($letter)[0];
+        if (in_array($snapshot, $this->photoAlbum, true)) {
+//            print("Found " . $snapshot . " in " );
+//            var_dump($this->photoAlbum);
+//            print "\n ==== \n";
+            return true;
         }
 
-        return $message;
+        array_push($this->photoAlbum, $snapshot);
+
+        return false;
     }
 }
