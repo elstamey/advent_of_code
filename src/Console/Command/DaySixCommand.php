@@ -34,7 +34,6 @@ class DaySixCommand extends Command
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
         $lines = preg_split("/\n/", $this->inputString);
         $memoryBanks = $lines[0];
-//        print "MB: " . $memoryBanks . "\n";
         $memoryBanks = preg_split('/\s/', $memoryBanks);
 
         $count = 0;
@@ -88,9 +87,6 @@ class DaySixCommand extends Command
         $snapshot = implode(' ', $memoryBanks);
 
         if (in_array($snapshot, $this->photoAlbum, true)) {
-//            print("Found " . $snapshot . " in " );
-//            var_dump($this->photoAlbum);
-//            print "\n ==== \n";
             return true;
         }
 
