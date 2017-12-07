@@ -72,9 +72,10 @@ class DayThreeCommand extends Command
 
     public function buildGridUpToSquare($square)
     {
-        $rows[][] = 0;
+        $rows = [];
+        $rows[0] = [1];
 
-        $value = 1;
+        $value = 2;
         $steps = 1;
         $direction = 1;
         $x = 0;
@@ -84,32 +85,41 @@ class DayThreeCommand extends Command
 
             switch ($direction):
                 case 1:
+                    print "\ngo right\n";
                     for ($i=0; $i < $steps; $i++) {
                         array_push($rows[0], $value);
                         $value++;
+                        print '> ';
                     }
                     $direction++;
                     break;
                 case 2:
+                    print "\ngo up\n";
                     array_unshift($rows, []);
                     for ($i=0; $i < $steps; $i++) {
                         array_unshift($rows[0], $value);
                         $value++;
+                        print '^ ';
                     }
                     $steps++;
                     $direction++;
                     break;
                 case 3:
+                    print "\ngo left\n";
                     for ($i=0; $i < $steps; $i++) {
                         array_unshift($rows[$i], $value);
                         $value++;
+                        print '< ';
                     }
                     $direction++;
                     break;
                 case 4:
+                    print "\ngo down\n";
                     $count = count($rows) - 1;
                     for ($i=0; $i < $steps; $i++) {
-                        array_push($rows[$count], $value);
+                        array_push($rows, $value);
+                        $value++;
+                        print 'v ';
                     }
                     $steps++;
                     $direction = 1;
@@ -124,6 +134,7 @@ class DayThreeCommand extends Command
 
     private function printMatrix($rows)
     {
+        print "\n\n==== MATRIX ====\n";
         foreach ($rows as $row) {
             $line = implode('  ', $row);
             print $line . "\n";
