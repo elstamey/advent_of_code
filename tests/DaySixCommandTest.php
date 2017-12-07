@@ -4,7 +4,7 @@ use Acme\Console\Command\DaySixCommand;
 use Symfony\Component\Console\Application;
 use \Symfony\Component\Console\Tester\CommandTester;
 
-class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
+class DaySixCommandTest extends \PHPUnit_Framework_TestCase
 {
 
     public $password = 'foo';
