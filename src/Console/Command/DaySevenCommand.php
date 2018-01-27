@@ -20,7 +20,7 @@ class DaySevenCommand extends Command
     {
         $this
             ->setName('day7')
-            ->setDescription('The Ideal Stocking Stuffer')
+            ->setDescription('Day 7: Recursive Circus')
             ->addArgument('inputFile', null, 'newFile', 'day7.txt')
             ->addOption(
                 'part2',
@@ -35,16 +35,16 @@ class DaySevenCommand extends Command
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->total += intval($this->supportsSSL($line));
-                }
-            }
+
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->total += intval($this->supportsTLS($line));
-                }
+
+        }
+
+        foreach (preg_split("/\n/", $this->input_string) as $line) {
+            if (isset($line) && ($line != "")) {
+                $program = preg_split('/[->]/', $line, null, PREG_SPLIT_NO_EMPTY);
+
+                die(var_dump($program));
             }
         }
 
