@@ -40,10 +40,9 @@ class DayOneCommand extends Command
         } elseif (isset($this->input_string)) {
 
             list($result, $errors) = $this->getFrequency($this->input_string);
-            $output->writeln('result = ' . $result);
-            $output->writeln($errors);
+            $output->writeln('<fg=green>result = ' . $result . '</>');
+            $output->writeln('<error>' . $errors . '</error>\n ');
             return;
-
         }
 
         $output->writeln('<error>Could not execute</error>');
@@ -57,19 +56,23 @@ class DayOneCommand extends Command
         $frequency = 0;
         $errors = "";
 
-        $digits = array_map('intval', preg_split("/[\n]/", $this->input_string));
-
+        $digits = $this->splitInputByLinesToArray($inputString);
         $cnt = count($digits);
         for ($i=0; $i < $cnt; $i++) {
-            if (!is_null($digits[$i])) {
+            if ($digits[$i] !== null) {
                 print($digits[$i] . "\n");
                 $frequency += $digits[$i];
             } else {
-                $errors .= "<error> NOT INT on " . ($i + 1) . " of " . $cnt . "</error>\n ";
+                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $cnt . "\n";
             }
         }
 
         return [$frequency, $errors];
+    }
+
+    private function splitInputByLinesToArray($inputString)
+    {
+        return array_map('intval', preg_split("/[\n]/", $inputString));
     }
 
     /**
