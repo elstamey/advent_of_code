@@ -18,7 +18,7 @@ class DayOneCommand extends Command
     {
         $this
             ->setName('day1')
-            ->setDescription('Inverse Captcha')
+            ->setDescription('Chronal Calibration')
             ->addArgument('inputFile', null, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
@@ -39,7 +39,9 @@ class DayOneCommand extends Command
 
         } elseif (isset($this->input_string)) {
 
-            $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
+            list($result, $errors) = $this->getFrequency($this->input_string);
+            $output->writeln('result = ' . $result);
+            $output->writeln($errors);
             return;
 
         }
@@ -50,22 +52,24 @@ class DayOneCommand extends Command
     /**
      *  Method to get the sum of all of the digits that repeat consecutively
      */
-    public function addRepeatDigits($inputString)
+    public function getFrequency($inputString)
     {
-        $total = 0;
+        $frequency = 0;
+        $errors = "";
 
-        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
-        array_push($digits, $digits[0]);
-        $max = count($digits) - 1;
+        $digits = array_map('intval', preg_split("/[\n]/", $this->input_string));
 
-        for ($i=0; $i < $max; $i++) {
-            if ($digits[$i] === $digits[$i+1]) {
+        $cnt = count($digits);
+        for ($i=0; $i < $cnt; $i++) {
+            if (!is_null($digits[$i])) {
                 print($digits[$i] . "\n");
-                $total += $digits[$i];
+                $frequency += $digits[$i];
+            } else {
+                $errors .= "<error> NOT INT on " . ($i + 1) . " of " . $cnt . "</error>\n ";
             }
         }
 
-        return $total;
+        return [$frequency, $errors];
     }
 
     /**
