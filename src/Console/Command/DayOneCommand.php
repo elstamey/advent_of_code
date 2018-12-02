@@ -20,6 +20,7 @@ class DayOneCommand extends Command
             ->setName('day1')
             ->setDescription('Chronal Calibration')
             ->addArgument('inputFile', null, 'newFile', 'day1.txt')
+            ->addOption('kid', null, InputOption::VALUE_NONE, 'If set, use kid\'s input file')
             ->addOption(
                 'part2',
                 null,
@@ -30,17 +31,22 @@ class DayOneCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        if ($input->getOption('kid')) {
+            $this->input_string = file_get_contents('day1e.txt');
+        } else {
+            $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        }
 
         if (isset($this->input_string) && $input->getOption('part2')) {
 
-            $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
+            list($frequency, $frequencies, $errors) = $this->getFirstDuplicateFrequency( $this->input_string );
+            $output->writeln('<fg=green>result part 2 = ' . $frequency . "\n");
             return;
 
         } elseif (isset($this->input_string)) {
 
             list($result, $errors) = $this->getFrequency($this->input_string);
-            $output->writeln('<fg=green>result = ' . $result . '</>');
+            $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
             $output->writeln('<error>' . $errors . '</error>\n ');
             return;
         }
@@ -49,7 +55,11 @@ class DayOneCommand extends Command
     }
 
     /**
-     *  Method to get the sum of all of the digits that repeat consecutively
+     *  Method to get the frequency by adding all of the digits to 0
+     *
+     * @param $inputString
+     *
+     * @return array
      */
     public function getFrequency($inputString)
     {
@@ -57,13 +67,13 @@ class DayOneCommand extends Command
         $errors = "";
 
         $digits = $this->splitInputByLinesToArray($inputString);
-        $cnt = count($digits);
-        for ($i=0; $i < $cnt; $i++) {
+        $count = count($digits) - 1;
+        for ($i=0; $i < $count; $i++) {
             if ($digits[$i] !== null) {
                 print($digits[$i] . "\n");
                 $frequency += $digits[$i];
             } else {
-                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $cnt . "\n";
+                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $count . "\n";
             }
         }
 
@@ -76,28 +86,45 @@ class DayOneCommand extends Command
     }
 
     /**
-     * method to get the sum of all of the digits if they repeat/match halfway around the circle
+     * method to get the frequency by adding all of the digits to 0 and continuing
+     * to loop over them until the total frequency is reached twice
+     *
+     * @param $inputString
+     *
+     * @return
      */
-    public function addHalfwayAroundDigits($inputString)
+    public function getFirstDuplicateFrequency($inputString)
     {
-        $total = 0;
+        $frequencies = [0];
+        $frequency = 0;
+        $errors = '';
 
-        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
-        array_push($digits, $digits[0]);
-        $max = count($digits) - 1;
-        $halfwayDistance = count($digits) / 2;
+        $digits = $this->splitInputByLinesToArray($inputString);
+        $count = count($digits) - 1;
+        $i = 0;
+        $loopCount = 0;
 
-        for ($i=0; $i < $max; $i++) {
-            $halfwayDigit = $i + $halfwayDistance;
-            $halfwayDigit -= ($halfwayDigit > $max) ? $max : 0;
 
-            if ($digits[$i] === $digits[$halfwayDigit]) {
-                print($digits[$i] . "\n");
-                $total += $digits[$i];
+        while (!in_array(2, array_count_values($frequencies),true)) {
+            if ($digits[$i] !== null) {
+                $frequency += $digits[$i];
+                $frequencies[] = $frequency;
+                print($frequency . "  \n");
+            } else {
+                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $count . "\n";
             }
+
+            if (($i+1) === $count) {
+                $i=0;
+            } else {
+                $i++;
+            }
+
+            print ($frequency . " " . $i . ' ' . $loopCount . "\n");
+            $loopCount++;
         }
 
-        return $total;
+        return [$frequency, $frequencies, $errors];
     }
 
 }

@@ -6,29 +6,60 @@
  */
 
 use Acme\Console\Command\DayOneCommand;
+use Symfony\Component\Console\Application;
+use \Symfony\Component\Console\Tester\CommandTester;
 
 class DayOneCommandTest extends PHPUnit_Framework_TestCase
 {
 
-    public function testAddRepeatDigits()
+    /** @test */
+    public function testExecute()
     {
-        $command = new DayOneCommand();
+        $application = new Application();
+        $application->add(new DayOneCommand());
 
-        $this->assertEquals(4, $command->addRepeatDigits('1111'), 'Expected these numbers to add up to 4');
-        $this->assertEquals(3, $command->addRepeatDigits('1122'), 'Expected these numbers to add up to 3');
-        $this->assertEquals(0, $command->addRepeatDigits('1234'), 'Expected these numbers to add up to 0');
-        $this->assertEquals(9, $command->addRepeatDigits('91212129'), 'Expected these numbers to add up to 9');
+        $command = $application->find('day1');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
 
+            // pass arguments to the helper
+            'inputFile' => 'testday1.txt',
+
+            // prefix the key with a double slash when passing options,
+            // e.g: '--some-option' => 'option_value',
+        ));
+
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('result part 1 = 0', $output);
     }
 
-    public function testAddHalfwayAroundDigits()
+    /** @test */
+    public function testExecutePartTwo()
     {
-        $command = new DayOneCommand();
+        $application = new Application();
+        $application->add(new DayOneCommand());
 
-        $this->assertEquals(6, $command->addHalfwayAroundDigits('1212'), 'Expected these numbers to add up to 6');
-        $this->assertEquals(0, $command->addHalfwayAroundDigits('1221'), 'Expected these numbers to add up to 0');
-        $this->assertEquals(4, $command->addHalfwayAroundDigits('123425'), 'Expected these numbers to add up to 4');
-        $this->assertEquals(12, $command->addHalfwayAroundDigits('123123'), 'Expected these numbers to add up to 12');
-        $this->assertEquals(4, $command->addHalfwayAroundDigits('12131415'), 'Expected these numbers to add up to 4');
+        $command = $application->find('day1');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+
+            // pass arguments to the helper
+            'inputFile' => 'testday1.txt',
+
+            // prefix the key with a double slash when passing options,
+            // e.g: '--some-option' => 'option_value',
+            '--part2' => true,
+
+
+        ));
+
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertContains('result part 2 = 0', $output);
     }
 }
