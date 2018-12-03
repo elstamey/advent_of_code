@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayOneCommand extends Command
 {
-    private $input_string = '';
+    private $inputString = '';
 
 
     protected function configure()
@@ -19,8 +19,7 @@ class DayOneCommand extends Command
         $this
             ->setName('day1')
             ->setDescription('Chronal Calibration')
-            ->addArgument('inputFile', null, 'newFile', 'day1.txt')
-            ->addOption('kid', null, InputOption::VALUE_NONE, 'If set, use kid\'s input file')
+            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
                 null,
@@ -31,21 +30,19 @@ class DayOneCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getOption('kid')) {
-            $this->input_string = file_get_contents('day1e.txt');
-        } else {
-            $this->input_string = file_get_contents($input->getArgument('inputFile'));
-        }
 
-        if (isset($this->input_string) && $input->getOption('part2')) {
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-            list($frequency, $frequencies, $errors) = $this->getFirstDuplicateFrequency( $this->input_string );
+
+        if (isset($this->inputString) && $input->getOption('part2')) {
+
+            list($frequency, $frequencies, $errors) = $this->getFirstDuplicateFrequency( $this->inputString );
             $output->writeln('<fg=green>result part 2 = ' . $frequency . "\n");
             return;
 
-        } elseif (isset($this->input_string)) {
+        } elseif (isset($this->inputString)) {
 
-            list($result, $errors) = $this->getFrequency($this->input_string);
+            list($result, $errors) = $this->getFrequency($this->inputString);
             $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
             $output->writeln('<error>' . $errors . '</error>\n ');
             return;
