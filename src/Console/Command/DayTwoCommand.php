@@ -15,7 +15,7 @@ class DayTwoCommand extends Command
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: Corruption Checksum')
+            ->setDescription('Day 2: Inventory Management System')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -29,14 +29,14 @@ class DayTwoCommand extends Command
     {
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-        if (isset($this->input_string) && $input->getOption('part2')) {
+        if (isset($this->inputString) && $input->getOption('part2')) {
 
-            $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
+//            $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
             return;
 
-        } elseif (isset($this->input_string)) {
+        } elseif (isset($this->inputString)) {
 
-            $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
+            $output->writeln('result = ' . $this->getChecksum());
             return;
 
         }
@@ -44,58 +44,21 @@ class DayTwoCommand extends Command
         $output->writeln('<error>Could not execute</error>');
     }
 
-    private function getDifferenceChecksum($inputString)
+
+    /**
+     * The checksum = a * b where
+     *   a = the number of boxIds that contain 2 of a letter
+     *   b = the number of boxIds that contain 3 of a letter
+     *
+     * @param $inputString
+     *
+     * @return int
+     */
+    private function getChecksum()
     {
-        $rowMath = [];
+        list($twiceBoxIdCount, $thriceBoxIdCount) = $this->getTwiceAndThriceBoxIdCounts();
 
-        foreach (preg_split("/\n/", $inputString) as $row) {
-
-            array_push($rowMath, $this->getRowMath($row));
-        }
-
-        return $this->getChecksum($rowMath);
-    }
-
-    private function getDivisibleChecksum($inputString)
-    {
-        $rowMath = [];
-
-        foreach (preg_split("/\n/", $inputString) as $row) {
-
-            array_push($rowMath, $this->getDivisibleRow($row));
-        }
-
-        return $this->getChecksum($rowMath);
-    }
-
-    public function getRowMath($row)
-    {
-        $largest = 0;
-        $smallest = 100000000000000;
-
-//        $row = preg_replace('/\s/', '', $row);
-
-//        print($row . "\n");
-
-        if (!empty($row)) {
-
-            $numbers = preg_split('/\s/', $row);
-
-            foreach ($numbers as $digit) {
-//                print '- ' . $digit . '(' . $largest . ', ' . $smallest . ")\n";
-                $largest = ($digit > $largest) ? $digit : $largest;
-                $smallest = ($digit < $smallest) ? $digit : $smallest;
-            }
-
-            return ($largest - $smallest);
-        }
-
-        return 0;
-    }
-
-    public function getChecksum($rows)
-    {
-        return array_sum($rows);
+        return ($twiceBoxIdCount * $thriceBoxIdCount);
     }
 
     public function getDivisibleRow($row)
@@ -118,5 +81,23 @@ class DayTwoCommand extends Command
         }
 
         return 0;
+    }
+
+    private function getTwiceAndThriceBoxIdCounts()
+    {
+        $twiceBoxIdCount = 0;
+        $thriceBoxIdCount = 0;
+
+        foreach (explode("\n", $this->inputString) as $row) {
+
+            $chars = preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
+
+            $counts = array_count_values($chars);
+
+            $twiceBoxIdCount += in_array(2, $counts, true) ? 1 : 0;
+            $thriceBoxIdCount += in_array(3, $counts, true) ? 1 : 0;
+        }
+
+        return [$twiceBoxIdCount, $thriceBoxIdCount];
     }
 }
