@@ -11,15 +11,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayOneCommand extends Command
 {
-    private $input_string = '';
+    private $inputString = '';
 
 
     protected function configure()
     {
         $this
             ->setName('day1')
-            ->setDescription('Inverse Captcha')
-            ->addArgument('inputFile', null, 'newFile', 'day1.txt')
+            ->setDescription('Chronal Calibration')
+            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
                 null,
@@ -30,67 +30,103 @@ class DayOneCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
-        if (isset($this->input_string) && $input->getOption('part2')) {
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-            $output->writeln('result = ' . $this->addHalfwayAroundDigits( $this->input_string ));
+
+        if (isset($this->inputString) && $input->getOption('part2')) {
+
+            list($frequency, $frequencies, $errors) = $this->getFirstDuplicateFrequency( $this->inputString );
+            $output->writeln('<fg=green>result part 2 = ' . $frequency . "\n");
             return;
 
-        } elseif (isset($this->input_string)) {
+        } elseif (isset($this->inputString)) {
 
-            $output->writeln('result = ' . $this->addRepeatDigits($this->input_string));
+            list($result, $errors) = $this->getFrequency($this->inputString);
+            $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
+            $output->writeln('<error>' . $errors . '</error>\n ');
             return;
-
         }
 
         $output->writeln('<error>Could not execute</error>');
     }
 
     /**
-     *  Method to get the sum of all of the digits that repeat consecutively
+     *  Method to get the frequency by adding all of the digits to 0
+     *
+     * @param $inputString
+     *
+     * @return array
      */
-    public function addRepeatDigits($inputString)
+    public function getFrequency($inputString)
     {
-        $total = 0;
+        $frequency = 0;
+        $errors = "";
 
-        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
-        array_push($digits, $digits[0]);
-        $max = count($digits) - 1;
-
-        for ($i=0; $i < $max; $i++) {
-            if ($digits[$i] === $digits[$i+1]) {
+        $digits = $this->splitInputByLinesToArray($inputString);
+        $count = count($digits) - 1;
+        for ($i=0; $i < $count; $i++) {
+            if ($digits[$i] !== null) {
                 print($digits[$i] . "\n");
-                $total += $digits[$i];
+                $frequency += $digits[$i];
+            } else {
+                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $count . "\n";
             }
         }
 
-        return $total;
+        return [$frequency, $errors];
+    }
+
+    private function splitInputByLinesToArray($inputString)
+    {
+        return array_map('intval', preg_split("/[\n]/", $inputString));
     }
 
     /**
-     * method to get the sum of all of the digits if they repeat/match halfway around the circle
+     * method to get the frequency by adding all of the digits to 0 and continuing
+     * to loop over them until the total frequency is reached twice
+     *
+     * @param $inputString
+     *
+     * @return
      */
-    public function addHalfwayAroundDigits($inputString)
+    public function getFirstDuplicateFrequency($inputString)
     {
-        $total = 0;
+        $frequencies = [0];
+        $frequency = 0;
+        $errors = '';
 
-        $digits = str_split(preg_replace(['/\s+/', '/[\t\n]/'], '', $inputString));
-        array_push($digits, $digits[0]);
-        $max = count($digits) - 1;
-        $halfwayDistance = count($digits) / 2;
+        $digits = $this->splitInputByLinesToArray($inputString);
+        $count = count($digits) - 1;
+        $i = 0;
+        $loopCount = 0;
 
-        for ($i=0; $i < $max; $i++) {
-            $halfwayDigit = $i + $halfwayDistance;
-            $halfwayDigit -= ($halfwayDigit > $max) ? $max : 0;
 
-            if ($digits[$i] === $digits[$halfwayDigit]) {
-                print($digits[$i] . "\n");
-                $total += $digits[$i];
+        while (!$this->checkDuplicateFrequencies($frequencies)) {
+            if ($digits[$i] !== null) {
+                $frequency += $digits[$i];
+                $frequencies[] = $frequency;
+                print($frequency . "  \n");
+            } else {
+                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $count . "\n";
             }
+
+            if (($i+1) === $count) {
+                $i=0;
+            } else {
+                $i++;
+            }
+
+            print ($frequency . " " . $i . ' ' . $loopCount . "\n");
+            $loopCount++;
         }
 
-        return $total;
+        return [$frequency, $frequencies, $errors];
+    }
+
+    private function checkDuplicateFrequencies($frequencies)
+    {
+        return in_array(2, array_count_values($frequencies),true);
     }
 
 }

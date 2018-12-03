@@ -15,7 +15,7 @@ class DayTwoCommand extends Command
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: Corruption Checksum')
+            ->setDescription('Day 2: Inventory Management System')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -29,14 +29,14 @@ class DayTwoCommand extends Command
     {
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
-        if (isset($this->input_string) && $input->getOption('part2')) {
+        if (isset($this->inputString) && $input->getOption('part2')) {
 
-            $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
+            $output->writeln('result = ' . $this->getCorrectBoxId());
             return;
 
-        } elseif (isset($this->input_string)) {
+        } elseif (isset($this->inputString)) {
 
-            $output->writeln('result = ' . $this->getDifferenceChecksum($this->inputString));
+            $output->writeln('result = ' . $this->getChecksum());
             return;
 
         }
@@ -44,79 +44,89 @@ class DayTwoCommand extends Command
         $output->writeln('<error>Could not execute</error>');
     }
 
-    private function getDifferenceChecksum($inputString)
+
+    /**
+     * The checksum = a * b where
+     *   a = the number of boxIds that contain 2 of a letter
+     *   b = the number of boxIds that contain 3 of a letter
+     *
+     * @param $inputString
+     *
+     * @return int
+     */
+    private function getChecksum()
     {
-        $rowMath = [];
+        list($twiceBoxIdCount, $thriceBoxIdCount) = $this->getTwiceAndThriceBoxIdCounts();
 
-        foreach (preg_split("/\n/", $inputString) as $row) {
+        return ($twiceBoxIdCount * $thriceBoxIdCount);
+    }
 
-            array_push($rowMath, $this->getRowMath($row));
+    private function getTwiceAndThriceBoxIdCounts()
+    {
+        $twiceBoxIdCount = 0;
+        $thriceBoxIdCount = 0;
+
+        foreach ($this->getRows() as $row) {
+
+            $chars = $this->splitCharacters($row);
+
+            $counts = array_count_values($chars);
+
+            $twiceBoxIdCount += in_array(2, $counts, true) ? 1 : 0;
+            $thriceBoxIdCount += in_array(3, $counts, true) ? 1 : 0;
         }
 
-        return $this->getChecksum($rowMath);
+        return [$twiceBoxIdCount, $thriceBoxIdCount];
     }
 
-    private function getDivisibleChecksum($inputString)
+    private function getRows()
     {
-        $rowMath = [];
-
-        foreach (preg_split("/\n/", $inputString) as $row) {
-
-            array_push($rowMath, $this->getDivisibleRow($row));
-        }
-
-        return $this->getChecksum($rowMath);
+        return explode("\n", $this->inputString);
     }
 
-    public function getRowMath($row)
+    private function getMostCommonBoxIds()
     {
-        $largest = 0;
-        $smallest = 100000000000000;
-
-//        $row = preg_replace('/\s/', '', $row);
-
-//        print($row . "\n");
-
-        if (!empty($row)) {
-
-            $numbers = preg_split('/\s/', $row);
-
-            foreach ($numbers as $digit) {
-//                print '- ' . $digit . '(' . $largest . ', ' . $smallest . ")\n";
-                $largest = ($digit > $largest) ? $digit : $largest;
-                $smallest = ($digit < $smallest) ? $digit : $smallest;
-            }
-
-            return ($largest - $smallest);
-        }
-
-        return 0;
-    }
-
-    public function getChecksum($rows)
-    {
-        return array_sum($rows);
-    }
-
-    public function getDivisibleRow($row)
-    {
-        if (!empty($row)) {
-
-            $numbers = preg_split('/\s/', $row);
-
-            foreach ($numbers as $left) {
-                foreach ($numbers as $right) {
-                    if ($left !== $right) {
-                        if (($left > $right) && (($left % $right) === 0)) {
-                            return ($left / $right);
-                        } elseif (($right > $left) && (($right % $left) === 0)) {
-                            return ($right / $left);
-                        }
-                    }
+        $idealPercentage = 25/26 * 100;
+        foreach ($this->getRows() as $row1) {
+            foreach ($this->getRows() as $row2) {
+                $percent = $this->getComparison($row1, $row2);
+                if ((100 > $percent) && ($percent >= $idealPercentage)) {
+                    return [$row1, $row2];
                 }
             }
         }
-
-        return 0;
+        return [null, null];
     }
+
+    public function getCorrectBoxId()
+    {
+        list($box1, $box2) = $this->getMostCommonBoxIds();
+
+        $correctBoxId = [];
+        $count = count($this->splitCharacters($box1));
+
+        for ($i=0; $i < $count; $i++) {
+            $correctBoxId[] = ($box1[$i] === $box2[$i]) ? $box1[$i] : '';
+        }
+
+        return $this->joinCharacters($correctBoxId);
+    }
+
+    private function splitCharacters($row)
+    {
+        return preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
+    }
+
+    private function joinCharacters(array $characters)
+    {
+        return implode('', $characters);
+    }
+
+    public function getComparison($string1, $string2)
+    {
+        similar_text($string1, $string2, $percent);
+
+        return $percent;
+    }
+
 }
