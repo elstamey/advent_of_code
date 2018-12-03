@@ -102,7 +102,7 @@ class DayOneCommand extends Command
         $loopCount = 0;
 
 
-        while (!in_array(2, array_count_values($frequencies),true)) {
+        while (!$this->checkDuplicateFrequencies($frequencies)) {
             if ($digits[$i] !== null) {
                 $frequency += $digits[$i];
                 $frequencies[] = $frequency;
@@ -122,6 +122,11 @@ class DayOneCommand extends Command
         }
 
         return [$frequency, $frequencies, $errors];
+    }
+
+    private function checkDuplicateFrequencies($frequencies)
+    {
+        return in_array(2, array_count_values($frequencies),true);
     }
 
 }
