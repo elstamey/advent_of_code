@@ -31,7 +31,7 @@ class DayTwoCommand extends Command
 
         if (isset($this->inputString) && $input->getOption('part2')) {
 
-//            $output->writeln('result = ' . $this->getDivisibleChecksum($this->inputString));
+            $output->writeln('result = ' . $this->getCorrectBoxId());
             return;
 
         } elseif (isset($this->inputString)) {
@@ -61,36 +61,14 @@ class DayTwoCommand extends Command
         return ($twiceBoxIdCount * $thriceBoxIdCount);
     }
 
-    public function getDivisibleRow($row)
-    {
-        if (!empty($row)) {
-
-            $numbers = preg_split('/\s/', $row);
-
-            foreach ($numbers as $left) {
-                foreach ($numbers as $right) {
-                    if ($left !== $right) {
-                        if (($left > $right) && (($left % $right) === 0)) {
-                            return ($left / $right);
-                        } elseif (($right > $left) && (($right % $left) === 0)) {
-                            return ($right / $left);
-                        }
-                    }
-                }
-            }
-        }
-
-        return 0;
-    }
-
     private function getTwiceAndThriceBoxIdCounts()
     {
         $twiceBoxIdCount = 0;
         $thriceBoxIdCount = 0;
 
-        foreach (explode("\n", $this->inputString) as $row) {
+        foreach ($this->getRows() as $row) {
 
-            $chars = preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
+            $chars = $this->splitCharacters($row);
 
             $counts = array_count_values($chars);
 
@@ -100,4 +78,55 @@ class DayTwoCommand extends Command
 
         return [$twiceBoxIdCount, $thriceBoxIdCount];
     }
+
+    private function getRows()
+    {
+        return explode("\n", $this->inputString);
+    }
+
+    private function getMostCommonBoxIds()
+    {
+        $idealPercentage = 25/26 * 100;
+        foreach ($this->getRows() as $row1) {
+            foreach ($this->getRows() as $row2) {
+                $percent = $this->getComparison($row1, $row2);
+                if ((100 > $percent) && ($percent >= $idealPercentage)) {
+                    return [$row1, $row2];
+                }
+            }
+        }
+        return [null, null];
+    }
+
+    public function getCorrectBoxId()
+    {
+        list($box1, $box2) = $this->getMostCommonBoxIds();
+
+        $correctBoxId = [];
+        $count = count($this->splitCharacters($box1));
+
+        for ($i=0; $i < $count; $i++) {
+            $correctBoxId[] = ($box1[$i] === $box2[$i]) ? $box1[$i] : '';
+        }
+
+        return $this->joinCharacters($correctBoxId);
+    }
+
+    private function splitCharacters($row)
+    {
+        return preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
+    }
+
+    private function joinCharacters(array $characters)
+    {
+        return implode('', $characters);
+    }
+
+    public function getComparison($string1, $string2)
+    {
+        similar_text($string1, $string2, $percent);
+
+        return $percent;
+    }
+
 }

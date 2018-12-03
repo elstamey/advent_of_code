@@ -42,7 +42,7 @@ class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
             'command'  => $command->getName(),
 
             // pass arguments to the helper
-            'inputFile' => 'testday2.txt',
+            'inputFile' => 'testday2b.txt',
 
             // prefix the key with a double slash when passing options,
             // e.g: '--some-option' => 'option_value',
@@ -54,7 +54,18 @@ class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result = 0', $output);
+        $this->assertContains('result = fgij', $output);
+    }
+
+    public function testGetComparison()
+    {
+        $command = new DayTwoCommand();
+
+        $this->assertEquals(60, $command->getComparison('abcde', 'fghij'));
+        $this->assertEquals(60, $command->getComparison('abcde', 'klmno'));
+        $this->assertEquals(60, $command->getComparison('abcde', 'pqrst'));
+        $this->assertEquals(60, $command->getComparison('abcde', 'axcye'));
+        $this->assertEquals(80, $command->getComparison('fghij', 'fguij'));
     }
 
 }
