@@ -2,6 +2,7 @@
 
 namespace Acme\Console\Command;
 
+use Acme\InputHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -68,7 +69,7 @@ class DayTwoCommand extends Command
 
         foreach ($this->getRows() as $row) {
 
-            $chars = $this->splitCharacters($row);
+            $chars = InputHelper::splitCharacters($row);
 
             $counts = array_count_values($chars);
 
@@ -81,15 +82,17 @@ class DayTwoCommand extends Command
 
     private function getRows()
     {
-        return explode("\n", $this->inputString);
+        return InputHelper::getRows($this->inputString);
     }
 
     private function getMostCommonBoxIds()
     {
-        $idealPercentage = 25/26 * 100;
+        $idealPercentage = $this->getIdealPercentage();
+
         foreach ($this->getRows() as $row1) {
             foreach ($this->getRows() as $row2) {
                 $percent = $this->getComparison($row1, $row2);
+
                 if ((100 > $percent) && ($percent >= $idealPercentage)) {
                     return [$row1, $row2];
                 }
@@ -98,24 +101,23 @@ class DayTwoCommand extends Command
         return [null, null];
     }
 
+    /**
+     * @return string
+     */
     public function getCorrectBoxId()
     {
         list($box1, $box2) = $this->getMostCommonBoxIds();
 
-        $correctBoxId = [];
-        $count = count($this->splitCharacters($box1));
+        $correctBoxIds = [];
+        $count = count(InputHelper::splitCharacters($box1));
 
         for ($i=0; $i < $count; $i++) {
-            $correctBoxId[] = ($box1[$i] === $box2[$i]) ? $box1[$i] : '';
+            $correctBoxIds[] = ($box1[$i] === $box2[$i]) ? $box1[$i] : '';
         }
 
-        return $this->joinCharacters($correctBoxId);
+        return $this->joinCharacters($correctBoxIds);
     }
 
-    private function splitCharacters($row)
-    {
-        return preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
-    }
 
     private function joinCharacters(array $characters)
     {
@@ -127,6 +129,14 @@ class DayTwoCommand extends Command
         similar_text($string1, $string2, $percent);
 
         return $percent;
+    }
+
+    private function getIdealPercentage()
+    {
+        $firstRow = $this->getRows()[0];
+        $size = count(InputHelper::splitCharacters($firstRow));
+
+        return ($size -1) / $size * 100;
     }
 
 }

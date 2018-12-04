@@ -33,7 +33,7 @@ class DayOneCommandTest extends PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result part 1 = 0', $output);
+        $this->assertContains('result part 1 = 1', $output);
     }
 
     /** @test */
@@ -60,6 +60,6 @@ class DayOneCommandTest extends PHPUnit_Framework_TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertContains('result part 2 = 0', $output);
+        $this->assertContains('result part 2 = 14', $output);
     }
 }

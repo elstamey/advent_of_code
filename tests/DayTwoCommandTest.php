@@ -61,9 +61,9 @@ class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
     {
         $command = new DayTwoCommand();
 
-        $this->assertEquals(60, $command->getComparison('abcde', 'fghij'));
-        $this->assertEquals(60, $command->getComparison('abcde', 'klmno'));
-        $this->assertEquals(60, $command->getComparison('abcde', 'pqrst'));
+        $this->assertEquals(0, $command->getComparison('abcde', 'fghij'));
+        $this->assertEquals(0, $command->getComparison('abcde', 'klmno'));
+        $this->assertEquals(0, $command->getComparison('abcde', 'pqrst'));
         $this->assertEquals(60, $command->getComparison('abcde', 'axcye'));
         $this->assertEquals(80, $command->getComparison('fghij', 'fguij'));
     }

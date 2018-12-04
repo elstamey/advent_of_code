@@ -41,7 +41,7 @@ class InputHelper
         return preg_split('/x/', $row, -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    private function splitCharacters($row)
+    public static function splitCharacters($row)
     {
         return preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
     }
