@@ -3,7 +3,6 @@
 namespace Acme\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,12 +10,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFourCommand extends Command
 {
 
+    private $minVal = 240298;
+    private $maxVal = 784956;
+
     protected function configure()
     {
         $this
             ->setName('day4')
-            ->setDescription('Day 4: High-Entropy Passphrases')
-            ->addArgument('inputFile', null, 'newFile', 'day4.txt')
+            ->setDescription('Day 4: Secure Container')
             ->addOption(
                 'part2',
                 null,
@@ -27,8 +28,6 @@ class DayFourCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
-
         if ($input->getOption('part2')) {
             $result = 0;
 
@@ -41,28 +40,45 @@ class DayFourCommand extends Command
         } else {
             $result = 0;
 
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $result += (int) $this->isValidPassword($line);
-                }
+            for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
+                $result += (int) $this->isValidPassword($i);
             }
+
         }
 
         $output->writeln("result = " . $result);
     }
 
 
-    public function isValidPassword($line)
+    public function isValidPassword($password)
     {
-//        print "\nTest output: " . $line . "\n";
+        return (
+            $this->isSixDigits($password) &&
+            $this->isWithinRange($password) &&
+            $this->digitsDontDecrease($password) &&
+            $this->containsDoubleDigits($password)
+        );
+    }
 
-        $words = preg_split('/\s/', $line);
+    public function isSixDigits($number)
+    {
+        $length = strlen((string) $number);
 
-        $searchTheseWords = $words;
-        foreach ($words as $word) {
-//            print "word " . $word . ": " . $line . "\n";
-            array_shift($searchTheseWords);
-            if (in_array($word, $searchTheseWords, true)) {
+        return ($length === 6);
+    }
+
+    public function isWithinRange($number)
+    {
+        return ( ($this->minVal <= $number) && ($this->maxVal >= $number) );
+    }
+
+
+    public function digitsDontDecrease($number)
+    {
+        $digits = str_split( (string) $number, 1);
+
+        for ($i=0; $i < 5; $i++) {
+            if ($digits[$i] > $digits[$i+1]) {
                 return false;
             }
         }
@@ -70,26 +86,16 @@ class DayFourCommand extends Command
         return true;
     }
 
-    public function passwordDoesNotContainAnagrams($line)
+    public function containsDoubleDigits($number)
     {
-//        print "\nTest output: " . $line . "\n";
+        $digits = str_split( (string) $number, 1);
 
-        $words = preg_split('/\s/', $line);
-
-        $searchTheseWords = $words;
-        foreach ($words as $word) {
-            array_shift($searchTheseWords);
-//            print "word " . $word . ": " . implode(' ', $searchTheseWords) . "\n";
-
-            foreach ($searchTheseWords as $search) {
-                if (count_chars($word,1) === count_chars($search, 1)) {
-//                    print "FALSE! \n";
-                    return false;
-                }
+        for ($i=0; $i < 5; $i++) {
+            if ($digits[$i] === $digits[$i+1]) {
+                return true;
             }
         }
 
-//        print "TRUE\n";
-        return true;
+        return false;
     }
 }
