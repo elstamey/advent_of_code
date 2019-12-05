@@ -4,7 +4,7 @@ use Acme\Console\Command\DayTwoCommand;
 use Symfony\Component\Console\Application;
 use \Symfony\Component\Console\Tester\CommandTester;
 
-class DayTwoCommandTest extends \PHPUnit_Framework_TestCase
+class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 {
 //    /** @test */
 //    public function testExecute()

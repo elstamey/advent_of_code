@@ -9,7 +9,7 @@ use Acme\Console\Command\DayOneCommand;
 use Symfony\Component\Console\Application;
 use \Symfony\Component\Console\Tester\CommandTester;
 
-class DayOneCommandTest extends PHPUnit_Framework_TestCase
+class DayOneCommandTest extends PHPUnit\Framework\TestCase
 {
 
     /** @test */

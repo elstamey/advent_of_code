@@ -4,7 +4,7 @@ use Acme\Console\Command\DayFiveCommand;
 use Symfony\Component\Console\Application;
 use \Symfony\Component\Console\Tester\CommandTester;
 
-class DayFiveCommandTest extends \PHPUnit_Framework_TestCase
+class DayFiveCommandTest extends PHPUnit\Framework\TestCase
 {
 
     public $password = 'foo';
