@@ -84,4 +84,14 @@ class DayFourCommandTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($command->isValidPassword(223450), 'isValidPassword returned true');
         $this->assertFalse($command->isValidPassword(123789), 'isValidPassword returned true');
     }
+
+
+    public function testContainsDoublePartTwo()
+    {
+        $command = new DayFourCommand();
+
+        $this->assertTrue($command->containsDoubleDigits(112233, true), 'containsDoubleDigits returned false');
+        $this->assertTrue($command->containsDoubleDigits(111122, true), 'containsDoubleDigits returned false');
+        $this->assertFalse($command->containsDoubleDigits(123444, true), 'containsDoubleDigits returned true');
+    }
 }

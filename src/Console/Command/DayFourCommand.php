@@ -10,9 +10,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFourCommand extends Command
 {
 
+    /**
+     * @var int
+     */
     private $minVal = 240298;
+    /**
+     * @var int
+     */
     private $maxVal = 784956;
 
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -26,19 +35,22 @@ class DayFourCommand extends Command
             );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|void|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getOption('part2')) {
-            $result = 0;
+        $result = 0;
 
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $result += (int) $this->passwordDoesNotContainAnagrams($line);
-                }
+        if ($input->getOption('part2')) {
+
+            for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
+                $result += (int) $this->isValidPassword($i, true);
             }
 
         } else {
-            $result = 0;
 
             for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
                 $result += (int) $this->isValidPassword($i);
@@ -49,33 +61,49 @@ class DayFourCommand extends Command
         $output->writeln("result = " . $result);
     }
 
-
-    public function isValidPassword($password)
+    /**
+     * @param int $password
+     * @param bool $part2
+     * @return bool
+     */
+    public function isValidPassword($password, $part2=false)
     {
         return (
             $this->isSixDigits($password) &&
             $this->isWithinRange($password) &&
             $this->digitsDontDecrease($password) &&
-            $this->containsDoubleDigits($password)
+            $this->containsDoubleDigits($password, $part2)
         );
     }
 
-    public function isSixDigits($number)
+    /**
+     * @param int $password
+     * @return bool
+     */
+    public function isSixDigits($password)
     {
-        $length = strlen((string) $number);
+        $length = strlen((string) $password);
 
         return ($length === 6);
     }
 
-    public function isWithinRange($number)
+    /**
+     * @param int $password
+     * @return bool
+     */
+    public function isWithinRange($password)
     {
-        return ( ($this->minVal <= $number) && ($this->maxVal >= $number) );
+        return ( ($this->minVal <= $password) && ($this->maxVal >= $password) );
     }
 
 
-    public function digitsDontDecrease($number)
+    /**
+     * @param int $password
+     * @return bool
+     */
+    public function digitsDontDecrease($password)
     {
-        $digits = str_split( (string) $number, 1);
+        $digits = str_split( (string) $password, 1);
 
         for ($i=0; $i < 5; $i++) {
             if ($digits[$i] > $digits[$i+1]) {
@@ -86,16 +114,31 @@ class DayFourCommand extends Command
         return true;
     }
 
-    public function containsDoubleDigits($number)
+    /**
+     * @param int $password
+     * @param bool $part2
+     * @return bool
+     */
+    public function containsDoubleDigits($password, $part2=false)
     {
-        $digits = str_split( (string) $number, 1);
+        $digits = str_split( (string) $password, 1);
 
         for ($i=0; $i < 5; $i++) {
             if ($digits[$i] === $digits[$i+1]) {
-                return true;
+
+                if (!$part2) {
+                    return true;
+                } elseif ($part2) {
+                    $doubleDigits = substr_count((string)$password, $digits[$i], 0, 6);
+                    if ($doubleDigits === 2) {
+                        return true;
+                    }
+
+                }
             }
         }
 
         return false;
     }
+
 }
