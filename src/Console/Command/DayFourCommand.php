@@ -3,7 +3,6 @@
 namespace Acme\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,12 +10,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFourCommand extends Command
 {
 
+    /**
+     * @var int
+     */
+    private $minVal = 240298;
+    /**
+     * @var int
+     */
+    private $maxVal = 784956;
+
+    /**
+     *
+     */
     protected function configure()
     {
         $this
             ->setName('day4')
-            ->setDescription('Day 4: High-Entropy Passphrases')
-            ->addArgument('inputFile', null, 'newFile', 'day4.txt')
+            ->setDescription('Day 4: Secure Container')
             ->addOption(
                 'part2',
                 null,
@@ -25,44 +35,78 @@ class DayFourCommand extends Command
             );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|void|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $result = 0;
 
         if ($input->getOption('part2')) {
-            $result = 0;
 
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $result += (int) $this->passwordDoesNotContainAnagrams($line);
-                }
+            for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
+                $result += (int) $this->isValidPassword($i, true);
             }
 
         } else {
-            $result = 0;
 
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $result += (int) $this->isValidPassword($line);
-                }
+            for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
+                $result += (int) $this->isValidPassword($i);
             }
+
         }
 
         $output->writeln("result = " . $result);
     }
 
-
-    public function isValidPassword($line)
+    /**
+     * @param int $password
+     * @param bool $part2
+     * @return bool
+     */
+    public function isValidPassword($password, $part2=false)
     {
-//        print "\nTest output: " . $line . "\n";
+        return (
+            $this->isSixDigits($password) &&
+            $this->isWithinRange($password) &&
+            $this->digitsDontDecrease($password) &&
+            $this->containsDoubleDigits($password, $part2)
+        );
+    }
 
-        $words = preg_split('/\s/', $line);
+    /**
+     * @param int $password
+     * @return bool
+     */
+    public function isSixDigits($password)
+    {
+        $length = strlen((string) $password);
 
-        $searchTheseWords = $words;
-        foreach ($words as $word) {
-//            print "word " . $word . ": " . $line . "\n";
-            array_shift($searchTheseWords);
-            if (in_array($word, $searchTheseWords, true)) {
+        return ($length === 6);
+    }
+
+    /**
+     * @param int $password
+     * @return bool
+     */
+    public function isWithinRange($password)
+    {
+        return ( ($this->minVal <= $password) && ($this->maxVal >= $password) );
+    }
+
+
+    /**
+     * @param int $password
+     * @return bool
+     */
+    public function digitsDontDecrease($password)
+    {
+        $digits = str_split( (string) $password, 1);
+
+        for ($i=0; $i < 5; $i++) {
+            if ($digits[$i] > $digits[$i+1]) {
                 return false;
             }
         }
@@ -70,26 +114,31 @@ class DayFourCommand extends Command
         return true;
     }
 
-    public function passwordDoesNotContainAnagrams($line)
+    /**
+     * @param int $password
+     * @param bool $part2
+     * @return bool
+     */
+    public function containsDoubleDigits($password, $part2=false)
     {
-//        print "\nTest output: " . $line . "\n";
+        $digits = str_split( (string) $password, 1);
 
-        $words = preg_split('/\s/', $line);
+        for ($i=0; $i < 5; $i++) {
+            if ($digits[$i] === $digits[$i+1]) {
 
-        $searchTheseWords = $words;
-        foreach ($words as $word) {
-            array_shift($searchTheseWords);
-//            print "word " . $word . ": " . implode(' ', $searchTheseWords) . "\n";
+                if (!$part2) {
+                    return true;
+                } elseif ($part2) {
+                    $doubleDigits = substr_count((string)$password, $digits[$i], 0, 6);
+                    if ($doubleDigits === 2) {
+                        return true;
+                    }
 
-            foreach ($searchTheseWords as $search) {
-                if (count_chars($word,1) === count_chars($search, 1)) {
-//                    print "FALSE! \n";
-                    return false;
                 }
             }
         }
 
-//        print "TRUE\n";
-        return true;
+        return false;
     }
+
 }
