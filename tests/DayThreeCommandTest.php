@@ -67,7 +67,7 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
 
         $sample2 = 'U62,R66,U55,R34,D71,R55,D58,R83';
         $sample2 = preg_split("/\,/", $sample2);
-        var_dump($sample1, $sample2);
+//        var_dump($sample1, $sample2);
 
         $this->assertEquals(159, $command->getManhattanDistance($sample1, $sample2));
     }
