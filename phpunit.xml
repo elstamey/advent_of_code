@@ -5,7 +5,6 @@
          colors="true"
          processIsolation="false"
          stopOnFailure="false"
-         syntaxCheck="true"
 >
     <testsuites>
         <testsuite name="elstamey/advent_of_code test suite">
