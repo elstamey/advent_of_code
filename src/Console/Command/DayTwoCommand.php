@@ -11,11 +11,16 @@ class DayTwoCommand extends Command
 {
     private $inputString = '';
 
+    /**
+     * @var int[]
+     */
+    private $inputArray;
+
     protected function configure()
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: Inventory Management System')
+            ->setDescription('Day 2: 1202 Program Alarm')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -36,7 +41,28 @@ class DayTwoCommand extends Command
 
         } elseif (isset($this->inputString)) {
 
-            $output->writeln('result = ' . $this->getChecksum());
+            $this->inputArray = preg_split('/\,/', $this->inputString);
+            $this->inputArray = array_map('intval', $this->inputArray);
+
+            $this->initializeInputArray();
+
+            var_dump($this->inputArray);
+
+            $count = count($this->inputArray);
+
+            for ($i=0; (($i < $count) && ($this->inputArray[$i] !== 99)); $i=$i+4) {
+
+                print ($i . "\n");
+                $this->printOpCodes($i);
+                list($opCode, $valueOnePosition, $valueTwoPosition, $resultPosition) = $this->readOpCodes($i);
+
+                $this->handleOpCodes($opCode, $valueOnePosition,  $valueTwoPosition, $resultPosition);
+                print ($this->inputArray[$resultPosition] . "\n");
+
+                $this->printOpCodes($resultPosition-3);
+                print("-----\n");
+            }
+            $output->writeln('result = ' . $this->inputArray[0]);
             return;
 
         }
@@ -44,89 +70,56 @@ class DayTwoCommand extends Command
         $output->writeln('<error>Could not execute</error>');
     }
 
+    /**
+     * @param int $startPosition
+     * @return int[]
+     */
+    public function readOpCodes($startPosition)
+    {
+        return [
+            $this->inputArray[$startPosition],
+            $this->inputArray[$startPosition +1],
+            $this->inputArray[$startPosition +2],
+            $this->inputArray[$startPosition +3]
+        ];
+    }
 
     /**
-     * The checksum = a * b where
-     *   a = the number of boxIds that contain 2 of a letter
-     *   b = the number of boxIds that contain 3 of a letter
      *
-     * @param $inputString
-     *
-     * @return int
+     * @param int $opCode
+     * @param int $valueOnePosition
+     * @param int $valueTwoPosition
+     * @param int $resultPosition
+     * @return void
      */
-    private function getChecksum()
+    private function handleOpCodes($opCode, $valueOnePosition, $valueTwoPosition, $resultPosition)
     {
-        list($twiceBoxIdCount, $thriceBoxIdCount) = $this->getTwiceAndThriceBoxIdCounts();
-
-        return ($twiceBoxIdCount * $thriceBoxIdCount);
-    }
-
-    private function getTwiceAndThriceBoxIdCounts()
-    {
-        $twiceBoxIdCount = 0;
-        $thriceBoxIdCount = 0;
-
-        foreach ($this->getRows() as $row) {
-
-            $chars = $this->splitCharacters($row);
-
-            $counts = array_count_values($chars);
-
-            $twiceBoxIdCount += in_array(2, $counts, true) ? 1 : 0;
-            $thriceBoxIdCount += in_array(3, $counts, true) ? 1 : 0;
+        switch ($opCode) {
+            case 1:
+                print ("add\n");
+                $this->inputArray[$resultPosition] = $this->inputArray[$valueOnePosition] + $this->inputArray[$valueTwoPosition];
+                break;
+            case 2:
+                print("multiply\n");
+                $this->inputArray[$resultPosition] = $this->inputArray[$valueOnePosition] * $this->inputArray[$valueTwoPosition];
+                break;
         }
-
-        return [$twiceBoxIdCount, $thriceBoxIdCount];
     }
 
-    private function getRows()
+    private function initializeInputArray()
     {
-        return explode("\n", $this->inputString);
+        $this->inputArray[1] = 12;
+        $this->inputArray[2] = 2;
+
     }
 
-    private function getMostCommonBoxIds()
+    private function printOpCodes($i)
     {
-        $idealPercentage = 25/26 * 100;
-        foreach ($this->getRows() as $row1) {
-            foreach ($this->getRows() as $row2) {
-                $percent = $this->getComparison($row1, $row2);
-                if ((100 > $percent) && ($percent >= $idealPercentage)) {
-                    return [$row1, $row2];
-                }
-            }
+        if (($i+3) < count($this->inputArray)) {
+            print ( $this->inputArray[$i] . " ");
+            print ( $this->inputArray[$i+1] . " ");
+            print ( $this->inputArray[$i+2] . " ");
+            print ( $this->inputArray[$i+3] . " \n");
         }
-        return [null, null];
     }
-
-    public function getCorrectBoxId()
-    {
-        list($box1, $box2) = $this->getMostCommonBoxIds();
-
-        $correctBoxId = [];
-        $count = count($this->splitCharacters($box1));
-
-        for ($i=0; $i < $count; $i++) {
-            $correctBoxId[] = ($box1[$i] === $box2[$i]) ? $box1[$i] : '';
-        }
-
-        return $this->joinCharacters($correctBoxId);
-    }
-
-    private function splitCharacters($row)
-    {
-        return preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
-    }
-
-    private function joinCharacters(array $characters)
-    {
-        return implode('', $characters);
-    }
-
-    public function getComparison($string1, $string2)
-    {
-        similar_text($string1, $string2, $percent);
-
-        return $percent;
-    }
-
 }

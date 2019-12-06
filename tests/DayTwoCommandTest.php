@@ -56,16 +56,5 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 //        $output = $commandTester->getDisplay();
 //        $this->assertContains('result = fgij', $output);
 //    }
-//
-//    public function testGetComparison()
-//    {
-//        $command = new DayTwoCommand();
-//
-//        $this->assertEquals(60, $command->getComparison('abcde', 'fghij'));
-//        $this->assertEquals(60, $command->getComparison('abcde', 'klmno'));
-//        $this->assertEquals(60, $command->getComparison('abcde', 'pqrst'));
-//        $this->assertEquals(60, $command->getComparison('abcde', 'axcye'));
-//        $this->assertEquals(80, $command->getComparison('fghij', 'fguij'));
-//    }
 
 }
