@@ -37,8 +37,28 @@ class DayTwoCommand extends Command
 
         if (isset($this->inputString) && $input->getOption('part2')) {
 
-            $output->writeln('result = ' . $this->getCorrectBoxId());
-            return;
+            $this->inputArray = preg_split('/\,/', $this->inputString);
+            $this->inputArray = array_map('intval', $this->inputArray);
+
+
+
+            foreach (range(0, 99) as $noun) {
+                foreach (range(0,99) as $verb) {
+                    $computer = new IntCodeComputer($this->inputArray, 3);
+                    $computer->initializeInputArray($noun, $verb);
+                    $result = $computer->compute();
+
+                    if ($result === 19690720) {
+                        print("Desired Result achieved!");
+                        $result = 100 * $noun + $verb;
+
+                        $output->writeln('result = ' . $result);
+                        return;
+                    }
+                }
+            }
+
+
 
         } elseif (isset($this->inputString)) {
 

@@ -52,12 +52,12 @@ class IntCodeComputer
 
     public function compute()
     {
-        var_dump($this->inputArray);
-
         $count = count($this->inputArray);
+        print("There are " . (string)$count . " instructions in this program\n");
 
         for ($instructionPointer=0;
-            (($instructionPointer < $count) && ($this->inputArray[$instructionPointer] !== 99));
+            ((($instructionPointer + $this->numberOfInstructionValues +1) < $count)
+                && ($this->inputArray[$instructionPointer] !== 99));
             $instructionPointer+=$this->numberOfInstructionValues + 1) {
 
             print ($instructionPointer . "\n");
