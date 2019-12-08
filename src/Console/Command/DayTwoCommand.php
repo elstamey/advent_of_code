@@ -6,16 +6,22 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Acme\Console\Models\IntCodeComputer;
 
 class DayTwoCommand extends Command
 {
     private $inputString = '';
 
+    /**
+     * @var int[]
+     */
+    private $inputArray;
+
     protected function configure()
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: Inventory Management System')
+            ->setDescription('Day 2: 1202 Program Alarm')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -31,102 +37,44 @@ class DayTwoCommand extends Command
 
         if (isset($this->inputString) && $input->getOption('part2')) {
 
-            $output->writeln('result = ' . $this->getCorrectBoxId());
-            return;
+            $this->inputArray = preg_split('/\,/', $this->inputString);
+            $this->inputArray = array_map('intval', $this->inputArray);
+
+
+
+            foreach (range(0, 99) as $noun) {
+                foreach (range(0,99) as $verb) {
+                    $computer = new IntCodeComputer($this->inputArray, 3);
+                    $computer->initializeInputArray($noun, $verb);
+                    $result = $computer->compute();
+
+                    if ($result === 19690720) {
+                        print("Desired Result achieved!");
+                        $result = 100 * $noun + $verb;
+
+                        $output->writeln('result = ' . $result);
+                        return;
+                    }
+                }
+            }
+
+
 
         } elseif (isset($this->inputString)) {
 
-            $output->writeln('result = ' . $this->getChecksum());
+            $this->inputArray = preg_split('/\,/', $this->inputString);
+            $this->inputArray = array_map('intval', $this->inputArray);
+
+            $computer = new IntCodeComputer($this->inputArray, 3);
+            $computer->initializeInputArray(12, 2);
+            $result = $computer->compute();
+
+            $output->writeln('result = ' . $result);
             return;
 
         }
 
         $output->writeln('<error>Could not execute</error>');
-    }
-
-
-    /**
-     * The checksum = a * b where
-     *   a = the number of boxIds that contain 2 of a letter
-     *   b = the number of boxIds that contain 3 of a letter
-     *
-     * @param $inputString
-     *
-     * @return int
-     */
-    private function getChecksum()
-    {
-        list($twiceBoxIdCount, $thriceBoxIdCount) = $this->getTwiceAndThriceBoxIdCounts();
-
-        return ($twiceBoxIdCount * $thriceBoxIdCount);
-    }
-
-    private function getTwiceAndThriceBoxIdCounts()
-    {
-        $twiceBoxIdCount = 0;
-        $thriceBoxIdCount = 0;
-
-        foreach ($this->getRows() as $row) {
-
-            $chars = $this->splitCharacters($row);
-
-            $counts = array_count_values($chars);
-
-            $twiceBoxIdCount += in_array(2, $counts, true) ? 1 : 0;
-            $thriceBoxIdCount += in_array(3, $counts, true) ? 1 : 0;
-        }
-
-        return [$twiceBoxIdCount, $thriceBoxIdCount];
-    }
-
-    private function getRows()
-    {
-        return explode("\n", $this->inputString);
-    }
-
-    private function getMostCommonBoxIds()
-    {
-        $idealPercentage = 25/26 * 100;
-        foreach ($this->getRows() as $row1) {
-            foreach ($this->getRows() as $row2) {
-                $percent = $this->getComparison($row1, $row2);
-                if ((100 > $percent) && ($percent >= $idealPercentage)) {
-                    return [$row1, $row2];
-                }
-            }
-        }
-        return [null, null];
-    }
-
-    public function getCorrectBoxId()
-    {
-        list($box1, $box2) = $this->getMostCommonBoxIds();
-
-        $correctBoxId = [];
-        $count = count($this->splitCharacters($box1));
-
-        for ($i=0; $i < $count; $i++) {
-            $correctBoxId[] = ($box1[$i] === $box2[$i]) ? $box1[$i] : '';
-        }
-
-        return $this->joinCharacters($correctBoxId);
-    }
-
-    private function splitCharacters($row)
-    {
-        return preg_split('//', $row, -1,  PREG_SPLIT_NO_EMPTY);
-    }
-
-    private function joinCharacters(array $characters)
-    {
-        return implode('', $characters);
-    }
-
-    public function getComparison($string1, $string2)
-    {
-        similar_text($string1, $string2, $percent);
-
-        return $percent;
     }
 
 }

@@ -4,7 +4,7 @@ use Acme\Console\Command\DayFourCommand;
 use Symfony\Component\Console\Application;
 use \Symfony\Component\Console\Tester\CommandTester;
 
-class DayFourCommandTest extends PHPUnit_Framework_TestCase
+class DayFourCommandTest extends PHPUnit\Framework\TestCase
 {
 
 
