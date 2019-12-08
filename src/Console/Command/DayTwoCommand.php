@@ -45,8 +45,8 @@ class DayTwoCommand extends Command
             $this->inputArray = preg_split('/\,/', $this->inputString);
             $this->inputArray = array_map('intval', $this->inputArray);
 
-            $computer = new IntCodeComputer($this->inputArray);
-
+            $computer = new IntCodeComputer($this->inputArray, 3);
+            $computer->initializeInputArray(12, 2);
             $result = $computer->compute();
 
             $output->writeln('result = ' . $result);

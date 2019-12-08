@@ -79,9 +79,7 @@ class DayThreeCommand extends Command
 
 
         $xDifference = $xA - $xB;
-        var_dump($xA, $xB, $xDifference);
         $yDifference = $yA - $yB;
-        var_dump($yA, $yB, $yDifference);
         return ($xDifference + $yDifference);
     }
 

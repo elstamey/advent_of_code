@@ -11,41 +11,43 @@ class IntCodeComputer
      * @var
      */
     private $opCode;
-    private $firstValuePosition;
-    private $secondValuePosition;
-    private $saveResultPosition;
+    private $firstValueAddress;
+    private $secondValueAddress;
+    private $saveResultAddress;
     private $result;
     private $inputArray;
+    private $numberOfInstructionValues;
 
     /**
      * IntCode constructor.
      * @param $inputArray
      */
-    public function __construct($inputArray)
+    public function __construct($inputArray, $numberOfInstructionValues)
     {
         $this->inputArray = $inputArray;
-        $this->initializeInputArray();
+        $this->numberOfInstructionValues = $numberOfInstructionValues;
     }
 
 
     /**
-     * @param int $startPosition
+     * @param int $startAddress
      * @return int[]
      */
-    public function readOpCodes($startPosition)
+    public function readOpCodes($startAddress)
     {
+        $parameter = $startAddress + 1;
         return [
-            $this->inputArray[$startPosition],
-            $this->inputArray[$startPosition +1],
-            $this->inputArray[$startPosition +2],
-            $this->inputArray[$startPosition +3]
+            $this->inputArray[$startAddress],
+            $this->inputArray[$parameter],
+            $this->inputArray[$parameter + 1],
+            $this->inputArray[$parameter + 2]
         ];
     }
 
-    private function initializeInputArray()
+    public function initializeInputArray($noun=12, $verb=2)
     {
-        $this->inputArray[1] = 12;
-        $this->inputArray[2] = 2;
+        $this->inputArray[1] = $noun;
+        $this->inputArray[2] = $verb;
     }
 
     public function compute()
@@ -54,32 +56,34 @@ class IntCodeComputer
 
         $count = count($this->inputArray);
 
-        for ($i=0; (($i < $count) && ($this->inputArray[$i] !== 99)); $i=$i+4) {
+        for ($instructionPointer=0;
+            (($instructionPointer < $count) && ($this->inputArray[$instructionPointer] !== 99));
+            $instructionPointer+=$this->numberOfInstructionValues + 1) {
 
-            print ($i . "\n");
-            $this->printOpCodes($i);
-            list($opCode, $valueOnePosition, $valueTwoPosition, $resultPosition) = $this->readOpCodes($i);
+            print ($instructionPointer . "\n");
+            $this->printOpCodes($instructionPointer);
+            list($opCode, $parameterOne, $parameterTwo, $parameterThree) = $this->readOpCodes($instructionPointer);
 
-            $this->handleOpCodes($opCode, $valueOnePosition,  $valueTwoPosition, $resultPosition);
-            print ($this->inputArray[$resultPosition] . "\n");
+            $this->handleOpCodes($opCode, $parameterOne,  $parameterTwo, $parameterThree);
+            print ($this->inputArray[$parameterThree] . "\n");
 
-            $this->printOpCodes($resultPosition-3);
+            $this->printOpCodes($parameterThree-3);
             print("-----\n");
         }
 
         return $this->inputArray[0];
     }
 
-    private function handleOpCodes($opCode, $valueOnePosition, $valueTwoPosition, $resultPosition)
+    private function handleOpCodes($opCode, $valueOneAddress, $valueTwoAddress, $resultAddress)
     {
         switch ($opCode) {
             case 1:
                 print ("add\n");
-                $this->inputArray[$resultPosition] = $this->inputArray[$valueOnePosition] + $this->inputArray[$valueTwoPosition];
+                $this->inputArray[$resultAddress] = $this->handleAdd($valueOneAddress, $valueTwoAddress);
                 break;
             case 2:
                 print("multiply\n");
-                $this->inputArray[$resultPosition] = $this->inputArray[$valueOnePosition] * $this->inputArray[$valueTwoPosition];
+                $this->inputArray[$resultAddress] = $this->handleMultiply($valueOneAddress, $valueTwoAddress);
                 break;
         }
     }
@@ -93,5 +97,16 @@ class IntCodeComputer
             print ( $this->inputArray[$i+2] . " ");
             print ( $this->inputArray[$i+3] . " \n");
         }
+    }
+
+    private function handleAdd($valueOneAddress, $valueTwoAddress)
+    {
+        return ($this->inputArray[$valueOneAddress] + $this->inputArray[$valueTwoAddress]);
+    }
+
+
+    private function handleMultiply($valueOneAddress, $valueTwoAddress)
+    {
+        return ($this->inputArray[$valueOneAddress] * $this->inputArray[$valueTwoAddress]);
     }
 }
