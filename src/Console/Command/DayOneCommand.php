@@ -18,7 +18,7 @@ class DayOneCommand extends Command
     {
         $this
             ->setName('day1')
-            ->setDescription('Chronal Calibration')
+            ->setDescription('Day 1: Report Repair')
             ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'day1.txt')
             ->addOption(
                 'part2',
@@ -42,7 +42,7 @@ class DayOneCommand extends Command
 
         } elseif (isset($this->inputString)) {
 
-            list($result, $errors) = $this->getFrequency($this->inputString);
+            list($result, $errors) = $this->findMultiplierOfSumTwentyTwenty($this->inputString);
             $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
             $output->writeln('<error>' . $errors . '</error>\n ');
             return;
@@ -127,6 +127,32 @@ class DayOneCommand extends Command
     private function checkDuplicateFrequencies($frequencies)
     {
         return in_array(2, array_count_values($frequencies),true);
+    }
+
+    /**
+     *  Method to get the the product of the digits that add up to 2020
+     *
+     * @param $inputString
+     *
+     * @return array
+     */
+    private function findMultiplierOfSumTwentyTwenty($inputString)
+    {
+        $errors = "";
+
+        $digits = $this->splitInputByLinesToArray($inputString);
+        $count = count($digits) - 1;
+        for ($i=0; $i < $count; $i++) {
+            if ($digits[$i] !== null) {
+                $numberNeeded = 2020 - $digits[$i];
+                $key = array_search($numberNeeded, $digits);
+                if ($key && ($key !== $i)) {
+                    return [($digits[$i] * $digits[$key]), ''];
+                }
+            }
+        }
+
+        return ['not found', $errors];
     }
 
 }
