@@ -64,3 +64,4 @@ parameters:
 			message: "#^PHPDoc tag @param has invalid value \\(\\$inputArray\\)\\: Unexpected token \"\\$inputArray\", expected type at offset 46$#"
 			count: 1
 			path: src/Console/Models/IntCodeComputer.php
+
