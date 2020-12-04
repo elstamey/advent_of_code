@@ -21,6 +21,11 @@ parameters:
 			path: src/Console/Command/DayFiveCommand.php
 
 		-
+			message: "#^Elseif condition is always true\\.$#"
+			count: 1
+			path: src/Console/Command/DayFourCommand.php
+
+		-
 			message: "#^Access to an undefined property Acme\\\\Console\\\\Command\\\\DaySevenCommand\\:\\:\\$input_string\\.$#"
 			count: 1
 			path: src/Console/Command/DaySevenCommand.php
