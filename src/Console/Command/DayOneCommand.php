@@ -11,10 +11,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayOneCommand extends Command
 {
-    private $inputString = '';
+    /**
+     * @var string
+     */
+    private string $inputString = '';
 
 
-    protected function configure()
+    /**
+     *
+     */
+    protected function configure() : void
     {
         $this
             ->setName('day1')
@@ -28,13 +34,20 @@ class DayOneCommand extends Command
             );
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $file = $input->getArgument('inputFile');
+        if (is_string($file) )
+            $this->inputString = file_get_contents($file);
 
-
-        if (isset($this->inputString) && $input->getOption('part2')) {
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
             $result = $this->findProductOfThreeSumTwentyTwenty( $this->inputString );
             $output->writeln('<fg=green>result part 2 = ' . $result . "\n");
@@ -52,7 +65,12 @@ class DayOneCommand extends Command
     }
 
 
-    private function splitInputByLinesToArray($inputString)
+    /**
+     * @param string $inputString
+     *
+     * @return int[]
+     */
+    private function splitInputByLinesToArray(string $inputString) : array
     {
         return array_map('intval', preg_split("/[\n]/", $inputString));
     }
