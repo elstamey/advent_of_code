@@ -6,7 +6,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Acme\Console\Models\IntCodeComputer;
 
 class DayTwoCommand extends Command
 {
@@ -43,7 +42,7 @@ class DayTwoCommand extends Command
             $result = $this->processPasswordsWithTobogganPolicies($this->inputArray);
 
             $output->writeln('result = ' . $result);
-            return;
+            return Command::SUCCESS;;
 
         } elseif (isset($this->inputString)) {
 
@@ -52,11 +51,13 @@ class DayTwoCommand extends Command
             $result = $this->processPasswordsWithPolicies($this->inputArray);
 
             $output->writeln('result = ' . $result);
-            return;
+            return Command::SUCCESS;
 
         }
 
         $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
+
     }
 
     public function getRange($input)

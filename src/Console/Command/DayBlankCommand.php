@@ -19,7 +19,7 @@ class DayBlankCommand extends Command
     /**
      * @var string
      */
-    var $input_string = 'bgvyzdsv';
+    public string $input_string = 'bgvyzdsv';
 
     protected function configure()
     {
@@ -35,6 +35,12 @@ class DayBlankCommand extends Command
             );
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
@@ -52,6 +58,7 @@ class DayBlankCommand extends Command
         }
         $result = '';
         $output->writeln("result = " . $result);
+        return Command::SUCCESS;
     }
 
 }
