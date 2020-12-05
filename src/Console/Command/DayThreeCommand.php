@@ -9,13 +9,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayThreeCommand extends Command
 {
-    protected $validTriangles = 0;
+    protected int $validTriangles = 0;
+    /**
+     * @var string|false
+     */
+    private $inputString;
+
+    private array $map;
 
     protected function configure()
     {
         $this
             ->setName('day3')
-            ->setDescription('Day 3: Crossed Wires')
+            ->setDescription('Day 3: Toboggan Trajectory')
             ->addArgument('inputFile', null, 'newFile', 'day3.txt')
             ->addOption(
                 'part2',
@@ -27,43 +33,36 @@ class DayThreeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $file = $input->getArgument('inputFile');
+        if (is_string($file) )
+            $this->inputString = file_get_contents($file);
 
         if ($input->getOption('part2')) {
 
-//            $this->validTriangles = 0;
-//
-//            $groups = array_chunk(preg_split("/[\n]/", $this->input_string), 3);
-//            foreach ($groups as $group) {
-//
-//                if (count($group) == 3) {
-//                    $g = $group[0] . $group[1] . $group[2];
-//
-//                    if (isset($g) && ($g != "")) {
-//                        $x = preg_split("/[\s]+/", $g);
-//
-//                        $this->testValidTriangle($x[1], $x[4], $x[7]);
-//                        $this->testValidTriangle($x[2], $x[5], $x[8]);
-//                        $this->testValidTriangle($x[3], $x[6], $x[9]);
-//                    }
-//                }
-//            }
+
 
         } else {
             $values = [];
 
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $steps = preg_split("/[\,]+/", $line);
-
-                    $values = $this->getManhattanDistance($steps);
-                }
-            }
+            $lines = preg_split("/\n/", $this->inputString);
+            $this->map = $this->prepareMap($lines);
+//            foreach (preg_split("/\n/", $this->inputString) as $line) {
+//                $width = 3 * count($line);
+//
+//
+//                if (isset($line) && ($line != "")) {
+//                    $steps = preg_split("/[\,]+/", $line);
+//
+//                    $values = $this->getManhattanDistance($steps);
+//                }
+//            }
 
         }
 
         $result = $this->validTriangles;
         $output->writeln("result = " . $result);
+        return Command::SUCCESS;
+
     }
 
 
@@ -109,6 +108,35 @@ class DayThreeCommand extends Command
         }
 
         return [$xDistance, $yDistance];
+    }
+
+    /**
+     * @param array $lines
+     *
+     * @return string[]
+     */
+    public function prepareMap(array $lines)
+    {
+        $map = [];
+
+        $height = count($lines);
+        $maxWidth = 3 * $height;
+        $lastLineNumber = $height - 1;
+        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
+            print "\n In While\n";
+            for ($i=count(str_split($lines[0])); $i<=$maxWidth; $i=count(str_split($map[$lastLineNumber]))) {
+                foreach ($lines as $key => $line) {
+                    if (isset($map[$key]))
+                        $map[$key] .= $line;
+                    else
+                        $map[$key] = $line;
+                }
+            }
+
+            echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
+
+var_dump($map);
+        return $map;
     }
 
 }
