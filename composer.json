@@ -1,13 +1,17 @@
 {
     "require": {
-        "symfony/console": "^3.2"
+        "symfony/console": "5.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.5",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.0",
+        "phpstan/phpstan": "^0.12.58"
     },
     "autoload": {
         "psr-4": {"Acme\\": "src/"}
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse"
     },
     "config": {
         "platform": {

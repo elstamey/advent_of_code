@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GreetCommand extends Command
 {
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('demo:greet')
@@ -29,19 +29,26 @@ class GreetCommand extends Command
         ;
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|void|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
-        if ($name) {
-            $text = 'Hello '. join(" ", $name);
-        } else {
-            $text = 'Hello';
-        }
+
+        $text = 'Hello';
+
+        $text .= (is_array($name)) ? ' '.join(" ", $name) : ' '.$name;
 
         if ($input->getOption('yell')) {
             $text = strtoupper($text);
         }
 
         $output->writeln($text);
+
+        return Command::SUCCESS;
     }
 }

@@ -13,7 +13,7 @@ class DayOneCommandTest extends PHPUnit\Framework\TestCase
 {
 
     /** @test */
-    public function testExecute()
+    public function testExecute() : void
     {
         $application = new Application();
         $application->add(new DayOneCommand());
@@ -37,7 +37,7 @@ class DayOneCommandTest extends PHPUnit\Framework\TestCase
     }
 
     /** @test */
-    public function testExecutePartTwo()
+    public function testExecutePartTwo() : void
     {
         $application = new Application();
         $application->add(new DayOneCommand());

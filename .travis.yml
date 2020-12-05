@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - '7.3'
   - '7.4'
 
 before_script:
@@ -11,3 +10,7 @@ before_script:
 script:
   - ./vendor/bin/phpunit 
 
+jobs:
+  include:
+    - env: PHPSTAN=true
+        script: composer phpstan
