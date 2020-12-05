@@ -1,6 +1,9 @@
 {
+    "name": "estamey/advent_of_code",
+    "description": "Emily's Advent of Code Exercises",
+    "license": ["proprietary"],
     "require": {
-        "symfony/console": "5.2"
+        "symfony/console": "^5.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.5",
