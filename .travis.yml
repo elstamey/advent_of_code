@@ -9,5 +9,8 @@ before_script:
 
 script:
   - ./vendor/bin/phpunit 
-  - ./vendor/bin/phpstan
 
+jobs:
+  include:
+    - env: PHPSTAN=true
+        script: composer phpstan
