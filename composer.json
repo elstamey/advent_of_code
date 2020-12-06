@@ -11,6 +11,7 @@
         "psr-4": {"Acme\\": "src/"}
     },
     "scripts": {
+        "test": "vendor/bin/phpunit",
         "phpstan": "phpstan analyse"
     },
     "config": {
