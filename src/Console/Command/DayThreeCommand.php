@@ -93,14 +93,15 @@ class DayThreeCommand extends Command
     }
 
     /**
-     * @param int $posX
-     * @param int $posY
+     * @param int   $posX
+     * @param int   $posY
+     * @param int[] $slope
      *
      * @return int[]
      */
-    public function takeStep(int $posX, int $posY)
+    public function takeStep(int $posX, int $posY, array $slope)
     {
-        return [$posX+3, $posY+1];
+        return [$posX+$slope[0], $posY+$slope[1]];
     }
 
     /**
@@ -114,15 +115,17 @@ class DayThreeCommand extends Command
     }
 
     /**
+     * @param int[] $slope
+     *
      * @return int
      */
-    private function traverseAndFindTrees() : int
+    private function traverseAndFindTrees(array $slope=[3,1]) : int
     {
         $height = count($this->map);
         $length = count($this->map[0]);
         $treeCount = 0;
 
-        for ($x=$y=0; $y<$height && $x<$length; list($x, $y)=$this->takeStep($x, $y)) {
+        for ($x=$y=0; $y<$height && $x<$length; list($x, $y)=$this->takeStep($x, $y, $slope)) {
             $treeCount += intval($this->isTree($this->map[$y][$x]));
         }
 
