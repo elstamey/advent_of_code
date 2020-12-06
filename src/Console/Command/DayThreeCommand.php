@@ -15,9 +15,12 @@ class DayThreeCommand extends Command
      */
     private $inputString;
 
+    /**
+     * @var string[]
+     */
     private array $map;
 
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day3')
@@ -46,16 +49,7 @@ class DayThreeCommand extends Command
 
             $lines = preg_split("/\n/", $this->inputString);
             $this->map = $this->prepareMap($lines);
-//            foreach (preg_split("/\n/", $this->inputString) as $line) {
-//                $width = 3 * count($line);
-//
-//
-//                if (isset($line) && ($line != "")) {
-//                    $steps = preg_split("/[\,]+/", $line);
-//
-//                    $values = $this->getManhattanDistance($steps);
-//                }
-//            }
+
 
         }
 
@@ -68,18 +62,18 @@ class DayThreeCommand extends Command
 
 
     /**
-     * @param array $lines
+     * @param string[] $lines
      *
      * @return string[]
      */
-    public function prepareMap(array $lines)
+    public function prepareMap(array $lines) : array
     {
         $map = [];
 
         $height = count($lines);
         $maxWidth = 3 * $height;
         $lastLineNumber = $height - 1;
-        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
+//        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
 
         for ($i=count(str_split($lines[0])); $i<=$maxWidth; $i=count(str_split($map[$lastLineNumber]))) {
             foreach ($lines as $key => $line) {
@@ -90,9 +84,30 @@ class DayThreeCommand extends Command
             }
         }
 
-        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
+//        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
 
         return $map;
+    }
+
+    /**
+     * @param int $posX
+     * @param int $posY
+     *
+     * @return int[]
+     */
+    public function takeStep(int $posX, int $posY)
+    {
+        return [$posX+3, $posY+1];
+    }
+
+    /**
+     * @param string $char
+     *
+     * @return bool
+     */
+    public function isTree(string $char)
+    {
+        return ($char === '#');
     }
 
 }

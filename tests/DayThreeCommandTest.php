@@ -74,7 +74,10 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
         '.#..#...#.#'
     ];
 
-    public function testPrepareMap()
+    /**
+     * @test
+     */
+    public function testPrepareMap() : void
     {
         $command = new DayThreeCommand();
 
@@ -94,11 +97,28 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
 
         $this->assertEquals($expectedResults, $command->prepareMap($this->inputLines));
     }
-//    function testTakeStep()
-//    {
-//        $command = new DayThreeCommand();
-//
-//        $this->assertEquals([75, 0], $command->takeStep('R', 75));
-//    }
 
+    /**
+     * @test
+     */
+    function testTakeStep() : void
+    {
+        $command = new DayThreeCommand();
+
+        $posX = 0;
+        $posY = 0;
+        $this->assertEquals([3, 1], $command->takeStep($posX, $posY));
+    }
+
+    /**
+     * @test
+     */
+    public function testIsTree() : void
+    {
+        $command = new DayThreeCommand();
+
+        $this->assertFalse($command->isTree('.'));
+
+        $this->assertTrue($command->isTree('#'));
+    }
 }
