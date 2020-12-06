@@ -10,6 +10,9 @@
     "autoload": {
         "psr-4": {"Acme\\": "src/"}
     },
+    "scripts": {
+        "phpstan": "phpstan analyse"
+    },
     "config": {
         "platform": {
             "php": "7.4.11"
