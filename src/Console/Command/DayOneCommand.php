@@ -36,46 +36,20 @@ class DayOneCommand extends Command
 
         if (isset($this->inputString) && $input->getOption('part2')) {
 
-            list($frequency, $frequencies, $errors) = $this->getFirstDuplicateFrequency( $this->inputString );
-            $output->writeln('<fg=green>result part 2 = ' . $frequency . "\n");
+            $result = $this->findProductOfThreeSumTwentyTwenty( $this->inputString );
+            $output->writeln('<fg=green>result part 2 = ' . $result . "\n");
             return;
 
         } elseif (isset($this->inputString)) {
 
-            list($result, $errors) = $this->findProductOfTwoSumTwentyTwenty($this->inputString);
+            $result = $this->findProductOfTwoSumTwentyTwenty($this->inputString);
             $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
-            $output->writeln('<error>' . $errors . '</error>\n ');
             return;
         }
 
         $output->writeln('<error>Could not execute</error>');
     }
 
-    /**
-     *  Method to get the frequency by adding all of the digits to 0
-     *
-     * @param $inputString
-     *
-     * @return array
-     */
-    public function getFrequency($inputString)
-    {
-        $frequency = 0;
-        $errors = "";
-
-        $digits = $this->splitInputByLinesToArray($inputString);
-        $count = count($digits) - 1;
-        for ($i=0; $i < $count; $i++) {
-            if ($digits[$i] !== null) {
-                print($digits[$i] . "\n");
-                $frequency += $digits[$i];
-            } else {
-                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $count . "\n";
-            }
-        }
-
-        return [$frequency, $errors];
-    }
 
     private function splitInputByLinesToArray($inputString)
     {
@@ -83,63 +57,14 @@ class DayOneCommand extends Command
     }
 
     /**
-     * method to get the frequency by adding all of the digits to 0 and continuing
-     * to loop over them until the total frequency is reached twice
-     *
-     * @param $inputString
-     *
-     * @return
-     */
-    public function getFirstDuplicateFrequency($inputString)
-    {
-        $frequencies = [0];
-        $frequency = 0;
-        $errors = '';
-
-        $digits = $this->splitInputByLinesToArray($inputString);
-        $count = count($digits) - 1;
-        $i = 0;
-        $loopCount = 0;
-
-
-        while (!$this->checkDuplicateFrequencies($frequencies)) {
-            if ($digits[$i] !== null) {
-                $frequency += $digits[$i];
-                $frequencies[] = $frequency;
-                print($frequency . "  \n");
-            } else {
-                $errors .= 'NOT INT on ' . ($i + 1) . ' of ' . $count . "\n";
-            }
-
-            if (($i+1) === $count) {
-                $i=0;
-            } else {
-                $i++;
-            }
-
-            print ($frequency . " " . $i . ' ' . $loopCount . "\n");
-            $loopCount++;
-        }
-
-        return [$frequency, $frequencies, $errors];
-    }
-
-    private function checkDuplicateFrequencies($frequencies)
-    {
-        return in_array(2, array_count_values($frequencies),true);
-    }
-
-    /**
      *  Method to get the the product of the digits that add up to 2020
      *
      * @param $inputString
      *
-     * @return array
+     * @return int
      */
-    private function findMultiplierOfSumTwentyTwenty($inputString)
+    private function findProductOfTwoSumTwentyTwenty($inputString)
     {
-        $errors = "";
-
         $digits = $this->splitInputByLinesToArray($inputString);
         $count = count($digits) - 1;
         for ($i=0; $i < $count; $i++) {
@@ -147,12 +72,35 @@ class DayOneCommand extends Command
                 $numberNeeded = 2020 - $digits[$i];
                 $key = array_search($numberNeeded, $digits);
                 if ($key && ($key !== $i)) {
-                    return [($digits[$i] * $digits[$key]), ''];
+                    return ($digits[$i] * $digits[$key]);
                 }
             }
         }
 
-        return ['not found', $errors];
+        return 50;
+    }
+
+    /**
+     * @param string $inputString
+     *
+     * @return int
+     */
+    private function findProductOfThreeSumTwentyTwenty($inputString)
+    {
+        $digits = $this->splitInputByLinesToArray($inputString);
+        $count = count($digits) - 1;
+        for ($i=0; $i < $count; $i++) {
+            for ($j=0; ($i!=$j) && $j < $count; $j++) {
+                $numberNeeded = 2020 - $digits[$i] - $digits[$j];
+                $digits2 = array_filter($digits, function ($k) use ($i, $j) { return (($k !== $i) && ($k !== $j)); }, ARRAY_FILTER_USE_KEY);
+                $key = array_search($numberNeeded, $digits2);
+                if ($key && ($digits[$i] != 0) && ($digits[$j] != 0) && ($digits2[$key] != 0)) {
+                    return ($digits[$i] * $digits[$j] * $digits2[$key]);
+                }
+            }
+        }
+
+        return 50;
     }
 
 }
