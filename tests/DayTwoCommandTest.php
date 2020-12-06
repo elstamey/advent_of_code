@@ -6,7 +6,9 @@ use \Symfony\Component\Console\Tester\CommandTester;
 
 class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 {
-    /** @test */
+    /**
+     * @return void
+     */
     public function testExecute()
     {
         $application = new Application();
@@ -30,7 +32,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString('result = 2', $output);
     }
 
-    public function testGetRange()
+    public function testGetRange() : void
     {
         $testData = [
             '1-3',
@@ -44,7 +46,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertEquals([2,9], $command->getRange($testData[2]));
     }
 
-    public function testGetPositions()
+    public function testGetPositions() : void
     {
         $testData = [
             '1-3',
@@ -57,7 +59,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertEquals([1,3], $command->getPositions($testData[1]));
         $this->assertEquals([2,9], $command->getPositions($testData[2]));
     }
-    public function testGetRepeatedLetter()
+    public function testGetRepeatedLetter() : void
     {
         $testData = [
             'a:',
@@ -72,7 +74,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
     }
 
-    public function testGetRepeatedLetters()
+    public function testGetRepeatedLetters() : void
     {
         $testData = [
             'abcde',
@@ -87,7 +89,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(9, $command->countRepeatedLetters('c',$testData[2]));
     }
 
-    public function testIsPasswordValid()
+    public function testIsPasswordValid() : void
     {
         $testData = [
             '1-3 a: abcde',
@@ -102,7 +104,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($command->isPasswordValid($testData[2]));
     }
 
-    public function testIsPasswordOfficialTobogganCorpValid()
+    public function testIsPasswordOfficialTobogganCorpValid() : void
     {
         $testData = [
             '1-3 a: abcde',
@@ -117,7 +119,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertFalse($command->isPasswordOfficialTobogganCorpValid($testData[2]));
     }
 
-    public function testProcessPasswordsWithPolicies()
+    public function testProcessPasswordsWithPolicies() : void
     {
         $testData = [
             '1-3 a: abcde',
@@ -133,7 +135,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
 
     /** @test */
-    public function testExecutePartTwo()
+    public function testExecutePartTwo() : void
     {
         $application = new Application();
         $application->add(new DayTwoCommand());
@@ -159,7 +161,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString('result = 1', $output);
     }
 
-    public function testIsLetterAtOnlyOneOfPositionsInPassword()
+    public function testIsLetterAtOnlyOneOfPositionsInPassword() : void
     {
         $command = new DayTwoCommand();
 

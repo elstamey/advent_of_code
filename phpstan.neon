@@ -1,5 +1,21 @@
 parameters:
-	level: 5
+	level: 6
 	paths:
 		- src
 		- tests
+	excludes_analyse:
+	    - 'src/Console/Command/DayThreeCommand.php'
+	    - 'src/Console/Command/DayFourCommand.php'
+	    - 'src/Console/Command/DayFiveCommand.php'
+	    - 'src/Console/Command/DaySixCommand.php'
+	    - 'src/Console/Command/DaySevenCommand.php'
+	    - 'src/Console/Command/DayEightCommand.php'
+	    - 'src/Console/Command/DayTwelveCommand.php'
+	    - 'tests/DayThreeCommandTest.php'
+	    - 'tests/DayFourCommandTest.php'
+	    - 'tests/DayFiveCommandTest.php'
+	    - 'tests/DaySixCommandTest.php'
+	    - 'tests/DaySevenCommandTest.php'
+	    - 'tests/DayEightCommandTest.php'
+	    - 'tests/DayTwelveCommandTest.php'
+	    - 'src/Console/Models/IntCodeComputer.php'

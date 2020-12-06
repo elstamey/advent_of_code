@@ -19,9 +19,9 @@ class DayBlankCommand extends Command
     /**
      * @var string
      */
-    public string $input_string = 'bgvyzdsv';
+    public string $inputString;
 
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('dayblank')
@@ -41,17 +41,17 @@ class DayBlankCommand extends Command
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
         if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
                 }
             }
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
                 }
             }
