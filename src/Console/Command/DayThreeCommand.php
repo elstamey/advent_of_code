@@ -66,49 +66,6 @@ class DayThreeCommand extends Command
     }
 
 
-    /**
-     * @param array $stepsA
-     * @param array $stepsB
-     * @return int
-     */
-    public function getManhattanDistance($stepsA, $stepsB)
-    {
-        list($xA, $yA) = $this->getCoordinates($stepsA);
-        list($xB, $yB) = $this->getCoordinates($stepsB);
-
-
-        $xDifference = $xA - $xB;
-        $yDifference = $yA - $yB;
-        return ($xDifference + $yDifference);
-    }
-
-    public function getCoordinates($steps)
-    {
-        $xDistance = 0;
-        $yDistance = 0;
-
-        foreach ($steps as $step) {
-            $direction = substr($step, 0, 1);
-            $amount = intval(substr($step, 1));
-
-            switch ($direction) {
-                case 'R':
-                    $xDistance += $amount;
-                    break;
-                case 'L':
-                    $xDistance -= $amount;
-                    break;
-                case 'U':
-                    $yDistance += $amount;
-                    break;
-                case 'D':
-                    $yDistance += $amount;
-                    break;
-            }
-        }
-
-        return [$xDistance, $yDistance];
-    }
 
     /**
      * @param array $lines
@@ -123,19 +80,18 @@ class DayThreeCommand extends Command
         $maxWidth = 3 * $height;
         $lastLineNumber = $height - 1;
         echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
-            print "\n In While\n";
-            for ($i=count(str_split($lines[0])); $i<=$maxWidth; $i=count(str_split($map[$lastLineNumber]))) {
-                foreach ($lines as $key => $line) {
-                    if (isset($map[$key]))
-                        $map[$key] .= $line;
-                    else
-                        $map[$key] = $line;
-                }
+
+        for ($i=count(str_split($lines[0])); $i<=$maxWidth; $i=count(str_split($map[$lastLineNumber]))) {
+            foreach ($lines as $key => $line) {
+                if (isset($map[$key]))
+                    $map[$key] .= $line;
+                else
+                    $map[$key] = $line;
             }
+        }
 
-            echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
+        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
 
-var_dump($map);
         return $map;
     }
 
