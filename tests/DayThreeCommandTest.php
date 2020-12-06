@@ -7,29 +7,31 @@ use \Symfony\Component\Console\Tester\CommandTester;
 class DayThreeCommandTest extends PHPUnit\Framework\TestCase
 {
 
-//    /** @test */
-//    public function testExecute()
-//    {
-//        $application = new Application();
-//        $application->add(new DayThreeCommand());
-//
-//        $command = $application->find('day3');
-//        $commandTester = new CommandTester($command);
-//        $commandTester->execute(array(
-//            'command'  => $command->getName(),
-//
-//            // pass arguments to the helper
-//            'inputFile' => 'testday3.txt',
-//
-//            // prefix the key with a double slash when passing options,
-//            // e.g: '--some-option' => 'option_value',
-//        ));
-//
-//
-//        // the output of the command in the console
-//        $output = $commandTester->getDisplay();
-//        $this->assertContains('result = 0', $output);
-//    }
+    /**
+     * @test
+     */
+    public function testExecute() : void
+    {
+        $application = new Application();
+        $application->add(new DayThreeCommand());
+
+        $command = $application->find('day3');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'  => $command->getName(),
+
+            // pass arguments to the helper
+            'inputFile' => 'testday3.txt',
+
+            // prefix the key with a double slash when passing options,
+            // e.g: '--some-option' => 'option_value',
+        ));
+
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('result = 7', $output);
+    }
 //
 //    /** @test */
 //    public function testExecutePartTwo()
@@ -95,7 +97,11 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
             '.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#'
         ];
 
-        $this->assertEquals($expectedResults, $command->prepareMap($this->inputLines));
+        $preparedMap = $command->prepareMap($this->inputLines);
+        $this->assertEquals(str_split($expectedResults[0]), $preparedMap[0]);
+        $this->assertEquals(str_split($expectedResults[2]), $preparedMap[2]);
+        $this->assertEquals(str_split($expectedResults[3]), $preparedMap[3]);
+        $this->assertEquals(str_split($expectedResults[6]), $preparedMap[6]);
     }
 
     /**

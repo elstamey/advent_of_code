@@ -9,16 +9,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayThreeCommand extends Command
 {
-    protected int $validTriangles = 0;
     /**
      * @var string|false
      */
     private $inputString;
 
     /**
-     * @var string[]
+     * @var string[][]
      */
-    private array $map;
+    private array $map=[['a','a'],['b']];
 
     protected function configure() : void
     {
@@ -42,7 +41,7 @@ class DayThreeCommand extends Command
 
         if ($input->getOption('part2')) {
 
-
+        $result=0;
 
         } else {
             $values = [];
@@ -50,10 +49,10 @@ class DayThreeCommand extends Command
             $lines = preg_split("/\n/", $this->inputString);
             $this->map = $this->prepareMap($lines);
 
+            $result = $this->traverseAndFindTrees();
 
         }
 
-        $result = $this->validTriangles;
         $output->writeln("result = " . $result);
         return Command::SUCCESS;
 
@@ -64,7 +63,7 @@ class DayThreeCommand extends Command
     /**
      * @param string[] $lines
      *
-     * @return string[]
+     * @return string[][]
      */
     public function prepareMap(array $lines) : array
     {
@@ -82,6 +81,10 @@ class DayThreeCommand extends Command
                 else
                     $map[$key] = $line;
             }
+        }
+
+        foreach ($map as $key => $m) {
+            $map[$key] = str_split($m);
         }
 
 //        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
@@ -108,6 +111,22 @@ class DayThreeCommand extends Command
     public function isTree(string $char)
     {
         return ($char === '#');
+    }
+
+    /**
+     * @return int
+     */
+    private function traverseAndFindTrees() : int
+    {
+        $height = count($this->map);
+        $length = count($this->map[0]);
+        $treeCount = 0;
+
+        for ($x=$y=0; $y<$height && $x<$length; list($x, $y)=$this->takeStep($x, $y)) {
+            $treeCount += intval($this->isTree($this->map[$y][$x]));
+        }
+
+        return $treeCount;
     }
 
 }
