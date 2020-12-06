@@ -17,11 +17,12 @@ class DayTwoCommand extends Command
      */
     private $inputArray;
 
+
     protected function configure()
     {
         $this
             ->setName('day2')
-            ->setDescription('Day 2: 1202 Program Alarm')
+            ->setDescription('Day 2: Password Philosophy')
             ->addArgument('inputFile', null, 'newFile', 'day2.txt')
             ->addOption(
                 'part2',
@@ -37,37 +38,18 @@ class DayTwoCommand extends Command
 
         if (isset($this->inputString) && $input->getOption('part2')) {
 
-            $this->inputArray = preg_split('/\,/', $this->inputString);
-            $this->inputArray = array_map('intval', $this->inputArray);
+            $this->inputArray = preg_split('/\n/', $this->inputString);
 
+            $result = $this->processPasswordsWithTobogganPolicies($this->inputArray);
 
-
-            foreach (range(0, 99) as $noun) {
-                foreach (range(0,99) as $verb) {
-                    $computer = new IntCodeComputer($this->inputArray, 3);
-                    $computer->initializeInputArray($noun, $verb);
-                    $result = $computer->compute();
-
-                    if ($result === 19690720) {
-                        print("Desired Result achieved!");
-                        $result = 100 * $noun + $verb;
-
-                        $output->writeln('result = ' . $result);
-                        return;
-                    }
-                }
-            }
-
-
+            $output->writeln('result = ' . $result);
+            return;
 
         } elseif (isset($this->inputString)) {
 
-            $this->inputArray = preg_split('/\,/', $this->inputString);
-            $this->inputArray = array_map('intval', $this->inputArray);
+            $this->inputArray = preg_split('/\n/', $this->inputString);
 
-            $computer = new IntCodeComputer($this->inputArray, 3);
-            $computer->initializeInputArray(12, 2);
-            $result = $computer->compute();
+            $result = $this->processPasswordsWithPolicies($this->inputArray);
 
             $output->writeln('result = ' . $result);
             return;
@@ -77,4 +59,73 @@ class DayTwoCommand extends Command
         $output->writeln('<error>Could not execute</error>');
     }
 
+    public function getRange($input)
+    {
+        return preg_split("/[\-]/", $input);
+    }
+
+    public function getPositions($input)
+    {
+        return preg_split("/[\-]/", $input);
+    }
+
+    public function getLetter(string $input)
+    {
+        $letter = preg_split("/\:/", $input);
+        return $letter[0];
+    }
+
+    public function countRepeatedLetters(string $letter, string $password)
+    {
+        return substr_count($password, $letter);
+    }
+
+    public function isPasswordValid(string $line)
+    {
+        $pieces = preg_split("/\s/", $line);
+
+        if (count($pieces) !== 3) return false;
+
+        $range = $this->getRange($pieces[0]);
+        $letter = $this->getLetter($pieces[1]);
+        $stringCount = $this->countRepeatedLetters($letter, $pieces[2]);
+
+        return in_array($stringCount, range($range[0], $range[1]));
+    }
+
+    public function processPasswordsWithPolicies(array $inputArray)
+    {
+        $validPasswords = array_filter($inputArray, function ($v, $k) { return $this->isPasswordValid($v); }, ARRAY_FILTER_USE_BOTH);
+
+        return count($validPasswords);
+    }
+
+    public function processPasswordsWithTobogganPolicies(array $inputArray)
+    {
+        $validPasswords = array_filter($inputArray, function ($v, $k) { return $this->isPasswordOfficialTobogganCorpValid($v); }, ARRAY_FILTER_USE_BOTH);
+
+        return count($validPasswords);
+    }
+
+    public function isPasswordOfficialTobogganCorpValid(string $line)
+    {
+        $pieces = preg_split("/\s/", $line);
+
+        if (count($pieces) !== 3) return false;
+
+        $positions = $this->getPositions($pieces[0]);
+        $letter = $this->getLetter($pieces[1]);
+        $password = $pieces[2];
+
+        return $this->isLetterAtOnlyOneOfPositionsInPassword($letter, $positions, $password);
+    }
+
+    public function isLetterAtOnlyOneOfPositionsInPassword(string $letter, $positions, string $password)
+    {
+        $password = str_split($password);
+        $pos1 = $positions[0] - 1;
+        $pos2 = $positions[1] - 1;
+
+        return ($password[$pos1] == $letter) xor ($password[$pos2] == $letter);
+    }
 }
