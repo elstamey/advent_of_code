@@ -9,10 +9,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayTwoCommand extends Command
 {
-    private $inputString = '';
+    private string $inputString = '';
 
     /**
-     * @var int[]
+     * @var string[]
      */
     private $inputArray;
 
