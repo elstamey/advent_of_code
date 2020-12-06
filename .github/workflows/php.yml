@@ -35,3 +35,6 @@ jobs:
 
     - name: Run test suite
       run: composer test
+
+    - name: Run phpstan
+      run: composer phpstan
