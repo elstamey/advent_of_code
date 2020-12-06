@@ -42,7 +42,7 @@ class DayOneCommand extends Command
 
         } elseif (isset($this->inputString)) {
 
-            list($result, $errors) = $this->findMultiplierOfSumTwentyTwenty($this->inputString);
+            list($result, $errors) = $this->findProductOfTwoSumTwentyTwenty($this->inputString);
             $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
             $output->writeln('<error>' . $errors . '</error>\n ');
             return;
