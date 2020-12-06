@@ -41,10 +41,22 @@ class DayThreeCommand extends Command
 
         if ($input->getOption('part2')) {
 
-        $result=0;
+            $result = 1;
+
+            $lines = preg_split("/\n/", $this->inputString);
+            $this->map = $this->prepareMap($lines,7);
+            $slopes = [
+                [1,1],
+                [3,1],
+                [5,1],
+                [7,1],
+                [1,2]
+            ];
+            foreach ($slopes as $slope) {
+                $result *= $this->traverseAndFindTrees($slope);
+            }
 
         } else {
-            $values = [];
 
             $lines = preg_split("/\n/", $this->inputString);
             $this->map = $this->prepareMap($lines);
@@ -59,18 +71,18 @@ class DayThreeCommand extends Command
     }
 
 
-
     /**
      * @param string[] $lines
+     * @param int      $multiplier
      *
      * @return string[][]
      */
-    public function prepareMap(array $lines) : array
+    public function prepareMap(array $lines, $multiplier=3) : array
     {
         $map = [];
 
         $height = count($lines);
-        $maxWidth = 3 * $height;
+        $maxWidth = $multiplier * $height;
         $lastLineNumber = $height - 1;
 //        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
 
