@@ -38,16 +38,17 @@ class DayOneCommand extends Command
 
             $result = $this->findProductOfThreeSumTwentyTwenty( $this->inputString );
             $output->writeln('<fg=green>result part 2 = ' . $result . "\n");
-            return;
+            return Command::SUCCESS;
 
         } elseif (isset($this->inputString)) {
 
             $result = $this->findProductOfTwoSumTwentyTwenty($this->inputString);
             $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
-            return;
+            return Command::SUCCESS;
         }
 
         $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
     }
 
 
@@ -59,11 +60,11 @@ class DayOneCommand extends Command
     /**
      *  Method to get the the product of the digits that add up to 2020
      *
-     * @param $inputString
+     * @param string $inputString
      *
      * @return int
      */
-    private function findProductOfTwoSumTwentyTwenty($inputString)
+    private function findProductOfTwoSumTwentyTwenty(string $inputString)
     {
         $digits = $this->splitInputByLinesToArray($inputString);
         $count = count($digits) - 1;

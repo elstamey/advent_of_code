@@ -29,6 +29,12 @@ class GreetCommand extends Command
         ;
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|void|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $name = $input->getArgument('name');
@@ -43,5 +49,7 @@ class GreetCommand extends Command
         }
 
         $output->writeln($text);
+
+        return Command::SUCCESS;
     }
 }

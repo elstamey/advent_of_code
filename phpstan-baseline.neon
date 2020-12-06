@@ -1,0 +1,66 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method Acme\\\\Console\\\\Command\\\\DayEightCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: src/Console/Command/DayEightCommand.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between \\(array\\|float\\|int\\) and 50 results in an error\\.$#"
+			count: 1
+			path: src/Console/Command/DayEightCommand.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between \\(array\\|float\\|int\\) and 6 results in an error\\.$#"
+			count: 1
+			path: src/Console/Command/DayEightCommand.php
+
+		-
+			message: "#^Method Acme\\\\Console\\\\Command\\\\DayFiveCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: src/Console/Command/DayFiveCommand.php
+
+		-
+			message: "#^Access to an undefined property Acme\\\\Console\\\\Command\\\\DaySevenCommand\\:\\:\\$input_string\\.$#"
+			count: 1
+			path: src/Console/Command/DaySevenCommand.php
+
+		-
+			message: "#^Method Acme\\\\Console\\\\Command\\\\DaySevenCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: src/Console/Command/DaySevenCommand.php
+
+		-
+			message: "#^Method Acme\\\\Console\\\\Command\\\\DaySixCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: src/Console/Command/DaySixCommand.php
+
+		-
+			message: "#^PHPDoc tag @var has invalid value \\(\\)\\: Unexpected token \"\\\\n     \", expected type at offset 15$#"
+			count: 3
+			path: src/Console/Command/DayTwelveCommand.php
+
+		-
+			message: "#^Access to an undefined property Acme\\\\Console\\\\Command\\\\DayTwelveCommand\\:\\:\\$input_string\\.$#"
+			count: 1
+			path: src/Console/Command/DayTwelveCommand.php
+
+		-
+			message: "#^Method Acme\\\\Console\\\\Command\\\\DayTwelveCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: src/Console/Command/DayTwelveCommand.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between \\(array\\|float\\|int\\) and 0 results in an error\\.$#"
+			count: 1
+			path: src/Console/Command/DayTwelveCommand.php
+
+		-
+			message: "#^PHPDoc tag @var has invalid value \\(\\)\\: Unexpected token \"\\\\n     \", expected type at offset 15$#"
+			count: 1
+			path: src/Console/Models/IntCodeComputer.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$inputArray\\)\\: Unexpected token \"\\$inputArray\", expected type at offset 46$#"
+			count: 1
+			path: src/Console/Models/IntCodeComputer.php
