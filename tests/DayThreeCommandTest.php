@@ -113,7 +113,7 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
 
         $posX = 0;
         $posY = 0;
-        $this->assertEquals([3, 1], $command->takeStep($posX, $posY));
+        $this->assertEquals([3, 1], $command->takeStep($posX, $posY,[3,1]));
     }
 
     /**
