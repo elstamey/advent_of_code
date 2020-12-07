@@ -9,59 +9,59 @@ class Passport
     /**
      * @var int|null
      */
-    private int $birthYear;
+    private ?int $birthYear;
 
     /**
      * @var int|null
      */
-    private int $issueYear;
+    private ?int $issueYear;
 
     /**
      * @var int|null
      */
-    private int $expirationYear;
+    private ?int $expirationYear;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $height;
+    private ?string $height;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $hairColor;
+    private ?string $hairColor;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $eyeColor;
+    private ?string $eyeColor;
 
     /**
-     * @var int
+     * @var string|null
      */
-    private int $passportId;
+    private ?string $passportId;
 
     /**
-     * @var int
+     * @var int|null
      */
-    private int $countryId;
+    private ?int $countryId;
 
     /**
      * Passport constructor.
      *
-     * @param int    $birthYear
-     * @param int    $issueYear
-     * @param int    $expirationYear
-     * @param string    $height
-     * @param string $hairColor
-     * @param string $eyeColor
-     * @param int    $passportId
-     * @param int    $countryId
+     * @param int|null    $birthYear
+     * @param int|null    $issueYear
+     * @param int|null    $expirationYear
+     * @param string|null $height
+     * @param string|null $hairColor
+     * @param string|null $eyeColor
+     * @param string|null $passportId
+     * @param int|null    $countryId
      */
-    public function __construct(int $birthYear, int $issueYear,
-                                int $expirationYear, string $height,
-                                string $hairColor, string $eyeColor,
-                                int $passportId, int $countryId)
+    public function __construct(?int $birthYear, ?int $issueYear,
+                                ?int $expirationYear, ?string $height,
+                                ?string $hairColor, ?string $eyeColor,
+                                ?string $passportId, ?int $countryId)
     {
         $this->birthYear = $birthYear;
         $this->issueYear = $issueYear;
@@ -101,9 +101,8 @@ class Passport
     /**
      * @param int $issueYear
      *
-     * @return
      */
-    public function setIssueYear(int $issueYear)
+    public function setIssueYear(int $issueYear) : void
     {
         $this->issueYear = $issueYear;
     }
@@ -119,9 +118,8 @@ class Passport
     /**
      * @param int $expirationYear
      *
-     * @return Passport
      */
-    public function setExpirationYear(int $expirationYear): Passport
+    public function setExpirationYear(int $expirationYear): void
     {
         $this->expirationYear = $expirationYear;
     }
@@ -137,9 +135,8 @@ class Passport
     /**
      * @param string $height
      *
-     * @return Passport
      */
-    public function setHeight(string $height): Passport
+    public function setHeight(string $height): void
     {
         $this->height = $height;
     }
@@ -174,31 +171,29 @@ class Passport
     /**
      * @param string $eyeColor
      *
-     * @return Passport
+     * @return void
      */
-    public function setEyeColor(string $eyeColor): Passport
+    public function setEyeColor(string $eyeColor): void
     {
         $this->eyeColor = $eyeColor;
-        return $this;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getPassportId(): int
+    public function getPassportId(): string
     {
         return $this->passportId;
     }
 
     /**
-     * @param int $passportId
+     * @param string $passportId
      *
-     * @return Passport
+     * @return void
      */
-    public function setPassportId(int $passportId): Passport
+    public function setPassportId(string $passportId): void
     {
         $this->passportId = $passportId;
-        return $this;
     }
 
     /**
@@ -219,7 +214,10 @@ class Passport
         $this->countryId = $countryId;
     }
 
-    public function isValid()
+    /**
+     * @return bool
+     */
+    public function isValid() : bool
     {
         return (isset($this->birthYear) && isset($this->issueYear) &&
             isset($this->expirationYear) && isset($this->height) &&
