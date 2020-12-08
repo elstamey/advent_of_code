@@ -73,20 +73,28 @@ class DayFourCommand extends Command
                         switch ($var) {
                             case 'byr':
                                 $passport->setBirthYear($val);
+                                break;
                             case 'iyr':
                                 $passport->setIssueYear($val);
+                                break;
                             case 'eyr':
                                 $passport->setExpirationYear($val);
+                                break;
                             case 'hgt':
                                 $passport->setHeight($val);
+                                break;
                             case 'hcl':
                                 $passport->setHairColor($val);
+                                break;
                             case 'ecl':
                                 $passport->setEyeColor($val);
+                                break;
                             case 'pid':
                                 $passport->setPassportId($val);
+                                break;
                             case 'cid':
                                 $passport->setCountryId($val);
+                                break;
                             default:
                                 break;
                         }

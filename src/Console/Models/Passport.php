@@ -153,7 +153,7 @@ class Passport
      */
     public function setHeight(string $height): void
     {
-        $this->height = $height;
+        $this->height = (preg_match("/\w\w/", $height)) ? $height : null;
     }
 
     /**
