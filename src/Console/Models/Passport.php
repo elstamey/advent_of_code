@@ -48,6 +48,20 @@ class Passport
 
     /**
      * Passport constructor.
+     */
+    public function __construct()
+    {
+        $this->birthYear = null;
+        $this->issueYear = null;
+        $this->expirationYear = null;
+        $this->height = null;
+        $this->hairColor = null;
+        $this->eyeColor = null;
+        $this->passportId = null;
+        $this->countryId = null;
+    }
+
+    /**
      *
      * @param int|null    $birthYear
      * @param int|null    $issueYear
@@ -57,11 +71,13 @@ class Passport
      * @param string|null $eyeColor
      * @param string|null $passportId
      * @param int|null    $countryId
+     *
+     * @return Passport
      */
-    public function __construct(?int $birthYear, ?int $issueYear,
+    public function createFromInputs(?int $birthYear, ?int $issueYear,
                                 ?int $expirationYear, ?string $height,
                                 ?string $hairColor, ?string $eyeColor,
-                                ?string $passportId, ?int $countryId)
+                                ?string $passportId, ?int $countryId) : Passport
     {
         $this->birthYear = $birthYear;
         $this->issueYear = $issueYear;
@@ -71,63 +87,62 @@ class Passport
         $this->eyeColor = $eyeColor;
         $this->passportId = $passportId;
         $this->countryId = $countryId;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBirthYear(): ?int
+    {
+        return (isset($this->birthYear) ? $this->birthYear : null);
+    }
+
+    /**
+     * @param string $birthYear
+     */
+    public function setBirthYear(string $birthYear) : void
+    {
+        $this->birthYear = intval($birthYear);
     }
 
     /**
      * @return int
      */
-    public function getBirthYear(): int
-    {
-        return $this->birthYear;
-    }
-
-    /**
-     * @param int $birthYear
-     *
-     */
-    public function setBirthYear(int $birthYear) : void
-    {
-        $this->birthYear = $birthYear;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIssueYear(): int
+    public function getIssueYear(): ?int
     {
         return $this->issueYear;
     }
 
     /**
-     * @param int $issueYear
-     *
+     * @param string $issueYear
      */
-    public function setIssueYear(int $issueYear) : void
+    public function setIssueYear(string $issueYear) : void
     {
-        $this->issueYear = $issueYear;
+        $this->issueYear = intval($issueYear);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getExpirationYear(): int
+    public function getExpirationYear(): ?int
     {
         return $this->expirationYear;
     }
 
     /**
-     * @param int $expirationYear
-     *
+     * @param string $expirationYear
      */
-    public function setExpirationYear(int $expirationYear): void
+    public function setExpirationYear(string $expirationYear): void
     {
-        $this->expirationYear = $expirationYear;
+        $this->expirationYear = intval($expirationYear);
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHeight(): string
+    public function getHeight(): ?string
     {
         return $this->height;
     }
@@ -142,9 +157,9 @@ class Passport
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getHairColor(): string
+    public function getHairColor(): ?string
     {
         return $this->hairColor;
     }
@@ -152,18 +167,16 @@ class Passport
     /**
      * @param string $hairColor
      *
-     * @return Passport
      */
-    public function setHairColor(string $hairColor): Passport
+    public function setHairColor(string $hairColor): void
     {
         $this->hairColor = $hairColor;
-        return $this;
     }
 
     /**
-     * @return string
+     * @return string| null
      */
-    public function getEyeColor(): string
+    public function getEyeColor(): ?string
     {
         return $this->eyeColor;
     }
@@ -179,9 +192,9 @@ class Passport
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPassportId(): string
+    public function getPassportId(): ?string
     {
         return $this->passportId;
     }
@@ -199,19 +212,19 @@ class Passport
     /**
      * @return int
      */
-    public function getCountryId(): int
+    public function getCountryId(): ?int
     {
         return $this->countryId;
     }
 
     /**
-     * @param int $countryId
+     * @param string $countryId
      *
      * @return void
      */
-    public function setCountryId(int $countryId): void
+    public function setCountryId(string $countryId): void
     {
-        $this->countryId = $countryId;
+        $this->countryId = intval($countryId);
     }
 
     /**
@@ -219,10 +232,10 @@ class Passport
      */
     public function isValid() : bool
     {
-        return (isset($this->birthYear) && isset($this->issueYear) &&
-            isset($this->expirationYear) && isset($this->height) &&
-            isset($this->hairColor) && isset($this->eyeColor) &&
-            isset($this->passportId) && ($this->passportId > 0)
+        return ($this->getBirthYear() && $this->getIssueYear() &&
+            $this->getExpirationYear() && $this->getHeight() &&
+            $this->getHairColor() && $this->getEyeColor() &&
+            $this->getPassportId()
         );
     }
 }

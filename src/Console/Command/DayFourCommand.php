@@ -6,27 +6,30 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Acme\Console\Models\Passport;
 
 class DayFourCommand extends Command
 {
+    /**
+     * @var false|string
+     */
+    private $inputString;
 
     /**
-     * @var int
+     * @var string[]
      */
-    private $minVal = 240298;
-    /**
-     * @var int
-     */
-    private $maxVal = 784956;
+    private array $inputArray;
+
 
     /**
      *
      */
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day4')
-            ->setDescription('Day 4: Secure Container')
+            ->setDescription('Day 4: Passport Processing')
+            ->addArgument('inputFile', null, 'newFile', 'day4.txt')
             ->addOption(
                 'part2',
                 null,
@@ -38,107 +41,67 @@ class DayFourCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|void|null
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+
         $result = 0;
 
-        if ($input->getOption('part2')) {
+        $file = $input->getArgument('inputFile');
+        if (is_string($file) )
+            $this->inputString = file_get_contents($file);
 
-            for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
-                $result += (int) $this->isValidPassword($i, true);
-            }
-
-        } else {
-
-            for ($i = $this->minVal; $i <= $this->maxVal; $i++) {
-                $result += (int) $this->isValidPassword($i);
-            }
-
-        }
-
-        $output->writeln("result = " . $result);
-    }
-
-    /**
-     * @param int $password
-     * @param bool $part2
-     * @return bool
-     */
-    public function isValidPassword($password, $part2=false)
-    {
-        return (
-            $this->isSixDigits($password) &&
-            $this->isWithinRange($password) &&
-            $this->digitsDontDecrease($password) &&
-            $this->containsDoubleDigits($password, $part2)
-        );
-    }
-
-    /**
-     * @param int $password
-     * @return bool
-     */
-    public function isSixDigits($password)
-    {
-        $length = strlen((string) $password);
-
-        return ($length === 6);
-    }
-
-    /**
-     * @param int $password
-     * @return bool
-     */
-    public function isWithinRange($password)
-    {
-        return ( ($this->minVal <= $password) && ($this->maxVal >= $password) );
-    }
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
 
-    /**
-     * @param int $password
-     * @return bool
-     */
-    public function digitsDontDecrease($password)
-    {
-        $digits = str_split( (string) $password, 1);
 
-        for ($i=0; $i < 5; $i++) {
-            if ($digits[$i] > $digits[$i+1]) {
-                return false;
-            }
-        }
+        } elseif (isset($this->inputString)) {
 
-        return true;
-    }
+            $this->inputArray = preg_split('/\n\n/', $this->inputString);
 
-    /**
-     * @param int $password
-     * @param bool $part2
-     * @return bool
-     */
-    public function containsDoubleDigits($password, $part2=false)
-    {
-        $digits = str_split( (string) $password, 1);
+            print "Here: " . count($this->inputArray) . "\n";
 
-        for ($i=0; $i < 5; $i++) {
-            if ($digits[$i] === $digits[$i+1]) {
+            foreach ($this->inputArray as $passportFields) {
+                $fields = preg_split('/[\n|\s]/', $passportFields);
+                $passport = new Passport();
 
-                if (!$part2) {
-                    return true;
-                } elseif ($part2) {
-                    $doubleDigits = substr_count((string)$password, $digits[$i], 0, 6);
-                    if ($doubleDigits === 2) {
-                        return true;
+                foreach ($fields as $f) {
+                    if ($f) {
+                        list($var, $val) = preg_split('/:/', $f);
+
+                        switch ($var) {
+                            case 'byr':
+                                $passport->setBirthYear($val);
+                            case 'iyr':
+                                $passport->setIssueYear($val);
+                            case 'eyr':
+                                $passport->setExpirationYear($val);
+                            case 'hgt':
+                                $passport->setHeight($val);
+                            case 'hcl':
+                                $passport->setHairColor($val);
+                            case 'ecl':
+                                $passport->setEyeColor($val);
+                            case 'pid':
+                                $passport->setPassportId($val);
+                            case 'cid':
+                                $passport->setCountryId($val);
+                            default:
+                                break;
+                        }
                     }
 
-                }
+                } // end foreach $fields
+//                var_dump($passport);
+                $result += intval($passport->isValid());
             }
+
         }
 
-        return false;
+        $output->writeln("result = " . $result );
+        return Command::SUCCESS;
     }
+
 
 }

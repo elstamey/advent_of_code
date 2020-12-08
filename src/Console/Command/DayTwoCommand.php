@@ -44,7 +44,7 @@ class DayTwoCommand extends Command
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $file = $input->getArgument('inputFile');
         if (is_string($file) )
