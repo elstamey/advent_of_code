@@ -101,10 +101,18 @@ class Passport
 
     /**
      * @param string $birthYear
+     * @param bool   $strict
      */
-    public function setBirthYear(string $birthYear) : void
+    public function setBirthYear(string $birthYear, bool $strict) : void
     {
-        $this->birthYear = intval($birthYear);
+        $birthYearInt = intval($birthYear);
+        if (($strict) &&
+            (preg_match("/\d\d\d\d/", $birthYear)) &&
+            (1920 <= $birthYearInt) && ($birthYearInt <= 2002)) {
+            $this->birthYear = $birthYearInt;
+        } elseif (!$strict) {
+            $this->birthYear = $birthYearInt;
+        }
     }
 
     /**
@@ -117,10 +125,19 @@ class Passport
 
     /**
      * @param string $issueYear
+     * @param bool   $strict
      */
-    public function setIssueYear(string $issueYear) : void
+    public function setIssueYear(string $issueYear, bool $strict) : void
     {
-        $this->issueYear = intval($issueYear);
+        $issueYearInt = intval($issueYear);
+        if (($strict) &&
+            (preg_match("/\d\d\d\d/", $issueYear)) &&
+            (2010 <= $issueYearInt) && ($issueYearInt <= 2020)) {
+            $this->issueYear = $issueYearInt;
+        } elseif (!$strict) {
+            $this->issueYear = $issueYearInt;
+        }
+
     }
 
     /**
@@ -133,10 +150,18 @@ class Passport
 
     /**
      * @param string $expirationYear
+     * @param bool   $strict
      */
-    public function setExpirationYear(string $expirationYear): void
+    public function setExpirationYear(string $expirationYear, bool $strict): void
     {
-        $this->expirationYear = intval($expirationYear);
+        $expirationYearInt = intval($expirationYear);
+        if (($strict) &&
+            (preg_match("/[0-9]{4}/", $expirationYear)) &&
+            (2020 <= $expirationYearInt) && ($expirationYearInt <= 2030)) {
+            $this->expirationYear = $expirationYearInt;
+        } elseif (!$strict) {
+            $this->expirationYear = $expirationYearInt;
+        }
     }
 
     /**
@@ -149,11 +174,25 @@ class Passport
 
     /**
      * @param string $height
-     *
+     * @param bool   $strict
      */
-    public function setHeight(string $height): void
+    public function setHeight(string $height, bool $strict): void
     {
-        $this->height = (preg_match("/\w\w/", $height)) ? $height : null;
+        if ($strict && preg_match("/[0-9]+\w\w/", $height)) {
+
+            $length = strlen($height);
+            $amt = intval(substr($height, 0, $length-2));
+            $unit = substr($height, $length-2, 2);
+
+            if (($unit === 'cm') && (150 <= $amt) && ($amt <= 193)) {
+                $this->height =  $height;
+            } elseif (($unit === 'in') && (59 <= $amt) && ($amt <= 76)) {
+                $this->height =  $height;
+            }
+
+        } elseif (!$strict && preg_match("/\w\w/", $height)) {
+            $this->height =  $height;
+        }
     }
 
     /**
@@ -166,11 +205,15 @@ class Passport
 
     /**
      * @param string $hairColor
-     *
+     * @param bool   $strict
      */
-    public function setHairColor(string $hairColor): void
+    public function setHairColor(string $hairColor, bool $strict): void
     {
-        $this->hairColor = $hairColor;
+        if ($strict && preg_match("/[\#]{1}[0-9a-f]{6}/", $hairColor)) {
+            $this->hairColor = $hairColor;
+        } elseif (!$strict) {
+            $this->hairColor = $hairColor;
+        }
     }
 
     /**
@@ -183,12 +226,21 @@ class Passport
 
     /**
      * @param string $eyeColor
+     * @param bool   $strict
      *
      * @return void
      */
-    public function setEyeColor(string $eyeColor): void
+    public function setEyeColor(string $eyeColor, bool $strict): void
     {
-        $this->eyeColor = $eyeColor;
+        if ($strict) {
+            if (($eyeColor === 'amb') || ($eyeColor === 'blu') || ($eyeColor === 'brn') ||
+                ($eyeColor === 'gry') || ($eyeColor === 'grn') || ($eyeColor === 'hzl') ||
+                ($eyeColor === 'oth')) {
+                $this->eyeColor = $eyeColor;
+            }
+        } else {
+            $this->eyeColor = $eyeColor;
+        }
     }
 
     /**
@@ -201,12 +253,18 @@ class Passport
 
     /**
      * @param string $passportId
+     * @param bool   $strict
      *
      * @return void
      */
-    public function setPassportId(string $passportId): void
+    public function setPassportId(string $passportId, bool $strict): void
     {
-        $this->passportId = $passportId;
+        if ($strict &&
+            (preg_match("/[0-9]{9}/", $passportId) && (strlen($passportId) === 9))) {
+            $this->passportId = $passportId;
+        } elseif (!$strict) {
+            $this->passportId = $passportId;
+        }
     }
 
     /**
@@ -232,10 +290,36 @@ class Passport
      */
     public function isValid() : bool
     {
-        return ($this->getBirthYear() && $this->getIssueYear() &&
-            $this->getExpirationYear() && $this->getHeight() &&
-            $this->getHairColor() && $this->getEyeColor() &&
-            $this->getPassportId()
-        );
+        if (!$this->getBirthYear()) {
+//            print "No valid birth year\n\n";
+            return false;
+        }
+        if (!$this->getIssueYear()) {
+//            print "No valid issue year\n\n";
+            return false;
+        }
+        if (!$this->getExpirationYear()) {
+//            print "No valid expiration year\n\n";
+            return false;
+        }
+        if (!$this->getHeight()) {
+//            print "No valid height\n\n";
+            return false;
+        }
+        if (!$this->getHairColor()) {
+//            print "No valid hair color\n\n";
+            return false;
+        }
+        if (!$this->getEyeColor()) {
+//            print "No valid eye color\n\n";
+            return false;
+        }
+        if (!$this->getPassportId()) {
+//            print "No valid passport id \n\n";
+            return false;
+        }
+
+//        print "VALID!!!\n\n";
+        return true;
     }
 }
