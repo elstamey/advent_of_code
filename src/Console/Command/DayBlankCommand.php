@@ -26,7 +26,7 @@ class DayBlankCommand extends Command
         $this
             ->setName('dayblank')
             ->setDescription('The Ideal Stocking Stuffer')
-            ->addArgument('inputFile', null, 'newFile', 'dayblank.txt')
+            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'dayblank.txt')
             ->addOption(
                 'part2',
                 null,
@@ -43,20 +43,25 @@ class DayBlankCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
-
-        if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-                }
-            }
-        } else {
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-                }
-            }
-        }
+        $file = $input->getArgument('inputFile');
         $result = '';
+        if (is_string($file) && !empty($file)) {
+            $this->inputString = file_get_contents($file);
+
+            if ($input->getOption('part2')) {
+                foreach (preg_split("/\n/", $this->inputString) as $line) {
+                    if ($line != "") {
+                    }
+                }
+            } else {
+                foreach (preg_split("/\n/", $this->inputString) as $line) {
+                    if ($line != "") {
+                    }
+                }
+            }
+
+        }
+
         $output->writeln("result = " . $result);
         return Command::SUCCESS;
     }

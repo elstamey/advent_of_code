@@ -39,6 +39,8 @@ class DayOneCommand extends Command
      * @param OutputInterface $output
      *
      * @return int
+     *
+     * @psalm-return 0|1
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -47,7 +49,7 @@ class DayOneCommand extends Command
         if (is_string($file) )
             $this->inputString = file_get_contents($file);
 
-        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+        if (is_string($this->inputString) && $input->getOption('part2')) {
 
             $result = $this->findProductOfThreeSumTwentyTwenty( $this->inputString );
             $output->writeln('<fg=green>result part 2 = ' . $result . "\n");
@@ -87,7 +89,7 @@ class DayOneCommand extends Command
         $digits = $this->splitInputByLinesToArray($inputString);
         $count = count($digits) - 1;
         for ($i=0; $i < $count; $i++) {
-            if ($digits[$i] !== null) {
+            if (isset($digits[$i])) {
                 $numberNeeded = 2020 - $digits[$i];
                 $key = array_search($numberNeeded, $digits);
                 if ($key && ($key !== $i)) {
@@ -104,14 +106,14 @@ class DayOneCommand extends Command
      *
      * @return int
      */
-    private function findProductOfThreeSumTwentyTwenty($inputString)
+    private function findProductOfThreeSumTwentyTwenty(string $inputString) : int
     {
         $digits = $this->splitInputByLinesToArray($inputString);
         $count = count($digits) - 1;
         for ($i=0; $i < $count; $i++) {
             for ($j=0; ($i!=$j) && $j < $count; $j++) {
                 $numberNeeded = 2020 - $digits[$i] - $digits[$j];
-                $digits2 = array_filter($digits, function ($k) use ($i, $j) { return (($k !== $i) && ($k !== $j)); }, ARRAY_FILTER_USE_KEY);
+                $digits2 = array_filter($digits, function (int $k) use ($i, $j) { return (($k !== $i) && ($k !== $j)); }, ARRAY_FILTER_USE_KEY);
                 $key = array_search($numberNeeded, $digits2);
                 if ($key && ($digits[$i] != 0) && ($digits[$j] != 0) && ($digits2[$key] != 0)) {
                     return ($digits[$i] * $digits[$j] * $digits2[$key]);

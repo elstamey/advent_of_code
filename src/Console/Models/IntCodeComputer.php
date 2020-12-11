@@ -15,6 +15,9 @@ class IntCodeComputer
     private $secondValueAddress;
     private $saveResultAddress;
     private $result;
+    /**
+     * @var int[]
+     */
     private $inputArray;
     private $numberOfInstructionValues;
 
@@ -33,7 +36,7 @@ class IntCodeComputer
      * @param int $startAddress
      * @return int[]
      */
-    public function readOpCodes($startAddress)
+    public function readOpCodes(int $startAddress)
     {
         $parameter = $startAddress + 1;
         return [
@@ -44,7 +47,7 @@ class IntCodeComputer
         ];
     }
 
-    public function initializeInputArray($noun=12, $verb=2)
+    public function initializeInputArray($noun=12, $verb=2): void
     {
         $this->inputArray[1] = $noun;
         $this->inputArray[2] = $verb;
@@ -74,7 +77,15 @@ class IntCodeComputer
         return $this->inputArray[0];
     }
 
-    private function handleOpCodes($opCode, $valueOneAddress, $valueTwoAddress, $resultAddress)
+    /**
+     * @param int $opCode
+     * @param int $valueOneAddress
+     * @param int $valueTwoAddress
+     * @param int $resultAddress
+     *
+     * @returns void
+     */
+    private function handleOpCodes(int $opCode, int $valueOneAddress, int $valueTwoAddress, int $resultAddress): void
     {
         switch ($opCode) {
             case 1:
@@ -89,7 +100,7 @@ class IntCodeComputer
     }
 
 
-    private function printOpCodes($i)
+    private function printOpCodes(int $i): void
     {
         if (($i >= 0) && (($i+3) < count($this->inputArray))) {
             print ( $this->inputArray[$i] . " ");
@@ -99,13 +110,13 @@ class IntCodeComputer
         }
     }
 
-    private function handleAdd($valueOneAddress, $valueTwoAddress)
+    private function handleAdd(int $valueOneAddress, int $valueTwoAddress) : int
     {
         return ($this->inputArray[$valueOneAddress] + $this->inputArray[$valueTwoAddress]);
     }
 
 
-    private function handleMultiply($valueOneAddress, $valueTwoAddress)
+    private function handleMultiply(int $valueOneAddress, int $valueTwoAddress) : int
     {
         return ($this->inputArray[$valueOneAddress] * $this->inputArray[$valueTwoAddress]);
     }

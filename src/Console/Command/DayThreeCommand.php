@@ -15,9 +15,9 @@ class DayThreeCommand extends Command
     private $inputString;
 
     /**
-     * @var string[][]
+     * @var array<array-key, array<string>|string>
      */
-    private array $map=[['a','a'],['b']];
+    private array $map;
 
     protected function configure() : void
     {
@@ -33,6 +33,9 @@ class DayThreeCommand extends Command
             );
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $file = $input->getArgument('inputFile');
@@ -75,9 +78,11 @@ class DayThreeCommand extends Command
      * @param string[] $lines
      * @param int      $multiplier
      *
-     * @return string[][]
+     * @return array (string|string[])[]
+     *
+     * @psalm-return array<array-key, array<string>|string>
      */
-    public function prepareMap(array $lines, $multiplier=3) : array
+    public function prepareMap(array $lines, int $multiplier=3) : array
     {
         $map = [];
 
@@ -96,7 +101,7 @@ class DayThreeCommand extends Command
         }
 
         foreach ($map as $key => $m) {
-            $map[$key] = str_split($m);
+            $map[$key] = str_split($m, 1);
         }
 
 //        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
@@ -110,8 +115,10 @@ class DayThreeCommand extends Command
      * @param int[] $slope
      *
      * @return int[]
+     *
+     * @psalm-return array{0: int, 1: int}
      */
-    public function takeStep(int $posX, int $posY, array $slope)
+    public function takeStep(int $posX, int $posY, array $slope): array
     {
         return [$posX+$slope[0], $posY+$slope[1]];
     }
@@ -134,7 +141,7 @@ class DayThreeCommand extends Command
     private function traverseAndFindTrees(array $slope=[3,1]) : int
     {
         $height = count($this->map);
-        $length = count($this->map[0]);
+        $length = (is_string($this->map[0])) ? strlen($this->map[0]) : 0;
         $treeCount = 0;
 
         for ($x=$y=0; $y<$height && $x<$length; list($x, $y)=$this->takeStep($x, $y, $slope)) {

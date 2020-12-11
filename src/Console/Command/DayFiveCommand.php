@@ -11,9 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFiveCommand extends Command
 {
 
-    private $inputString;
+    /**
+     * @var string
+     */
+    private string $inputString;
 
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day5')
@@ -27,7 +30,13 @@ class DayFiveCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->inputString = file_get_contents($input->getArgument('inputFile'));
 
@@ -38,7 +47,15 @@ class DayFiveCommand extends Command
         $output->writeln("result = " . $result);
     }
 
-    public function traverseJumpInstructions($instructions, $partTwoRule=false)
+    /**
+     * @param false|string[] $instructions
+     * @param bool $partTwoRule
+     *
+     * @return int
+     *
+     * @psalm-return 0|positive-int
+     */
+    public function traverseJumpInstructions($instructions, bool $partTwoRule=false)
     {
         $stepCount = 0;
         $pos = 0;
@@ -54,7 +71,15 @@ class DayFiveCommand extends Command
         return $stepCount;
     }
 
-    public function replaceOffset($offset, $partTwoRule) {
+    /**
+     * @param string                    $offset
+     * @param bool|null|string|string[] $partTwoRule
+     *
+     * @return int
+     */
+    public function replaceOffset(string $offset, $partTwoRule) : int
+    {
+        $offset = intval($offset);
         if ($partTwoRule && $offset >= 3) {
             return ($offset - 1);
         }
