@@ -34,15 +34,18 @@ class DayThreeCommand extends Command
     }
 
     /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $file = $input->getArgument('inputFile');
         if (is_string($file) )
             $this->inputString = file_get_contents($file);
 
-        if ($input->getOption('part2')) {
+        if (is_string($this->inputString) && $input->getOption('part2')) {
 
             $result = 1;
 
@@ -84,6 +87,7 @@ class DayThreeCommand extends Command
      */
     public function prepareMap(array $lines, int $multiplier=3) : array
     {
+        /** @var string[] $map */
         $map = [];
 
         $height = count($lines);
@@ -100,7 +104,7 @@ class DayThreeCommand extends Command
             }
         }
 
-        foreach ($map as $key => $m) {
+        foreach ($map as $key=>$m) {
             $map[$key] = str_split($m, 1);
         }
 

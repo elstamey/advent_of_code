@@ -45,20 +45,20 @@ class DayTwoCommand extends Command
     {
         $file = $input->getArgument('inputFile');
         if (is_string($file) )
-            $this->inputString = file_get_contents($file);
+            $this->inputString = file_get_contents($file) ?: '';
 
-        if ( is_string($this->inputString) && $input->getOption('part2')) {
+        if ( $input->getOption('part2')) {
 
-            $inputArray = preg_split('/\n/', $this->inputString);
+            $inputArray = preg_split('/\n/', $this->inputString) ?: [];
 
             $result = $this->processPasswordsWithTobogganPolicies($inputArray);
 
             $output->writeln('result = ' . $result);
             return Command::SUCCESS;;
 
-        } elseif (isset($this->inputString)) {
+        } elseif (!empty($this->inputString)) {
 
-            $inputArray = preg_split('/\n/', $this->inputString);
+            $inputArray = preg_split('/\n/', $this->inputString) ?: [];
 
             $result = $this->processPasswordsWithPolicies($inputArray);
 
@@ -79,31 +79,31 @@ class DayTwoCommand extends Command
      */
     public function getRange(string $input) : ?array
     {
-        return preg_split("/[\-]/", $input);
+        return preg_split("/[\-]/", $input) ?: null;
     }
 
     /**
      * @param string $input
      *
-     * @return int[]
+     * @return int[]|null
      *
      * @psalm-return array{0: int, 1: int}
      */
-    public function getPositions(string $input) : array
+    public function getPositions(string $input) : ?array
     {
         $positions = preg_split("/[\-]/", $input);
-        return [intval($positions[0]), intval($positions[1])];
+        return (is_array($positions)) ? [intval($positions[0]), intval($positions[1])] : null;
     }
 
     /**
      * @param string $input
      *
-     * @return string
+     * @return string|null
      */
-    public function getLetter(string $input) : string
+    public function getLetter(string $input) : ?string
     {
         $letter = preg_split("/\:/", $input);
-        return $letter[0];
+        return (is_array($letter)) ? $letter[0] : null;
     }
 
     /**
@@ -126,13 +126,19 @@ class DayTwoCommand extends Command
     {
         $pieces = preg_split("/\s/", $line);
 
-        if (count($pieces) !== 3) return false;
+        if ($pieces) {
+            if (count($pieces) !== 3) {
+                return false;
+            }
 
-        $range = $this->getRange($pieces[0]);
-        $letter = $this->getLetter($pieces[1]);
-        $stringCount = $this->countRepeatedLetters($letter, $pieces[2]);
+            $range = $this->getRange($pieces[0]);
+            $letter = $this->getLetter($pieces[1]);
+            $stringCount = ($letter) ? $this->countRepeatedLetters($letter, $pieces[2]) : 0;
 
-        return (is_array($range) && (count($range) === 2)) ? in_array($stringCount, range($range[0], $range[1])) : false;
+            return (is_array($range) && (count($range) === 2)) ? in_array($stringCount,
+                range($range[0], $range[1])) : false;
+        }
+        return false;
     }
 
     /**
@@ -168,13 +174,16 @@ class DayTwoCommand extends Command
     {
         $pieces = preg_split("/\s/", $line);
 
-        if (count($pieces) !== 3) return false;
+        if ($pieces) {
+            if (count($pieces) !== 3) return false;
 
-        $positions = $this->getPositions($pieces[0]);
-        $letter = $this->getLetter($pieces[1]);
-        $password = $pieces[2];
+            $positions = $this->getPositions($pieces[0]);
+            $letter = $this->getLetter($pieces[1]);
+            $password = $pieces[2];
 
-        return $this->isLetterAtOnlyOneOfPositionsInPassword($letter, $positions, $password);
+            return ($positions && $letter) ? $this->isLetterAtOnlyOneOfPositionsInPassword($letter, $positions, $password) : false;
+        }
+        return false;
     }
 
     /**
