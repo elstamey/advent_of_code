@@ -75,10 +75,13 @@ class DayThreeCommand extends Command
      * @param string[] $lines
      * @param int      $multiplier
      *
-     * @return string[][]
+     * @return (string|string[])[]
+     *
+     * @psalm-return array<array-key, non-empty-list<string>|string>
      */
-    public function prepareMap(array $lines, $multiplier=3) : array
+    public function prepareMap(array $lines, int $multiplier=3) : array
     {
+        /** @var string[] $map */
         $map = [];
 
         $height = count($lines);
@@ -96,7 +99,7 @@ class DayThreeCommand extends Command
         }
 
         foreach ($map as $key => $m) {
-            $map[$key] = str_split($m);
+            $map[$key] = preg_split("//", $m,-1, PREG_SPLIT_NO_EMPTY) ?: '';
         }
 
 //        echo "Hey!!! \n " . count(str_split($lines[$lastLineNumber])) . " " . $maxWidth . "\n";
