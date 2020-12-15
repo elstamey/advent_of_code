@@ -8,14 +8,18 @@
     "require-dev": {
         "fzaninotto/faker": "^1.5",
         "phpunit/phpunit": "^8.0",
-        "phpstan/phpstan": "^0.12.58"
+        "phpstan/phpstan": "^0.12.58",
+        "vimeo/psalm": "^4.3",
+        "psalm/plugin-phpunit": "^0.15.0"
     },
     "autoload": {
         "psr-4": {"Acme\\": "src/"}
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "phpstan": "phpstan analyse"
+        "phpstan": "phpstan analyse",
+        "psalm": "vendor/bin/psalm",
+        "psalm-info": "vendor/bin/psalm --show-info=true"
     },
     "config": {
         "platform": {
