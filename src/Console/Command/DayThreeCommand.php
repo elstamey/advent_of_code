@@ -15,9 +15,9 @@ class DayThreeCommand extends Command
     private $inputString;
 
     /**
-     * @var string[][]
+     * @var array<array<string>|string>
      */
-    private array $map=[['a','a'],['b']];
+    private array $map;
 
     protected function configure() : void
     {
@@ -75,9 +75,8 @@ class DayThreeCommand extends Command
      * @param string[] $lines
      * @param int      $multiplier
      *
-     * @return (string|string[])[]
+     * @return array<array<string>>|array<string>
      *
-     * @psalm-return array<array-key, non-empty-list<string>|string>
      */
     public function prepareMap(array $lines, int $multiplier=3) : array
     {
