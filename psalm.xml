@@ -11,8 +11,6 @@
         <directory name="tests"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <file name="src/Console/Command/DayFiveCommand.php"/>
-            <file name="tests/DayFiveCommandTest.php"/>
             <file name="src/Console/Command/DaySixCommand.php"/>
             <file name="tests/DaySixCommandTest.php"/>
             <file name="src/Console/Command/DaySevenCommand.php"/>
