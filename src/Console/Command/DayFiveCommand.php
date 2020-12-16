@@ -11,13 +11,27 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DayFiveCommand extends Command
 {
 
+    /**
+     * @var string
+     */
     private $inputString;
 
-    protected function configure()
+    /**
+     * @var array|false|string[]
+     */
+    private $inputArray;
+
+    /**
+     * @var int[]
+     */
+    private $seatIds;
+
+
+    protected function configure() : void
     {
         $this
             ->setName('day5')
-            ->setDescription('Day 5: A Maze of Twisty Trampolines, All Alike')
+            ->setDescription('Day 5: Binary Boarding')
             ->addArgument('inputFile', null, 'newFile', 'day5.txt')
             ->addOption(
                 'part2',
@@ -27,38 +41,124 @@ class DayFiveCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $file = $input->getArgument('inputFile');
+        if (is_string($file) )
+            $this->inputString = file_get_contents($file);
 
-        $instructions = preg_split("/\n/", $this->inputString, null, PREG_SPLIT_NO_EMPTY);
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
-        $result = $this->traverseJumpInstructions($instructions, $input->getOption('part2'));
+            $this->inputArray = preg_split('/\n/', $this->inputString);
 
-        $output->writeln("result = " . $result);
-    }
+            $result = 0;
 
-    public function traverseJumpInstructions($instructions, $partTwoRule=false)
-    {
-        $stepCount = 0;
-        $pos = 0;
-        $max = count($instructions) - 1;
+            $output->writeln('result = ' . $result);
+            return Command::SUCCESS;;
 
-        while (in_array($pos, range(0, $max), true) && isset($instructions[$pos])) {
-            $offset = $instructions[$pos];
-            $instructions[$pos] = $this->replaceOffset($offset, $partTwoRule);
-            $pos += $offset;
-            $stepCount++;
+        } elseif (isset($this->inputString)) {
+
+            $this->inputArray = preg_split('/\n/', $this->inputString);
+
+            foreach ($this->inputArray as $boardingPass) {
+                $seat = $this->getSeat($boardingPass);
+                if (is_array($seat)) {
+                    $this->seatIds[] = $this->getSeatId($seat[0], $seat[1]);
+                }
+            }
+
+            $result = $this->getHighestSeatId($this->seatIds);
+
+            $output->writeln('result = ' . $result);
+            return Command::SUCCESS;
+
         }
 
-        return $stepCount;
+        $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
     }
 
-    public function replaceOffset($offset, $partTwoRule) {
-        if ($partTwoRule && $offset >= 3) {
-            return ($offset - 1);
+
+    /**
+     * @param int[] $rows
+     *
+     * @return int[]
+     */
+    public function getLowerHalf(array $rows) : array
+    {
+        $halfPos = $rows[0] + intdiv(($rows[1] - $rows[0]), 2);
+
+        return [$rows[0], $halfPos];
+    }
+
+
+    /**
+     * @param int[] $rows
+     *
+     * @return int[]
+     */
+    public function getUpperHalf(array $rows) : array
+    {
+        $halfPos = $rows[0] + intdiv(($rows[1] - $rows[0]), 2) + 1;
+
+        return [$halfPos, $rows[1]];
+    }
+
+    public function getSeatId(int $row, int $col) : int
+    {
+        return ((8 * $row) + $col);
+    }
+
+    /**
+     * @param int[] $boardingPasses
+     *
+     * @return int
+     */
+    public function getHighestSeatId(array $boardingPasses) : int
+    {
+        return max($boardingPasses);
+    }
+
+    /**
+     * @param string $boardingPass
+     *
+     * @return int[]|null
+     */
+    public function getSeat(string $boardingPass) : ?array
+    {
+        $moves = str_split($boardingPass);
+        $rows = [0, 127];
+        $cols = [0, 7];
+
+        foreach ($moves as $move) {
+            switch ($move) {
+                case 'F':
+                    $rows = $this->getLowerHalf($rows);
+                    break;
+                case 'B':
+                    $rows = $this->getUpperHalf($rows);
+                    break;
+                case 'L':
+                    $cols = $this->getLowerHalf($cols);
+                    break;
+                case 'R':
+                    $cols = $this->getUpperHalf($cols);
+                    break;
+
+            }
         }
 
-        return ($offset + 1);
+        if (($cols[0] == $cols[1]) && ($rows[0] == $rows[1])) {
+            return [$rows[0], $cols[0]];
+        }
+
+        return null;
     }
+
 }
