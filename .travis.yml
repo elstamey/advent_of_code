@@ -8,9 +8,15 @@ before_script:
   - composer install
 
 script:
-  - ./vendor/bin/phpunit 
+  - ./vendor/bin/phpstan
+  - ./vendor/bin/phpunit
+  - ./vendor/bin/psalm
 
 jobs:
   include:
-    - env: PHPSTAN=true
+    - stage: lint
         script: composer phpstan
+    - #
+        script: composer psalm
+    - stage: test
+        script: composer test
