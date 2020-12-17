@@ -4,11 +4,9 @@ parameters:
 		- src
 		- tests
 	excludes_analyse:
-	    - 'src/Console/Command/DaySixCommand.php'
 	    - 'src/Console/Command/DaySevenCommand.php'
 	    - 'src/Console/Command/DayEightCommand.php'
 	    - 'src/Console/Command/DayTwelveCommand.php'
-	    - 'tests/DaySixCommandTest.php'
 	    - 'tests/DaySevenCommandTest.php'
 	    - 'tests/DayEightCommandTest.php'
 	    - 'tests/DayTwelveCommandTest.php'

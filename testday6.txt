@@ -1,2 +1,15 @@
-0 2 7 0
+abc
 
+a
+b
+c
+
+ab
+ac
+
+a
+a
+a
+a
+
+b
