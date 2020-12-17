@@ -15,8 +15,8 @@ script:
 jobs:
   include:
     - stage: lint
-        script: composer phpstan
+      script: ./vendor/bin/phpstan
     - #
-        script: composer psalm
+      script: ./vendor/bin/psalm
     - stage: test
-        script: composer test
+      script: ./vendor/bin/phpunit
