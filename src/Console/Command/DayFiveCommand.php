@@ -14,18 +14,22 @@ class DayFiveCommand extends Command
     /**
      * @var string
      */
-    private $inputString;
+    private string $inputString;
 
     /**
-     * @var array|false|string[]
+     * @var null|string[]
      */
-    private $inputArray;
+    private ?array $inputArray;
 
     /**
      * @var int[]
      */
-    private $seatIds;
+    private array $seatIds;
 
+    /**
+     * @var int[][]
+     */
+    private array $occupiedSeats;
 
     protected function configure() : void
     {
@@ -49,6 +53,7 @@ class DayFiveCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $result = 0;
         $file = $input->getArgument('inputFile');
         if (is_string($file) )
             $this->inputString = file_get_contents($file);
@@ -57,10 +62,17 @@ class DayFiveCommand extends Command
 
             $this->inputArray = preg_split('/\n/', $this->inputString);
 
-            $result = 0;
+            foreach ($this->inputArray as $boardingPass) {
+                $seat = $this->getSeat($boardingPass);
+                if (is_array($seat)) {
+                    $seatId = $this->getSeatId($seat[0], $seat[1]);
+                    $this->occupiedSeats[] = [$seat[0], $seat[1], $seatId];
+                    $this->seatIds[] = $seatId;
+                }
+            }
 
-            $output->writeln('result = ' . $result);
-            return Command::SUCCESS;;
+            $result = $this->findMySeat();
+
 
         } elseif (isset($this->inputString)) {
 
@@ -75,9 +87,13 @@ class DayFiveCommand extends Command
 
             $result = $this->getHighestSeatId($this->seatIds);
 
+
+
+        }
+
+        if (is_int($result) && ($result>0)) {
             $output->writeln('result = ' . $result);
             return Command::SUCCESS;
-
         }
 
         $output->writeln('<error>Could not execute</error>');
@@ -159,6 +175,30 @@ class DayFiveCommand extends Command
         }
 
         return null;
+    }
+
+    public function findMySeat() : int
+    {
+        // traverse seats row 1 to row 126
+        for ($row=1; $row<127; $row++) {
+            for ($col=0; $col<8; $col++) {
+                $seatId = $this->getSeatId($row, $col);
+                if ($this->isSeatAvailable($row, $col, $seatId) && $this->areNearbySeatsAvailable($seatId)) {
+                    return $seatId;
+                }
+            }
+        }
+        return 0;
+    }
+
+    private function isSeatAvailable(int $row, int $col, int $seatId) : bool
+    {
+        return !in_array([$row, $col, $seatId], $this->occupiedSeats, true);
+    }
+
+    private function areNearbySeatsAvailable(int $seatId) : bool
+    {
+        return (in_array($seatId+1, $this->seatIds) && in_array($seatId-1, $this->seatIds));
     }
 
 }
