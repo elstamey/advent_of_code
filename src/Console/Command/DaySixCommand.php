@@ -11,15 +11,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DaySixCommand extends Command
 {
 
-    private $inputString;
+    private string $inputString;
+    /**
+     * @var array|false|string[]
+     */
+    private $inputArray;
 
-    public $photoAlbum = [];
-
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day6')
-            ->setDescription('Day 6: Signals and Noise')
+            ->setDescription('Day 6: Custom Customs')
             ->addArgument('inputFile', null, 'newFile', 'day6.txt')
             ->addOption(
                 'part2',
@@ -29,76 +31,57 @@ class DaySixCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
-        $lines = preg_split("/\n/", $this->inputString);
-        $memoryBanks = $lines[0];
-        $memoryBanks = preg_split('/\s/', $memoryBanks);
+        $result = 0;
+        $file = $input->getArgument('inputFile');
+        if (is_string($file) )
+            $this->inputString = file_get_contents($file);
 
-        $count = 0;
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
-        while ($this->checkForPreviouslySeenConfig($memoryBanks) !== true) {
-            $memoryBanks = $this->redistribute($memoryBanks);
-            $count++;
-        }
+            $this->inputArray = preg_split('/\n\n/', $this->inputString);
 
-        if ($input->getOption('part2')) {
+            foreach ($this->inputArray as $group) {
+                $groupMembersAnswers = preg_split('/\r|\n|\s/', $group);
+                $groupMembersLetters = array_map('str_split', $groupMembersAnswers);
+                $memCount = count($groupMembersLetters);
+                if ($memCount === 0) {
+                    $numberGroupYeses = 0;
+                } elseif ($memCount === 1) {
+                    $numberGroupYeses = count($groupMembersLetters[0]);
+                } else {
+                    $intersect = $groupMembersLetters[0];
 
-            $count = 1;
+                    for ($i=1; $i<$memCount; $i++) {
+                        if (!empty($groupMembersLetters[$i]))
+                            $intersect = array_intersect($intersect, $groupMembersLetters[$i]);
+                    }
+                    $numberGroupYeses = count($intersect);
+                }
 
-            $snapshot = implode(' ', $memoryBanks);
-            $memoryBanks = $this->redistribute($memoryBanks);
+                $result += $numberGroupYeses;
+            }
 
-            while ($this->isSameConfig($snapshot, $memoryBanks) !== true) {
-                $memoryBanks = $this->redistribute($memoryBanks);
-                $count++;
+
+        } elseif (isset($this->inputString)) {
+
+            $this->inputArray = preg_split('/\n\n/', $this->inputString);
+
+            foreach ($this->inputArray as $group) {
+                $group = preg_replace('/\r|\n|\s/', '', $group);
+                $groupYes = str_split($group, 1);
+                $numberGroupYeses = count(array_unique($groupYes));
+                $result += $numberGroupYeses;
             }
         }
 
-        $output->writeln("result = " . $count);
-    }
-
-    public function redistribute($memoryBanks)
-    {
-        $count = count($memoryBanks);
-        $key = $this->findKeyOfLargest($memoryBanks);
-        $most = $memoryBanks[$key];
-        $memoryBanks[$key] = 0;
-
-        for ($i=$most; $i > 0; $i--) {
-            $ptr = $key + 1;
-            $key = ($ptr < $count) ? $ptr : ($ptr - $count);
-            $memoryBanks[$key]++;
+        if (is_int($result) && ($result>0)) {
+            $output->writeln('result = ' . $result);
+            return Command::SUCCESS;
         }
 
-        return $memoryBanks;
-    }
-
-    public function findKeyOfLargest($memoryBanks)
-    {
-        $maxs = array_keys($memoryBanks, max($memoryBanks));
-
-        return $maxs[0];
-    }
-
-    public function checkForPreviouslySeenConfig($memoryBanks)
-    {
-        $snapshot = implode(' ', $memoryBanks);
-
-        if (in_array($snapshot, $this->photoAlbum, true)) {
-            return true;
-        }
-
-        array_push($this->photoAlbum, $snapshot);
-
-        return false;
-    }
-
-    public function isSameConfig($snapshot, $memoryBanks)
-    {
-        $current = implode(' ', $memoryBanks);
-
-        return ($snapshot === $current);
+        $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
     }
 }
