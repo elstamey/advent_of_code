@@ -32,33 +32,6 @@ class DayFiveCommandTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString('result = 820', $output);
     }
 
-    /** @test */
-    public function testExecutePartTwo() : void
-    {
-//        $application = new Application();
-//        $application->add(new DayFiveCommand());
-//
-//        $command = $application->find('day5');
-//        $commandTester = new CommandTester($command);
-//        $commandTester->execute(array(
-//            'command'  => $command->getName(),
-//
-//            // pass arguments to the helper
-//            'inputFile' => 'testday5.txt',
-//
-//            // prefix the key with a double slash when passing options,
-//            // e.g: '--some-option' => 'option_value',
-//            '--part2' => true,
-//
-//
-//        ));
-//
-//
-//        // the output of the command in the console
-//        $output = $commandTester->getDisplay();
-//        $this->assertContains('result = 10', $output);
-    }
-
     public function testGetSeat() : void
     {
         $command = new DayFiveCommand();
