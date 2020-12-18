@@ -7,34 +7,32 @@ use \Symfony\Component\Console\Tester\CommandTester;
 class DaySevenCommandTest extends PHPUnit\Framework\TestCase
 {
 
-    public $password = 'foo';
-
     /** @test */
-    public function testExecute()
+    public function testExecute(): void
     {
-//        $application = new Application();
-//        $application->add(new DaySevenCommand());
-//
-//        $command = $application->find('day7');
-//        $commandTester = new CommandTester($command);
-//        $commandTester->execute(array(
-//            'command'  => $command->getName(),
-//
-//            // pass arguments to the helper
-//            'inputFile' => 'testday7.txt',
-//
-//            // prefix the key with a double slash when passing options,
-//            // e.g: '--some-option' => 'option_value',
-//        ));
-//
-//
-//        // the output of the command in the console
-//        $output = $commandTester->getDisplay();
-//        $this->assertContains('result = 2', $output);
+        $application = new Application();
+        $application->add(new DaySevenCommand());
+
+        $command = $application->find('day7');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command' => $command->getName(),
+
+            // pass arguments to the helper
+            'inputFile' => 'testday7.txt',
+
+            // prefix the key with a double slash when passing options,
+            // e.g: '--some-option' => 'option_value',
+        ));
+
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('result = 4', $output);
     }
 
     /** @test */
-    public function testExecutePartTwo()
+    public function testExecutePartTwo(): void
     {
 //        $application = new Application();
 //        $application->add(new DaySevenCommand());
@@ -58,49 +56,35 @@ class DaySevenCommandTest extends PHPUnit\Framework\TestCase
 //        $this->assertContains('result = 3', $output);
     }
 
-    public function testIsAbba()
+    public function testBuildRuleset(): void
     {
-        $testAbbaStrings = ['abba', 'poop','ioxxoj'];
-        $testNotAbbaStrings = ['dogs', 'test', 'aaaa'];
+        $testRules = 'light red bags contain 1 bright white bag, 2 muted yellow bags.
+dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+bright white bags contain 1 shiny gold bag.
+muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+faded blue bags contain no other bags.
+dotted black bags contain no other bags.';
+
+
+        $handledRules = [
+            'light red bags' => ['bright white bag', 'muted yellow bags'],
+            'dark orange bags' => ['bright white bags', 'muted yellow bags'],
+            'bright white bags' => ['shiny gold bag'],
+            'muted yellow bags' => ['shiny gold bags', 'faded blue bags'],
+            'shiny gold bags' => ['dark olive bag', 'vibrant plum bags'],
+            'dark olive bags' => ['faded blue bags', 'dotted black bags'],
+            'vibrant plum bags' => ['faded blue bags', 'dotted black bags'],
+            'faded blue bags' => ['no other bags'],
+            'dotted black bags' => ['no other bags.']
+        ];
 
         $command = new DaySevenCommand();
 
-        foreach ($testAbbaStrings as $test) {
-            $this->assertTrue($command->isAbba($test), 'expected string to pass '.$test);
-        }
+        $this->assertEquals($handledRules, $command->buildRuleset($testRules));
 
-        foreach ($testNotAbbaStrings as $test) {
-            $this->assertFalse($command->isAbba($test), 'expected string to fail '.$test);
-        }
+
     }
-
-    public function testSupportsTls()
-    {
-        $passingLines = ['abba[mnop]qrst','ioxxoj[asdfgh]zxcvbn'];
-        $failingLines = ['abcd[bddb]xyyx', 'aaaa[qwer]tyui'];
-
-        $command = new DaySevenCommand();
-
-        foreach ($passingLines as $passLine) {
-            $this->assertTrue($command->supportsTLS($passLine), 'expecting string to pass '.$passLine);
-        }
-
-        foreach ($failingLines as $failLine) {
-            $this->assertFalse($command->supportsTLS($failLine), 'expecting string to fail '.$failLine);
-        }
-    }
-
-    public function testGetAbasFromString()
-    {
-        $command = new DaySevenCommand();
-
-        $this->assertEquals(['aba'], $command->getAbasFromString('aba'.'xyz'), 'Did not find matching aba');
-        $this->assertEquals(['bab'], $command->getAbasFromString('bab'), 'Did not find matching bab');
-        $this->assertEquals(['xyx','xyx'], $command->getAbasFromString('xyx'.'xyx'), 'Did not find matching xyx');
-        $this->assertEquals(['eke'], $command->getAbasFromString('aaa'.'eke'), 'Did not find matching eke');
-        $this->assertEquals(['kek'], $command->getAbasFromString('kek'), 'Did not find matching kek');
-        $this->assertEquals(['zaz','zbz'], $command->getAbasFromString('zazbz'.'cdb'), 'Did not find matching zbz and zaz in zazbz');
-        $this->assertEquals(['bzb'], $command->getAbasFromString('bzb'), 'Did not find matching bzb');
-    }
-
 }
