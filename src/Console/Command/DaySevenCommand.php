@@ -14,13 +14,17 @@ class DaySevenCommand extends Command
      * @var int
      */
     var $total = 0;
+    /**
+     * @var false|string
+     */
+    private string $inputString;
 
 
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day7')
-            ->setDescription('The Ideal Stocking Stuffer')
+            ->setDescription('Day 7: Handy Haversacks')
             ->addArgument('inputFile', null, 'newFile', 'day7.txt')
             ->addOption(
                 'part2',
@@ -30,136 +34,48 @@ class DaySevenCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $result = 0;
 
         if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
-                    $this->total += intval($this->supportsSSL($line));
+//                    $this->total += intval($this->supportsSSL($line));
                 }
             }
         } else {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
+            foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
-                    $this->total += intval($this->supportsTLS($line));
+//                    $this->total += intval($this->supportsTLS($line));
                 }
             }
         }
 
-        $result = $this->total;
-        $output->writeln("result = " . $result);
-    }
-
-    public function isAbba($textString)
-    {
-        preg_match('/(\w)(\w)\2\1/', $textString, $out);
-//        var_dump($out);
-
-//        print $textString. " " . intval((preg_match('/.*(\w)(\w)\2\1.*/', $textString) === 1) && ($out[1] !== $out[2])). "\n";
-        return (preg_match('/(\w)(\w)\2\1/', $textString) === 1) && ($out[1] !== $out[2]);
-    }
-
-    public function supportsTLS($wholeLine)
-    {
-        if ( ! $this->isAbba($wholeLine)) {
-            return false;
+        if ($result !== 0) {
+            $output->writeln("result = " . $result);
+            return Command::SUCCESS;
         }
 
-        preg_match_all('/\[([a-zA-Z]+)\]/', $wholeLine, $hypernets);
+        $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
 
-        foreach ($hypernets[1] as $hypernet) {
-            if ($this->isAbba($hypernet))
-                return false;
-        };
-
-        return true;
     }
 
-
-    public function getAbasFromString($net)
+    public function buildRuleset(string $rules) : array
     {
-        $returnArray = [];
+        $rules = preg_split('/\.\n/', $rules);
+        $formattedRules = [];
 
-            $letters = str_split($net,1);
-            for ($i=0; $i < (count($letters) - 2); $i++) {
-
-                $myString = substr($net, $i, 3);
-                if (($letters[$i] !== $letters[$i+1]) && ($letters[$i] === $letters[$i+2])) {
-                    array_push($returnArray, $myString);
-                }
-
-            }
-//        var_dump($returnArray);
-
-        return $returnArray;
-    }
-
-
-    private function supportsSSL($line)
-    {
-        $supernets = $this->getSupernetsFromString($line);
-        $hypernets = $this->getHypernetsFromString($line);
-
-//        var_dump($supernets, $hypernets);
-
-        $abas = [];
-        foreach ($supernets as $supernet) {
-            foreach ($this->getAbasFromString($supernet) as $aba) {
-                array_push($abas, $aba);
-            }
+        foreach ($rules as $rule) {
+            $thisRule = preg_split('/ contain /', $rule);
+            $thisRule[1] = preg_replace('/[0-9]\s/', '', $thisRule[1]);
+            $thisRule[1] = preg_split('/\,\s/', $thisRule[1]);
+            $formattedRules[$thisRule[0]] = $thisRule[1];
         }
-
-        $babs = [];
-        foreach ($hypernets as $hypernet) {
-            foreach ($this->getAbasFromString($hypernet) as $bab) {
-                array_push($babs, $bab);
-            }
-        }
-
-//        var_dump($abas, $babs);
-
-        if (!empty($abas) && !empty($babs)) {
-
-            foreach ($abas as $aba) {
-                preg_match('/(\w)(\w)\1/', $aba, $out);
-                $bab = $out[2] . $out[1] . $out[2];
-
-//                var_dump($aba,$bab, $babs);
-
-
-                if (array_search($bab, $babs) !== false) {
-//                    print "match\n";
-                    return true;
-                }
-//                print "\n";
-            }
-        }
-
-        return false;
+var_dump($formattedRules);
+        return $formattedRules;
     }
-
-    private function getSupernetsFromString($line)
-    {
-        preg_match_all('/([a-zA-Z]+)\[[a-zA-Z]+\]([a-zA-Z]+)/', $line, $supernets);
-//        unset($supernets[0]);
-
-
-        return array_merge($supernets[1], $supernets[2]);
-    }
-
-    private function getHypernetsFromString($line)
-    {
-        preg_match_all('/\w+\[(\w+)\]\w+/', $line, $hypernets);
-        unset($hypernets[0]);
-
-//        var_dump($hypernets);
-
-
-        return $hypernets[1];
-    }
-
-
 
 }
