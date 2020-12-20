@@ -4,6 +4,8 @@ parameters:
 		- src
 		- tests
 	excludes_analyse:
+	    - 'src/Console/Command/DaySevenCommand.php'
+	    - 'tests/DaySevenCommandTest.php'
 	    - 'src/Console/Command/DayTwelveCommand.php'
 	    - 'tests/DayTwelveCommandTest.php'
 	    - 'src/Console/Models/IntCodeComputer.php'
