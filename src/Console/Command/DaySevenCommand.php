@@ -74,7 +74,7 @@ class DaySevenCommand extends Command
             $thisRule[1] = preg_split('/\,\s/', $thisRule[1]);
             $formattedRules[$thisRule[0]] = $thisRule[1];
         }
-var_dump($formattedRules);
+
         return $formattedRules;
     }
 

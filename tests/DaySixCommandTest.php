@@ -8,7 +8,7 @@ class DaySixCommandTest extends PHPUnit\Framework\TestCase
 {
 
     /** @test */
-    public function testExecute() :void
+    public function testExecute() : void
     {
         $application = new Application();
         $application->add(new DaySixCommand());
@@ -54,27 +54,4 @@ class DaySixCommandTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString('result = 6', $output);
     }
 
-    public function testRedistribute() : void
-    {
-        $command = new DaySixCommand();
-
-    }
-
-    public function testFindKeyOfLargest() : void
-    {
-        $command = new DaySixCommand();
-
-    }
-
-    public function testCheckForPreviouslySeenConfig() : void
-    {
-        $command = new DaySixCommand();
-
-    }
-
-    public function testIsSameConfig() : void
-    {
-        $command = new DaySixCommand();
-
-    }
 }

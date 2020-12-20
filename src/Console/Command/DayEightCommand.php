@@ -8,6 +8,7 @@
 
 namespace Acme\Console\Command;
 
+use Acme\Console\Models\BootCodeComputer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,16 +20,19 @@ class DayEightCommand extends Command
     /**
      * @var string
      */
-    var $input_string = '';
+    var string $inputString;
 
-    private $rectangle = [];
+    /**
+     * @var array|string[]
+     */
+    private array $inputArray;
 
 
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day8')
-            ->setDescription('The Ideal Stocking Stuffer')
+            ->setDescription('Day 8: Handheld Halting')
             ->addArgument('inputFile', null, 'newFile', 'day8.txt')
             ->addOption(
                 'part2',
@@ -38,165 +42,79 @@ class DayEightCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $result = 0;
+        $file = $input->getArgument('inputFile');
+        if (is_string($file) )
+            $this->inputString = file_get_contents($file);
 
-        if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+
+            $this->inputArray = preg_split('/\n/', $this->inputString);
+
+            if (is_array($this->inputArray)) {
+                foreach ($this->inputArray as $instruction) {
+
                 }
             }
-        } else {
-            $this->initializeRectangle();
-            $this->printRectangle();
 
 
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->handleCommand($line);
-                }
-            }
-        }
-        $result = $this->countLights();
-        $output->writeln("result = " . $result);
-    }
 
-    private function printRectangle()
-    {
-        foreach ($this->rectangle as $row) {
-            foreach ($row as $space) {
-                print " ". $space ." ";
-            }
-            print "\n";
-        }
-        print "\n";
-    }
+        } elseif (isset($this->inputString)) {
 
-    private function initializeRectangle()
-    {
-        $x = [];
-        $y = [];
-        $x = array_pad($x, 50, '.');
-        $y = array_pad($y, 6, $x);
-        $this->rectangle = $y;
-    }
+            $this->inputArray = preg_split('/\n/', $this->inputString);
 
-    private function handleCommand($line)
-    {
-        $command = preg_split('/[\s]+/', $line, 2);
+            $computer = new BootCodeComputer();
 
-        if ($command[0] === 'rect') {
+            if (is_array($this->inputArray)) {
+                $instructionPosition = 0;
+                $hasBeenVisited = false;
 
-//            print strtoupper($command[0])." ".$command[1];
-            $this->drawRectangle($command[1]);
-        } elseif ($command[0] === 'rotate') {
-//            var_dump($command);
-            $this->rotate($command[1]);
-        }
-    }
+                while (!$hasBeenVisited) {
+                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = intval($instructions[1]);
 
-    private function drawRectangle($restOfLine)
-    {
-//        var_dump($restOfLine);
-        $coords = preg_split('/x/', $restOfLine);
-//        print "RECT " . $coords[0] . " x " . $coords[1] . "\n";
-        $x = $coords[0];
-        $y = $coords[1];
-
-        foreach ($this->rectangle as $keyA => $row) {
-//            print implode(' ', $row) . "\n";
-            if ($keyA < $y) {
-                foreach ($row as $keyB => $space) {
-                    if ($keyB < $x) {
-//                        print $keyA."," . $keyB. "    ". $x .",".$y. "\n";
-                        $this->rectangle[$keyA][$keyB] = '#';
+                    if (!$computer->hasBeenVisited($code, $amount)) {
+                        switch ($code) {
+                            case 'nop':
+                                $computer->noOp();
+                                $computer->recordVisit();
+                                break;
+                            case 'acc':
+                                $computer->accumulate($amount);
+                                $computer->makeJump(1);
+                                $computer->recordVisit();
+                                break;
+                            case 'jmp':
+                                $computer->makeJump($amount);
+                                $computer->recordVisit();
+                                break;
+                            default:
+                                break;
+                        }
                     }
+
+                    $instructionPosition = $computer->getPosition();
+                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = intval($instructions[1]);
+                    $hasBeenVisited = $computer->hasBeenVisited($code, $amount);
+                    $result = $computer->getAccumulator();
                 }
+
             }
 
         }
 
-        $this->printRectangle();
-//        die();
-    }
-
-    private function rotate($restOfLine)
-    {
-//        row y=0 by 2
-        $command = preg_split('/[\s]/', $restOfLine);
-        var_dump($command);
-        $rowOrColumn = $command[0];
-        $position = $command[1];
-        $rotateAmount = $command[3];
-
-        switch ($rowOrColumn) {
-            case 'row':
-                print "ROW ".$position." by ".$rotateAmount . "\n";
-                $position = preg_split('/\=/', $position);
-                $this->shiftRow($position[1], $rotateAmount);
-                break;
-            case 'column':
-                print "COLUMN ".$position." by ".$rotateAmount . "\n";
-                $position = preg_split('/\=/', $position);
-                $this->shiftColumn($position[1], $rotateAmount);
-                break;
-        }
-    }
-
-    private function shiftRow($y, $rotateAmount)
-    {
-        $tempRow = array_pad([], 50, '');
-
-        foreach ($this->rectangle[$y] as $key => $item) {
-            $cnt = $key + $rotateAmount;
-            if ( $cnt >= 50 ) {
-                $cnt -= 50;
-            }
-            $tempRow[$cnt] = $item;
+        if (is_int($result) && ($result!==0)) {
+            $output->writeln('result = ' . $result);
+            return Command::SUCCESS;
         }
 
-//        print "row to shift" . implode(' ', $tempRow) ."\n";
-
-        $this->rectangle[$y] = $tempRow;
-        $this->printRectangle();
-    }
-
-    private function shiftColumn($x, $rotateAmount)
-    {
-        $tempColumn = array_pad([], 6, '');
-
-
-        foreach ($this->rectangle as $key => $item) {
-            $cnt = $key + $rotateAmount;
-            if ( $cnt >= 6) {
-                $cnt -= 6;
-            }
-            $tempColumn[$cnt] = $item[$x];
-        }
-
-        foreach ($this->rectangle as $key => $item) {
-            $this->rectangle[$key][$x] = $tempColumn[$key];
-        }
-
-        $this->printRectangle();
-    }
-
-    private function countLights()
-    {
-        $numberOfLights = 0;
-//        $wholeArray = [];
-//
-        foreach ($this->rectangle as $key => $item) {
-//            $numberOfLights += array_walk($item, function($value) {
-//                return ($item[$key] === '#');
-//            });
-            foreach ($item as $item2) {
-                $numberOfLights += ($item2 === '#');
-            }
-        }
-
-        return $numberOfLights;
+        $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
     }
 
 }
