@@ -33,25 +33,25 @@ class DayEightCommandTest extends PHPUnit\Framework\TestCase
     /** @test */
     public function testExecutePartTwo() : void
     {
-//        $application = new Application();
-//        $application->add(new DayEightCommand());
-//
-//        $command = $application->find('day8');
-//        $commandTester = new CommandTester($command);
-//        $commandTester->execute(array(
-//            'command'   => $command->getName(),
-//
-//            // pass arguments to the helper
-//            'inputFile' => 'testday8.txt',
-//
-//            // prefix the key with a double slash when passing options,
-//            // e.g: '--some-option' => 'option_value',
-//            '--part2'   => true,
-//        ));
-//
-//        // the output of the command in the console
-//        $output = $commandTester->getDisplay();
-//        $this->assertStringContainsString('result = 6', $output);
+        $application = new Application();
+        $application->add(new DayEightCommand());
+
+        $command = $application->find('day8');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command'   => $command->getName(),
+
+            // pass arguments to the helper
+            'inputFile' => 'testday8.txt',
+
+            // prefix the key with a double slash when passing options,
+            // e.g: '--some-option' => 'option_value',
+            '--part2'   => true,
+        ));
+
+        // the output of the command in the console
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('result = 8', $output);
     }
 
 }

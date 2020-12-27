@@ -71,4 +71,9 @@ class BootCodeComputer
     {
         $this->visited[] = $this->position;
     }
+
+    public function hasVisitedPrevious(int $currentPosition) : bool
+    {
+        return in_array(($currentPosition-1), $this->visited);
+    }
 }

@@ -46,20 +46,59 @@ class DayEightCommand extends Command
     {
         $result = 0;
         $file = $input->getArgument('inputFile');
-        if (is_string($file) )
+        if (is_string($file)) {
             $this->inputString = file_get_contents($file);
+        }
 
         if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
             $this->inputArray = preg_split('/\n/', $this->inputString);
 
             if (is_array($this->inputArray)) {
-                foreach ($this->inputArray as $instruction) {
+                $instructionPosition = 0;
+                /** @var bool $hasBeenSubstituted */
+                $hasBeenSubstituted = false;
+                /** @var bool $hasBeenFinished */
+                $hasBeenFinished = false;
 
+                $replacePositions[] = array_filter($this->inputArray, function ($v, $k) {
+                    $instructions = preg_split('/\s/', $this->inputArray[$k]);
+                    $code = $instructions[0];
+                    if (($code === 'jmp') || ($code === 'nop')) {
+                        return $k;
+                    }
+                }, ARRAY_FILTER_USE_BOTH);
+
+                $computer = new BootCodeComputer();
+
+                while (!$hasBeenFinished && !empty($replacePositions)) {
+
+                    if ($hasBeenFinished === true) {
+                        $instructionPosition = 0;
+                        $computer = new BootCodeComputer();
+                        $hasBeenFinished = $computer->hasVisitedPrevious(0);
+                        $hasBeenSubstituted = false;
+                    }
+                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = intval($instructions[1]);
+
+                    if (in_array($instructionPosition, $replacePositions) && !$hasBeenSubstituted) {
+                        $key = array_search($instructionPosition, $replacePositions);
+                        unset($replacePositions[$key]);
+                        $code = ($code === 'nop') ? 'jmp' : 'nop';
+                        $hasBeenSubstituted = true;
+                    }
+
+                    if (!$computer->hasVisitedPrevious($computer->getPosition())) {
+                        $this->handleInstructions($computer, $code, $amount);
+                    }
+
+                    $instructionPosition = $computer->getPosition();
+                    $result = $computer->getAccumulator();
+                    $hasBeenFinished = $computer->hasVisitedPrevious($instructionPosition);
                 }
             }
-
-
 
         } elseif (isset($this->inputString)) {
 
@@ -77,23 +116,7 @@ class DayEightCommand extends Command
                     $amount = intval($instructions[1]);
 
                     if (!$computer->hasBeenVisited($code, $amount)) {
-                        switch ($code) {
-                            case 'nop':
-                                $computer->noOp();
-                                $computer->recordVisit();
-                                break;
-                            case 'acc':
-                                $computer->accumulate($amount);
-                                $computer->makeJump(1);
-                                $computer->recordVisit();
-                                break;
-                            case 'jmp':
-                                $computer->makeJump($amount);
-                                $computer->recordVisit();
-                                break;
-                            default:
-                                break;
-                        }
+                        $this->handleInstructions($computer, $code, $amount);
                     }
 
                     $instructionPosition = $computer->getPosition();
@@ -108,13 +131,39 @@ class DayEightCommand extends Command
 
         }
 
-        if (is_int($result) && ($result!==0)) {
+        if (is_int($result) && ($result !== 0)) {
             $output->writeln('result = ' . $result);
             return Command::SUCCESS;
         }
 
         $output->writeln('<error>Could not execute</error>');
         return Command::FAILURE;
+
     }
 
+    /**
+     * @param BootCodeComputer $computer
+     * @param string           $code
+     * @param int              $amount
+     */
+    protected function handleInstructions(BootCodeComputer $computer, string $code, int $amount): void
+    {
+        switch ($code) {
+            case 'nop':
+                $computer->noOp();
+                $computer->recordVisit();
+                break;
+            case 'acc':
+                $computer->accumulate($amount);
+                $computer->makeJump(1);
+                $computer->recordVisit();
+                break;
+            case 'jmp':
+                $computer->makeJump($amount);
+                $computer->recordVisit();
+                break;
+            default:
+                break;
+        }
+    }
 }
