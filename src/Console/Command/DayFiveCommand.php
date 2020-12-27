@@ -138,7 +138,7 @@ class DayFiveCommand extends Command
      */
     public function getHighestSeatId(array $boardingPasses) : int
     {
-        return max($boardingPasses);
+        return !empty($boardingPasses) ? max($boardingPasses) : 0;
     }
 
     /**
