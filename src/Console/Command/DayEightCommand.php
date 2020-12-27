@@ -54,6 +54,8 @@ class DayEightCommand extends Command
 
             $this->inputArray = preg_split('/\n/', $this->inputString);
 
+            $computer = new BootCodeComputer();
+
             if (is_array($this->inputArray)) {
                 $instructionPosition = 0;
                 /** @var bool $hasBeenSubstituted */
@@ -79,6 +81,7 @@ class DayEightCommand extends Command
                         $hasBeenFinished = $computer->hasVisitedPrevious(0);
                         $hasBeenSubstituted = false;
                     }
+
                     $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
                     $code = $instructions[0];
                     $amount = intval($instructions[1]);
