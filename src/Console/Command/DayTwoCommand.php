@@ -122,17 +122,21 @@ class DayTwoCommand extends Command
      *
      * @return bool
      */
-    public function isPasswordValid(string $line)
+    public function isPasswordValid(string $line) : bool
     {
         $pieces = preg_split("/\s/", $line);
 
         if (count($pieces) !== 3) return false;
 
         $range = $this->getRange($pieces[0]);
-        $letter = $this->getLetter($pieces[1]);
-        $stringCount = $this->countRepeatedLetters($letter, $pieces[2]);
+        if (is_array($range)) {
+            $letter = $this->getLetter($pieces[1]);
+            $stringCount = $this->countRepeatedLetters($letter, $pieces[2]);
 
-        return in_array($stringCount, range($range[0], $range[1]));
+            return in_array($stringCount, range($range[0], $range[1]));
+        }
+
+        return false;
     }
 
     /**
