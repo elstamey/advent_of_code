@@ -52,6 +52,8 @@ class DayEightCommand extends Command
 
         if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
+            $replacePositions = [];
+
             $this->inputArray = preg_split('/\n/', $this->inputString);
 
             $computer = new BootCodeComputer();

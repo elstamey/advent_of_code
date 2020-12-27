@@ -43,14 +43,17 @@ class DayBlankCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $file = $input->getArgument('inputFile');
+        if (is_string($file)) {
+            $this->inputString = file_get_contents($file);
+        }
 
-        if ($input->getOption('part2')) {
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
             foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
                 }
             }
-        } else {
+        } elseif (isset($this->inputString)) {
             foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
                 }

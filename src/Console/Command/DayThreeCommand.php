@@ -136,7 +136,7 @@ class DayThreeCommand extends Command
     private function traverseAndFindTrees(array $slope=[3,1]) : int
     {
         $height = count($this->map);
-        $length = count($this->map[0]);
+        $length = is_array($this->map[0]) ? count($this->map[0]) : 0;
         $treeCount = 0;
 
         for ($x=$y=0; $y<$height && $x<$length; list($x, $y)=$this->takeStep($x, $y, $slope)) {
