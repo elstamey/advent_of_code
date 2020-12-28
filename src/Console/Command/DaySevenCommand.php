@@ -2,6 +2,7 @@
 
 namespace Acme\Console\Command;
 
+use Acme\Console\Models\Rules;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -46,11 +47,10 @@ class DaySevenCommand extends Command
                 }
             }
         } else {
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-//                    $this->total += intval($this->supportsTLS($line));
-                }
-            }
+            $rules = $this->buildRuleset($this->inputString);
+
+            $allBags = $rules->findBagsContaining('shiny gold');
+            $result = count($allBags) - 1;
         }
 
         if ($result !== 0) {
@@ -63,19 +63,16 @@ class DaySevenCommand extends Command
 
     }
 
-    public function buildRuleset(string $rules) : array
+    public function buildRuleset(string $ruleStrings) : Rules
     {
-        $rules = preg_split('/\.\n/', $rules);
-        $formattedRules = [];
+        $ruleStrings = preg_split('/\.\n/', $ruleStrings);
+        $rules = new Rules;
 
-        foreach ($rules as $rule) {
-            $thisRule = preg_split('/ contain /', $rule);
-            $thisRule[1] = preg_replace('/[0-9]\s/', '', $thisRule[1]);
-            $thisRule[1] = preg_split('/\,\s/', $thisRule[1]);
-            $formattedRules[$thisRule[0]] = $thisRule[1];
+        foreach ($ruleStrings as $rule) {
+            $rules->createFromString($rule);
         }
-var_dump($formattedRules);
-        return $formattedRules;
+
+        return $rules;
     }
 
 }
