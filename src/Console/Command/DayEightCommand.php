@@ -8,6 +8,7 @@
 
 namespace Acme\Console\Command;
 
+use Acme\Console\Models\BootCodeComputer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,16 +20,19 @@ class DayEightCommand extends Command
     /**
      * @var string
      */
-    var $input_string = '';
+    var string $inputString;
 
-    private $rectangle = [];
+    /**
+     * @var array|string[]
+     */
+    private array $inputArray;
 
 
-    protected function configure()
+    protected function configure() : void
     {
         $this
             ->setName('day8')
-            ->setDescription('The Ideal Stocking Stuffer')
+            ->setDescription('Day 8: Handheld Halting')
             ->addArgument('inputFile', null, 'newFile', 'day8.txt')
             ->addOption(
                 'part2',
@@ -38,30 +42,129 @@ class DayEightCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->input_string = file_get_contents($input->getArgument('inputFile'));
+        $result = 0;
+        $file = $input->getArgument('inputFile');
+        if (is_string($file)) {
+            $this->inputString = file_get_contents($file);
+        }
 
-        if ($input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
+
+        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+
+            $this->inputArray = preg_split('/\n/', $this->inputString);
+
+            if (is_array($this->inputArray)) {
+                $instructionPosition = 0;
+                /** @var bool $hasBeenSubstituted */
+                $hasBeenSubstituted = false;
+                /** @var bool $hasBeenFinished */
+                $hasBeenFinished = false;
+
+                $replacePositions[] = array_filter($this->inputArray, function ($v, $k) {
+                    $instructions = preg_split('/\s/', $this->inputArray[$k]);
+                    $code = $instructions[0];
+                    if (($code === 'jmp') || ($code === 'nop')) {
+                        return $k;
+                    }
+                }, ARRAY_FILTER_USE_BOTH);
+
+                $computer = new BootCodeComputer();
+
+                while (!$hasBeenFinished && !empty($replacePositions)) {
+
+                    if ($hasBeenFinished) {
+                        $instructionPosition = 0;
+                        $computer = new BootCodeComputer();
+                        $hasBeenFinished = $computer->hasVisitedPrevious(0);
+                        $hasBeenSubstituted = false;
+                    }
+                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = intval($instructions[1]);
+
+                    if (in_array($instructionPosition, $replacePositions) && !$hasBeenSubstituted) {
+                        $key = array_search($instructionPosition, $replacePositions);
+                        unset($replacePositions[$key]);
+                        $code = ($code === 'nop') ? 'jmp' : 'nop';
+                        $hasBeenSubstituted = true;
+                    }
+
+                    if (!$computer->hasVisitedPrevious($computer->getPosition())) {
+                        $this->handleInstructions($computer, $code, $amount);
+                    }
+
+                    $instructionPosition = $computer->getPosition();
+                    $result = $computer->getAccumulator();
+                    $hasBeenFinished = $computer->hasVisitedPrevious($instructionPosition);
                 }
             }
-        } else {
-            $replacePositions = [];
+
+        } elseif (isset($this->inputString)) {
 
             $this->inputArray = preg_split('/\n/', $this->inputString);
 
             $computer = new BootCodeComputer();
 
-            foreach (preg_split("/\n/", $this->input_string) as $line) {
-                if (isset($line) && ($line != "")) {
-                    $this->handleCommand($line);
+            if (is_array($this->inputArray)) {
+                $instructionPosition = 0;
+                $hasBeenVisited = false;
+
+                while (!$hasBeenVisited) {
+                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = intval($instructions[1]);
+
+                    if (!$computer->hasBeenVisited($code, $amount)) {
+                        $this->handleInstructions($computer, $code, $amount);
+                    }
+
+                    $instructionPosition = $computer->getPosition();
+                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = intval($instructions[1]);
+                    $hasBeenVisited = $computer->hasBeenVisited($code, $amount);
+                    $result = $computer->getAccumulator();
                 }
+
             }
+
         }
-        $result = $this->countLights();
-        $output->writeln("result = " . $result);
+
+        if (is_int($result) && ($result !== 0)) {
+            $output->writeln('result = ' . $result);
+            return Command::SUCCESS;
+        }
+
+        $output->writeln('<error>Could not execute</error>');
+        return Command::FAILURE;
+
     }
 
+    /**
+     * @param BootCodeComputer $computer
+     * @param string           $code
+     * @param int              $amount
+     */
+    protected function handleInstructions(BootCodeComputer $computer, string $code, int $amount): void
+    {
+        switch ($code) {
+            case 'nop':
+                $computer->noOp();
+                $computer->recordVisit();
+                break;
+            case 'acc':
+                $computer->accumulate($amount);
+                $computer->makeJump(1);
+                $computer->recordVisit();
+                break;
+            case 'jmp':
+                $computer->makeJump($amount);
+                $computer->recordVisit();
+                break;
+            default:
+                break;
+        }
+    }
 }

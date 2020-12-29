@@ -12,10 +12,11 @@ class DaySixCommand extends Command
 {
 
     private string $inputString;
+
     /**
-     * @var array|false|string[]
+     * @var array|string[]
      */
-    private $inputArray;
+    private array $inputArray;
 
     protected function configure() : void
     {
@@ -42,37 +43,42 @@ class DaySixCommand extends Command
 
             $this->inputArray = preg_split('/\n\n/', $this->inputString);
 
-            foreach ($this->inputArray as $group) {
-                $groupMembersAnswers = preg_split('/\r|\n|\s/', $group);
-                $groupMembersLetters = array_map('str_split', $groupMembersAnswers);
-                $memCount = count($groupMembersLetters);
-                if ($memCount === 0) {
-                    $numberGroupYeses = 0;
-                } elseif ($memCount === 1) {
-                    $numberGroupYeses = count($groupMembersLetters[0]);
-                } else {
-                    $intersect = $groupMembersLetters[0];
+            if (is_array($this->inputArray)) {
 
-                    for ($i=1; $i<$memCount; $i++) {
-                        if (!empty($groupMembersLetters[$i]))
-                            $intersect = array_intersect($intersect, $groupMembersLetters[$i]);
+                foreach ($this->inputArray as $group) {
+                    $groupMembersAnswers = preg_split('/\r|\n|\s/', $group);
+                    $groupMembersLetters = array_map('str_split', $groupMembersAnswers);
+                    $memCount = count($groupMembersLetters);
+                    if ($memCount === 0) {
+                        $numberGroupYeses = 0;
+                    } elseif ($memCount === 1) {
+                        $numberGroupYeses = count($groupMembersLetters[0]);
+                    } else {
+                        $intersect = $groupMembersLetters[0];
+
+                        for ($i = 1; $i < $memCount; $i++) {
+                            if (!empty($groupMembersLetters[$i])) {
+                                $intersect = array_intersect($intersect, $groupMembersLetters[$i]);
+                            }
+                        }
+                        $numberGroupYeses = count($intersect);
                     }
-                    $numberGroupYeses = count($intersect);
-                }
 
-                $result += $numberGroupYeses;
+                    $result += $numberGroupYeses;
+                }//end foreach
             }
-
 
         } elseif (isset($this->inputString)) {
 
             $this->inputArray = preg_split('/\n\n/', $this->inputString);
 
-            foreach ($this->inputArray as $group) {
-                $group = preg_replace('/\r|\n|\s/', '', $group);
-                $groupYes = str_split($group, 1);
-                $numberGroupYeses = count(array_unique($groupYes));
-                $result += $numberGroupYeses;
+            if (is_array($this->inputArray)) {
+                foreach ($this->inputArray as $group) {
+                    $group = preg_replace('/\r|\n|\s/', '', $group);
+                    $groupYes = str_split($group, 1);
+                    $numberGroupYeses = count(array_unique($groupYes));
+                    $result += $numberGroupYeses;
+                }
             }
         }
 
