@@ -11,7 +11,7 @@ class Rules
     /**
      * @var Bag[]
      */
-    private array $bags;
+    private array $bags = [];
 
 
     public function createFromString(string $ruleString) : void
