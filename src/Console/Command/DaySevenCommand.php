@@ -42,11 +42,9 @@ class DaySevenCommand extends Command
         $result = 0;
 
         if (is_string($this->inputString) && $input->getOption('part2')) {
-            foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line != "")) {
-//                    $this->total += intval($this->supportsSSL($line));
-                }
-            }
+            $rules = $this->buildRuleset($this->inputString);
+
+            $result = $rules->countBagsInside('shiny gold');
         } elseif (is_string($this->inputString)) {
             $rules = $this->buildRuleset($this->inputString);
 

@@ -34,4 +34,12 @@ class Bag
 
         return false;
     }
+
+    /**
+     * @return BagQuantity[]
+     */
+    public function getContents()
+    {
+        return $this->contents;
+    }
 }
