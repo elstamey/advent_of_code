@@ -14,11 +14,7 @@ class DaySevenCommand extends Command
     /**
      * @var int
      */
-    var $total = 0;
-    /**
-     * @var string
-     */
-    private string $inputString;
+    public int $total = 0;
 
 
     protected function configure() : void
@@ -26,7 +22,7 @@ class DaySevenCommand extends Command
         $this
             ->setName('day7')
             ->setDescription('Day 7: Handy Haversacks')
-            ->addArgument('inputFile', null, 'newFile', 'day7.txt')
+            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'day7.txt')
             ->addOption(
                 'part2',
                 null,
@@ -37,37 +33,36 @@ class DaySevenCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $file = $input->getArgument('inputFile');
-        $this->inputString = file_get_contents($file);
-        $result = 0;
+        $file = $input->getArgument('inputFile') ?: '';
+        $inputString = file_get_contents($file);
 
-        if (is_string($this->inputString) && $input->getOption('part2')) {
-            $rules = $this->buildRuleset($this->inputString);
+        if ($inputString ===false) {
+            $output->writeln('<error>Could not execute</error>');
+            return Command::FAILURE;
+        }
+
+        if ($input->getOption('part2')) {
+            $rules = $this->buildRuleset($inputString);
 
             $result = $rules->countBagsInside('shiny gold');
-        } elseif (is_string($this->inputString)) {
-            $rules = $this->buildRuleset($this->inputString);
+        } else {
+            $rules = $this->buildRuleset($inputString);
 
             $allBags = $rules->findBagsContaining('shiny gold');
             $result = count($allBags) - 1;
         }
 
-        if ($result !== 0) {
-            $output->writeln("result = " . $result);
-            return Command::SUCCESS;
-        }
-
-        $output->writeln('<error>Could not execute</error>');
-        return Command::FAILURE;
+        $output->writeln("result = " . $result);
+        return Command::SUCCESS;
 
     }
 
     public function buildRuleset(string $ruleStrings) : Rules
     {
-        $ruleStrings = preg_split('/\.\n/', $ruleStrings);
+        $ruleStringsArray = preg_split('/\.\n/', $ruleStrings);
         $rules = new Rules;
 
-        foreach ($ruleStrings as $rule) {
+        foreach ($ruleStringsArray as $rule) {
             $rules->createFromString($rule);
         }
 

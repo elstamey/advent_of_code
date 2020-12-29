@@ -9,7 +9,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
     /**
      * @return void
      */
-    public function testExecute()
+    public function testExecute(): void
     {
         $application = new Application();
         $application->add(new DayTwoCommand());
@@ -29,7 +29,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('result = 2', $output);
+        self::assertStringContainsString('result = 2', $output);
     }
 
     public function testGetRange() : void
@@ -41,9 +41,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         ];
         $command = new DayTwoCommand();
 
-        $this->assertEquals([1,3], $command->getRange($testData[0]));
-        $this->assertEquals([1,3], $command->getRange($testData[1]));
-        $this->assertEquals([2,9], $command->getRange($testData[2]));
+        self::assertEquals([1,3], $command->getRange($testData[0]));
+        self::assertEquals([1,3], $command->getRange($testData[1]));
+        self::assertEquals([2,9], $command->getRange($testData[2]));
     }
 
     public function testGetPositions() : void
@@ -55,9 +55,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         ];
         $command = new DayTwoCommand();
 
-        $this->assertEquals([1,3], $command->getPositions($testData[0]));
-        $this->assertEquals([1,3], $command->getPositions($testData[1]));
-        $this->assertEquals([2,9], $command->getPositions($testData[2]));
+        self::assertEquals([1,3], $command->getPositions($testData[0]));
+        self::assertEquals([1,3], $command->getPositions($testData[1]));
+        self::assertEquals([2,9], $command->getPositions($testData[2]));
     }
     public function testGetRepeatedLetter() : void
     {
@@ -68,9 +68,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
         ];
         $command = new DayTwoCommand();
 
-        $this->assertEquals('a', $command->getLetter($testData[0]));
-        $this->assertEquals('b', $command->getLetter($testData[1]));
-        $this->assertEquals('c', $command->getLetter($testData[2]));
+        self::assertEquals('a', $command->getLetter($testData[0]));
+        self::assertEquals('b', $command->getLetter($testData[1]));
+        self::assertEquals('c', $command->getLetter($testData[2]));
 
     }
 
@@ -84,9 +84,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
         $command = new DayTwoCommand();
 
-        $this->assertEquals(1, $command->countRepeatedLetters('a',$testData[0]));
-        $this->assertEquals(1, $command->countRepeatedLetters('b',$testData[1]));
-        $this->assertEquals(9, $command->countRepeatedLetters('c',$testData[2]));
+        self::assertEquals(1, $command->countRepeatedLetters('a',$testData[0]));
+        self::assertEquals(1, $command->countRepeatedLetters('b',$testData[1]));
+        self::assertEquals(9, $command->countRepeatedLetters('c',$testData[2]));
     }
 
     public function testIsPasswordValid() : void
@@ -99,9 +99,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
         $command = new DayTwoCommand();
 
-        $this->assertTrue($command->isPasswordValid($testData[0]));
-        $this->assertFalse($command->isPasswordValid($testData[1]));
-        $this->assertTrue($command->isPasswordValid($testData[2]));
+        self::assertTrue($command->isPasswordValid($testData[0]));
+        self::assertFalse($command->isPasswordValid($testData[1]));
+        self::assertTrue($command->isPasswordValid($testData[2]));
     }
 
     public function testIsPasswordOfficialTobogganCorpValid() : void
@@ -114,9 +114,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
         $command = new DayTwoCommand();
 
-        $this->assertTrue($command->isPasswordOfficialTobogganCorpValid($testData[0]));
-        $this->assertFalse($command->isPasswordOfficialTobogganCorpValid($testData[1]));
-        $this->assertFalse($command->isPasswordOfficialTobogganCorpValid($testData[2]));
+        self::assertTrue($command->isPasswordOfficialTobogganCorpValid($testData[0]));
+        self::assertFalse($command->isPasswordOfficialTobogganCorpValid($testData[1]));
+        self::assertFalse($command->isPasswordOfficialTobogganCorpValid($testData[2]));
     }
 
     public function testProcessPasswordsWithPolicies() : void
@@ -129,12 +129,9 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
         $command = new DayTwoCommand();
 
-        $this->assertEquals(2, $command->processPasswordsWithPolicies($testData));
+        self::assertEquals(2, $command->processPasswordsWithPolicies($testData));
     }
 
-
-
-    /** @test */
     public function testExecutePartTwo() : void
     {
         $application = new Application();
@@ -158,15 +155,15 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
 
         // the output of the command in the console
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('result = 1', $output);
+        self::assertStringContainsString('result = 1', $output);
     }
 
     public function testIsLetterAtOnlyOneOfPositionsInPassword() : void
     {
         $command = new DayTwoCommand();
 
-        $this->assertTrue($command->isLetterAtOnlyOneOfPositionsInPassword('a', [1, 3], 'abcde'));
-        $this->assertFalse($command->isLetterAtOnlyOneOfPositionsInPassword('b', [1, 3], 'cdefg'));
-        $this->assertFalse($command->isLetterAtOnlyOneOfPositionsInPassword('c', [2, 9], 'ccccccccc'));
+        self::assertTrue($command->isLetterAtOnlyOneOfPositionsInPassword('a', [1, 3], 'abcde'));
+        self::assertFalse($command->isLetterAtOnlyOneOfPositionsInPassword('b', [1, 3], 'cdefg'));
+        self::assertFalse($command->isLetterAtOnlyOneOfPositionsInPassword('c', [2, 9], 'ccccccccc'));
     }
 }

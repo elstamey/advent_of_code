@@ -5,7 +5,7 @@
 		use Acme\Console\Models\Rules;
 		use PHPUnit\Framework\TestCase;
 
-		class RulesTest extends TestCase
+        class RulesTest extends TestCase
 		{
 		    public function testFindBagsContaining() : void
 		    {
@@ -23,11 +23,11 @@
                 foreach ($inputs as $ruleString) {
                     $rules->createFromString($ruleString);
                 }
-		        $this->assertContains('muted yellow', $rules->findBagsContaining('shiny gold'));
-		        $this->assertContains('bright white', $rules->findBagsContaining('shiny gold'));
+		        self::assertContains('muted yellow', $rules->findBagsContaining('shiny gold'));
+		        self::assertContains('bright white', $rules->findBagsContaining('shiny gold'));
 		    }
 
-            public function testCountBagsContaining()
+            public function testCountBagsContaining() : void
             {
                 $inputs = ['light red bags contain 1 bright white bag, 2 muted yellow bags.',
                     'dark orange bags contain 3 bright white bags, 4 muted yellow bags.',
@@ -44,9 +44,9 @@
                     $rules->createFromString($ruleString);
                 }
 
-                $this->assertEquals(0, $rules->countBagsInside('faded blue'));
-                $this->assertEquals(0, $rules->countBagsInside('dotted black'));
-                $this->assertEquals(11, $rules->countBagsInside('vibrant plum'));
-                $this->assertEquals(7, $rules->countBagsInside('dark olive'));
+                self::assertEquals(0, $rules->countBagsInside('faded blue'));
+                self::assertEquals(0, $rules->countBagsInside('dotted black'));
+                self::assertEquals(11, $rules->countBagsInside('vibrant plum'));
+                self::assertEquals(7, $rules->countBagsInside('dark olive'));
 		    }
 		}
