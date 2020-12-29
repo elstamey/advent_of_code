@@ -16,7 +16,7 @@ class DaySevenCommand extends Command
      */
     var $total = 0;
     /**
-     * @var false|string
+     * @var string
      */
     private string $inputString;
 
@@ -37,16 +37,17 @@ class DaySevenCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $this->inputString = file_get_contents($input->getArgument('inputFile'));
+        $file = $input->getArgument('inputFile');
+        $this->inputString = file_get_contents($file);
         $result = 0;
 
-        if ($input->getOption('part2')) {
+        if (is_string($this->inputString) && $input->getOption('part2')) {
             foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line != "")) {
 //                    $this->total += intval($this->supportsSSL($line));
                 }
             }
-        } else {
+        } elseif (is_string($this->inputString)) {
             $rules = $this->buildRuleset($this->inputString);
 
             $allBags = $rules->findBagsContaining('shiny gold');

@@ -14,7 +14,7 @@ class Rules
     private array $bags;
 
 
-    public function createFromString(string $ruleString)
+    public function createFromString(string $ruleString) : void
     {
         if (empty($ruleString)) {
             return;
@@ -31,13 +31,18 @@ class Rules
             /** @var BagQuantity[] $bagContents */
             $bagContents = array_map(function ($quantityBagDescription) {
                 preg_match("/(?P<qty>\d+) (?P<color>\w+ \w+) bag/", $quantityBagDescription, $matches);
-                return new BagQuantity($matches['color'], $matches['qty']);
+                return new BagQuantity($matches['color'], intval($matches['qty']));
             }, $contents);
         }
 
         $this->bags[] = new Bag($color, ...$bagContents);
     }
 
+    /**
+     * @param string $bagColor
+     *
+     * @return string[]
+     */
     public function findBagsContaining(string $bagColor) : array
     {
         $bagsContaining = [];
@@ -63,7 +68,7 @@ class Rules
             }
         }
 
-        return array_flip($bagsContaining);
+        return $bagsContaining;
     }
 
     /**
@@ -80,7 +85,7 @@ class Rules
                 $bagsHolding[] = $bag->color;
             }
         }
-var_dump($bagsHolding,__LINE__);
+
         return $bagsHolding;
     }
 }
