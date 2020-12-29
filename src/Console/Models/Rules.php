@@ -35,7 +35,7 @@ class Rules
             }, $contents);
         }
 
-        $this->bags[] = new Bag($color, ...$bagContents);
+        $this->bags[$color] = new Bag($color, ...$bagContents);
     }
 
     /**
@@ -89,21 +89,17 @@ class Rules
         return $bagsHolding;
     }
 
-    public function countBagsInside(string $color, $bagCount=0) : int
+    public function countBagsInside(string $color) : int
     {
         $bagsInside = $this->findBagsInside($color);
+        $bagCount = 0;
 
-        foreach ($bagsInside as $bag) {
-            $contents = $bag->getContents();
-            $contentBagCount = 0;
-            foreach ($contents as $b) {
-                if ($b->quantity === 0)
-                    $contentBagCount += 1;
-                else {
-                    $contentBagCount += $b->quantity * $this->countBagsInside($b->color, $bagCount);
-                }
-            }
-            $bagCount += $contentBagCount;
+        if (count($bagsInside) === 0) {
+            return 0;
+        }
+
+        foreach ($bagsInside as $bagQuantity) {
+            $bagCount += $bagQuantity->quantity + ($bagQuantity->quantity * $this->countBagsInside($bagQuantity->color));
         }
 
         return $bagCount;
@@ -112,15 +108,10 @@ class Rules
     /**
      * @param string $color
      *
-     * @return Bag[]
+     * @return BagQuantity[]
      */
     private function findBagsInside(string $color) : array
     {
-        $key = array_search($color, $this->bags);
-        if ($key) {
-            return $this->bags[$key]->getContents();
-        }
-
-        return [];
+        return $this->bags[$color]->getContents();
     }
 }
