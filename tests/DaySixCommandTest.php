@@ -53,28 +53,4 @@ class DaySixCommandTest extends PHPUnit\Framework\TestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('result = 6', $output);
     }
-
-    public function testRedistribute() : void
-    {
-        $command = new DaySixCommand();
-
-    }
-
-    public function testFindKeyOfLargest() : void
-    {
-        $command = new DaySixCommand();
-
-    }
-
-    public function testCheckForPreviouslySeenConfig() : void
-    {
-        $command = new DaySixCommand();
-
-    }
-
-    public function testIsSameConfig() : void
-    {
-        $command = new DaySixCommand();
-
-    }
 }
