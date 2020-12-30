@@ -54,6 +54,7 @@ class DayEightCommand extends Command
         if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
 
             $this->inputArray = preg_split('/\n/', $this->inputString);
+            $replacePositions = [];
 
             if (is_array($this->inputArray)) {
                 $instructionPosition = 0;
