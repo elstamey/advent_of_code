@@ -33,7 +33,7 @@ class IntCodeComputer
      * @param int $startAddress
      * @return int[]
      */
-    public function readOpCodes($startAddress)
+    public function readOpCodes(int $startAddress)
     {
         $parameter = $startAddress + 1;
         return [

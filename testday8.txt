@@ -1,5 +1,9 @@
-rect 3x2
-rotate column x=1 by 1
-rotate row y=0 by 4
-rotate column x=1 by 1
-
+nop +0
+acc +1
+jmp +4
+acc +3
+jmp -3
+acc -99
+acc +1
+jmp -4
+acc +6
