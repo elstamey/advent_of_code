@@ -17,16 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DayEightCommand extends Command
 {
-    /**
-     * @var string
-     */
-    var string $inputString;
-
-    /**
-     * @var array|string[]
-     */
-    private array $inputArray;
-
 
     protected function configure() : void
     {
@@ -47,88 +37,78 @@ class DayEightCommand extends Command
         $result = 0;
         $file = $input->getArgument('inputFile');
         if (is_string($file)) {
-            $this->inputString = file_get_contents($file);
+            $inputString = file_get_contents($file);
+        } else {
+            $output->writeln('<error>Could not execute</error>');
+            return Command::FAILURE;
         }
 
+        if ($inputString === false) {
+            $output->writeln('<error>Could not execute</error>');
+            return Command::FAILURE;
+        }
 
-        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+        $inputArray = preg_split('/\n/', $inputString);
+        if (!is_array($inputArray)) {
+            $output->writeln('<error>Could not execute</error>');
+            return Command::FAILURE;
+        }
 
-            $this->inputArray = preg_split('/\n/', $this->inputString);
-            $replacePositions = [];
+        if ($input->getOption('part2')) {
 
-            if (is_array($this->inputArray)) {
+            /** @var bool $hasVisitedPrevious */
+            $hasVisitedPrevious = false;
+            $hasBeenVisited = false;
+
+            $replacePositions = $this->getReplacePositions($inputArray);
+            $replacedInputs = $this->replaceInputs($inputArray, $replacePositions);
+
+            foreach ($replacedInputs as $newInputArray) {
                 $instructionPosition = 0;
-                /** @var bool $hasBeenSubstituted */
-                $hasBeenSubstituted = false;
-                /** @var bool $hasBeenFinished */
-                $hasBeenFinished = false;
-
-                $replacePositions[] = array_filter($this->inputArray, function ($v, $k) {
-                    $instructions = preg_split('/\s/', $this->inputArray[$k]);
-                    $code = $instructions[0];
-                    if (($code === 'jmp') || ($code === 'nop')) {
-                        return $k;
-                    }
-                }, ARRAY_FILTER_USE_BOTH);
-
                 $computer = new BootCodeComputer();
 
-                while (!$hasBeenFinished && !empty($replacePositions)) {
-
-                    if ($hasBeenFinished) {
-                        $instructionPosition = 0;
-                        $computer = new BootCodeComputer();
-                        $hasBeenFinished = $computer->hasVisitedPrevious(0);
-                        $hasBeenSubstituted = false;
-                    }
-                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
+                while (!$hasVisitedPrevious && !$hasBeenVisited && ($result === 0)) {
+                    $instructions = preg_split('/\s/', $newInputArray[$instructionPosition]);
                     $code = $instructions[0];
-                    $amount = intval($instructions[1]);
+                    $amount = (int)$instructions[1];
 
-                    if (in_array($instructionPosition, $replacePositions) && !$hasBeenSubstituted) {
-                        $key = array_search($instructionPosition, $replacePositions);
-                        unset($replacePositions[$key]);
-                        $code = ($code === 'nop') ? 'jmp' : 'nop';
-                        $hasBeenSubstituted = true;
+                    if ($computer->hasVisitedPrevious($instructionPosition)) {
+                        $result = $computer->getAccumulator();
                     }
 
-                    if (!$computer->hasVisitedPrevious($computer->getPosition())) {
-                        $this->handleInstructions($computer, $code, $amount);
-                    }
-
+                    $this->handleInstructions($computer, $code, $amount);
                     $instructionPosition = $computer->getPosition();
-                    $result = $computer->getAccumulator();
-                    $hasBeenFinished = $computer->hasVisitedPrevious($instructionPosition);
+                    $instructions = preg_split('/\s/', $newInputArray[$instructionPosition]);
+                    $code = $instructions[0];
+                    $amount = (int)$instructions[1];
+                    $hasBeenVisited = $computer->hasBeenVisited($code, $amount);
+                    $hasVisitedPrevious = $computer->hasVisitedPrevious($instructionPosition);
+
                 }
             }
 
-        } elseif (isset($this->inputString)) {
-
-            $this->inputArray = preg_split('/\n/', $this->inputString);
+        } else {
 
             $computer = new BootCodeComputer();
 
-            if (is_array($this->inputArray)) {
-                $instructionPosition = 0;
-                $hasBeenVisited = false;
+            $instructionPosition = 0;
+            $hasBeenVisited = false;
 
-                while (!$hasBeenVisited) {
-                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
-                    $code = $instructions[0];
-                    $amount = intval($instructions[1]);
+            while (!$hasBeenVisited) {
+                $instructions = preg_split('/\s/', $inputArray[$instructionPosition]);
+                $code = $instructions[0];
+                $amount = intval($instructions[1]);
 
-                    if (!$computer->hasBeenVisited($code, $amount)) {
-                        $this->handleInstructions($computer, $code, $amount);
-                    }
-
-                    $instructionPosition = $computer->getPosition();
-                    $instructions = preg_split('/\s/', $this->inputArray[$instructionPosition]);
-                    $code = $instructions[0];
-                    $amount = intval($instructions[1]);
-                    $hasBeenVisited = $computer->hasBeenVisited($code, $amount);
-                    $result = $computer->getAccumulator();
+                if (!$computer->hasBeenVisited($code, $amount)) {
+                    $this->handleInstructions($computer, $code, $amount);
                 }
 
+                $instructionPosition = $computer->getPosition();
+                $instructions = preg_split('/\s/', $inputArray[$instructionPosition]);
+                $code = $instructions[0];
+                $amount = intval($instructions[1]);
+                $hasBeenVisited = $computer->hasBeenVisited($code, $amount);
+                $result = $computer->getAccumulator();
             }
 
         }
@@ -167,5 +147,53 @@ class DayEightCommand extends Command
             default:
                 break;
         }
+    }
+
+    /**
+     * @param string[] $inputArray
+     *
+     * @return int[]
+     */
+    public function getReplacePositions(array $inputArray) : array
+    {
+        $replacePositions = [];
+
+        foreach ($inputArray as $k=>$input) {
+            $instructions = preg_split("/\s/", $input);
+            $code = $instructions[0];
+            if (($code === 'jmp') || ($code === 'nop')) {
+                $replacePositions[] = $k;
+            }
+        }
+        return $replacePositions;
+    }
+
+    /**
+     * @param string[] $inputArray
+     * @param int[] $replacePositions
+     *
+     * @return array<int, array<string>>
+     */
+    public function replaceInputs(array $inputArray, array $replacePositions) : array
+    {
+        $returnArray = [];
+
+        foreach ($replacePositions as $pos) {
+            $newArray = $inputArray;
+            $newArray[$pos] = $this->replaceJumpOrNop($newArray[$pos]);
+            $returnArray[] = $newArray;
+        }
+
+        return $returnArray;
+    }
+
+    public function replaceJumpOrNop(string $instruction) : string
+    {
+        if (preg_match("/nop/", $instruction) === 1) {
+            return preg_replace("/nop/", "jmp", $instruction);
+        } elseif (preg_match("/jmp/", $instruction) === 1) {
+            return preg_replace("/jmp/", "nop", $instruction);
+        }
+        return $instruction;
     }
 }

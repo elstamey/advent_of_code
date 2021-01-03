@@ -54,4 +54,20 @@ class DayEightCommandTest extends PHPUnit\Framework\TestCase
         $this->assertStringContainsString('result = 8', $output);
     }
 
+    public function testGetReplacePositions(): void
+    {
+        $inputArray = ['nop +0',
+                        'acc +1',
+                        'jmp +4',
+                        'acc +3',
+                        'jmp -3',
+                        'acc -99',
+                        'acc +1',
+                        'jmp -4',
+                        'acc +6'];
+
+        $command = new DayEightCommand();
+        $result = $command->getReplacePositions($inputArray);
+        self::assertEquals([0, 2, 4, 7], $result);
+    }
 }
