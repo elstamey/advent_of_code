@@ -34,7 +34,9 @@ class DaySevenCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $file = $input->getArgument('inputFile');
-        $inputString = (is_string($file)) ? file_get_contents($file) : false;
+        if (is_string($file)) {
+            $this->inputString = file_get_contents($file);
+        }
 
         if ($inputString ===false) {
             $output->writeln('<error>Could not execute</error>');

@@ -3,7 +3,8 @@
     "description": "Emily's Advent of Code Exercises",
     "license": ["proprietary"],
     "require": {
-        "symfony/console": "^5.2"
+        "symfony/console": "^5.2",
+        "staabm/annotate-pull-request-from-checkstyle": "^1.4"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.5",
@@ -11,15 +12,16 @@
         "phpstan/phpstan": "^0.12.58",
         "vimeo/psalm": "^4.3",
         "psalm/plugin-phpunit": "^0.15.0",
-        "phpstan/phpstan-phpunit": "^0.12.17"
+        "phpstan/phpstan-phpunit": "^0.12.17",
+        "squizlabs/php_codesniffer": "^3.5"
     },
     "autoload": {
         "psr-4": {"Acme\\": "src/"}
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "phpstan": "phpstan analyse",
-        "psalm": "vendor/bin/psalm",
+        "phpstan": "phpstan analyse --error-format=checkstyle | vendor/bin/cs2pr --graceful-warnings --colorize",
+        "psalm": "vendor/bin/psalm --output-format=github | vendor/bin/cs2pr --graceful-warnings --colorize",
         "psalm-info": "vendor/bin/psalm --show-info=true"
     },
     "config": {
