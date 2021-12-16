@@ -56,7 +56,6 @@ class DayEightCommand extends Command
 
         if ($input->getOption('part2')) {
 
-            /** @var bool $hasVisitedPrevious */
             $hasVisitedPrevious = false;
             $hasBeenVisited = false;
 
