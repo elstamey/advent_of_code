@@ -46,9 +46,7 @@ class DaySixCommand extends Command
                 $groupMembersAnswers = preg_split('/\r|\n|\s/', $group);
                 $groupMembersLetters = array_map('str_split', $groupMembersAnswers);
                 $memCount = count($groupMembersLetters);
-                if ($memCount === 0) {
-                    $numberGroupYeses = 0;
-                } elseif ($memCount === 1) {
+                if ($memCount === 1) {
                     $numberGroupYeses = count($groupMembersLetters[0]);
                 } else {
                     $intersect = $groupMembersLetters[0];

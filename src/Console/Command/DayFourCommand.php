@@ -16,12 +16,6 @@ class DayFourCommand extends Command
     private $inputString;
 
     /**
-     * @var string[]
-     */
-    private array $inputArray;
-
-
-    /**
      *
      */
     protected function configure(): void
@@ -56,12 +50,12 @@ class DayFourCommand extends Command
 
         $strictValidation = false;
 
-        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+        if (is_string($this->inputString) && $input->getOption('part2')) {
 
             $strictValidation = true;
             $result = $this->handlePassports($this->inputString, $strictValidation);
 
-        } elseif (isset($this->inputString)) {
+        } else {
             $result = $this->handlePassports($this->inputString, $strictValidation);
         }
 
