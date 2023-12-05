@@ -11,12 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DaySevenCommand extends Command
 {
-    /**
-     * @var int
-     */
-    public int $total = 0;
-
-
     protected function configure() : void
     {
         $this

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.17.0@c620f6e80d0abfca532b00bda366062aaedf6e5d">
+  <file src="src/Console/Command/DayBlankCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+    <PropertyNotSetInConstructor>
+      <code>$inputString</code>
+    </PropertyNotSetInConstructor>
+    <RedundantCondition>
+      <code><![CDATA[isset($this->inputString)]]></code>
+    </RedundantCondition>
+    <RedundantConditionGivenDocblockType>
+      <code>isset($line)</code>
+      <code>isset($line)</code>
+    </RedundantConditionGivenDocblockType>
+  </file>
+  <file src="src/Console/Command/DayFiveCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+    <PropertyNotSetInConstructor>
+      <code>$inputArray</code>
+      <code>$inputString</code>
+      <code>$occupiedSeats</code>
+      <code>$seatIds</code>
+    </PropertyNotSetInConstructor>
+    <RedundantCondition>
+      <code>is_int($result)</code>
+      <code><![CDATA[isset($this->inputString)]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/Console/Command/DayFourCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+    <PropertyNotSetInConstructor>
+      <code>$inputString</code>
+    </PropertyNotSetInConstructor>
+    <UnusedVariable>
+      <code>$result</code>
+    </UnusedVariable>
+  </file>
+  <file src="src/Console/Command/DayOneCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+    <PossiblyNullOperand>
+      <code>$digits[$key]</code>
+    </PossiblyNullOperand>
+    <RedundantCondition>
+      <code><![CDATA[isset($this->inputString)]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/Console/Command/DaySevenCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Console/Command/DaySixCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+    <PropertyNotSetInConstructor>
+      <code>$inputArray</code>
+      <code>$inputString</code>
+    </PropertyNotSetInConstructor>
+    <RedundantCondition>
+      <code>is_int($result)</code>
+      <code><![CDATA[isset($this->inputString)]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/Console/Command/DayThreeCommand.php">
+    <MixedAssignment>
+      <code>$file</code>
+    </MixedAssignment>
+    <PropertyNotSetInConstructor>
+      <code>$inputString</code>
+      <code>$map</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Console/Command/DayTwoCommand.php">
+    <MixedArgument>
+      <code>$letter</code>
+      <code>$letter</code>
+      <code>$range[0]</code>
+      <code>$range[1]</code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code>$file</code>
+      <code>$letter</code>
+      <code>$letter</code>
+    </MixedAssignment>
+    <PropertyNotSetInConstructor>
+      <code>$inputArray</code>
+    </PropertyNotSetInConstructor>
+    <RedundantCondition>
+      <code><![CDATA[isset($this->inputString)]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/Console/Command/GreetCommand.php">
+    <MixedArgumentTypeCoercion>
+      <code>$name</code>
+    </MixedArgumentTypeCoercion>
+    <MixedAssignment>
+      <code>$name</code>
+    </MixedAssignment>
+    <MixedOperand>
+      <code>$name</code>
+    </MixedOperand>
+  </file>
+  <file src="src/Console/Models/Passport.php">
+    <PossiblyUnusedMethod>
+      <code>createFromInputs</code>
+      <code>getCountryId</code>
+    </PossiblyUnusedMethod>
+  </file>
+  <file src="src/Console/Models/Rules.php">
+    <MixedArgument>
+      <code>$color</code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code>$bagsContaining[]</code>
+      <code>$color</code>
+    </MixedAssignment>
+    <MixedReturnTypeCoercion>
+      <code>$bagsContaining</code>
+      <code>string[]</code>
+    </MixedReturnTypeCoercion>
+  </file>
+</files>

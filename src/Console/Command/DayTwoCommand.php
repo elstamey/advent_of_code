@@ -146,7 +146,7 @@ class DayTwoCommand extends Command
      */
     public function processPasswordsWithPolicies(array $inputArray) : int
     {
-        $validPasswords = array_filter($inputArray, function ($v, $k) { return $this->isPasswordValid($v); }, ARRAY_FILTER_USE_BOTH);
+        $validPasswords = array_filter($inputArray, function ($v) { return $this->isPasswordValid($v); }, ARRAY_FILTER_USE_BOTH);
 
         return count($validPasswords);
     }
@@ -158,7 +158,7 @@ class DayTwoCommand extends Command
      */
     public function processPasswordsWithTobogganPolicies(array $inputArray)
     {
-        $validPasswords = array_filter($inputArray, function ($v, $k) { return $this->isPasswordOfficialTobogganCorpValid($v); }, ARRAY_FILTER_USE_BOTH);
+        $validPasswords = array_filter($inputArray, function ($v) { return $this->isPasswordOfficialTobogganCorpValid($v); }, ARRAY_FILTER_USE_BOTH);
 
         return count($validPasswords);
     }
