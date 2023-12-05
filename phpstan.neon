@@ -3,9 +3,9 @@ parameters:
 	paths:
 		- src
 		- tests
-	excludes_analyse:
-	    - 'src/Console/Command/DayEightCommand.php'
-	    - 'src/Console/Command/DayTwelveCommand.php'
-	    - 'tests/DayEightCommandTest.php'
-	    - 'tests/DayTwelveCommandTest.php'
-	    - 'src/Console/Models/IntCodeComputer.php'
+	excludePaths:
+		- src/Console/Command/DayEightCommand.php
+		- src/Console/Command/DayTwelveCommand.php
+		- tests/DayEightCommandTest.php
+		- tests/DayTwelveCommandTest.php
+		- src/Console/Models/IntCodeComputer.php

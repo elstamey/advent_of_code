@@ -48,7 +48,11 @@ class DayBlankCommand extends Command
             $this->inputString = file_get_contents($file);
         }
 
-        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+        if (isset($this->inputString) &&
+            is_string($this->inputString) &&
+            $input->getOption('part2')
+        )
+        {
             foreach (preg_split("/\n/", $this->inputString) as $line) {
                 if (isset($line) && ($line !== "")) {
                 }
