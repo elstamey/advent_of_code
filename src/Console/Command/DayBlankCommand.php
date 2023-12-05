@@ -54,13 +54,13 @@ class DayBlankCommand extends Command
         )
         {
             foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line !== "")) {
-                }
+//                if (isset($line) && ($line !== "")) {
+//                }
             }
         } elseif (isset($this->inputString)) {
             foreach (preg_split("/\n/", $this->inputString) as $line) {
-                if (isset($line) && ($line !== "")) {
-                }
+//                if (isset($line) && ($line !== "")) {
+//                }
             }
         }
         $result = '';
