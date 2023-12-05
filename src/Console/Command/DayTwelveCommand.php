@@ -83,7 +83,7 @@ class DayTwelveCommand extends Command
         $output->writeln("result = " . $result);
     }
 
-    private function handleCommand($line)
+    private function handleCommand($line): void
     {
         $command = preg_split('/\s/', $line);
 
@@ -104,7 +104,7 @@ class DayTwelveCommand extends Command
         }
     }
 
-    private function copyCommand($value, $reg1)
+    private function copyCommand($value, $reg1): void
     {
         if (isset($this->$value)) {
             $this->$reg1 = $this->$value;
@@ -115,19 +115,19 @@ class DayTwelveCommand extends Command
 //        die();
     }
 
-    private function increaseCommand($reg1)
+    private function increaseCommand($reg1): void
     {
         $this->$reg1++;
 //        var_dump($this->$reg1);
     }
 
-    private function decreaseCommand($reg1)
+    private function decreaseCommand($reg1): void
     {
         $this->$reg1--;
 //        var_dump($this->$reg1);
     }
 
-    private function jumpCommand($reg1, $jumpAmount)
+    private function jumpCommand($reg1, $jumpAmount): void
     {
         $value = (isset($this->$reg1)) ? $this->$reg1 : $reg1;
 

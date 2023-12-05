@@ -44,7 +44,7 @@ class IntCodeComputer
         ];
     }
 
-    public function initializeInputArray($noun=12, $verb=2)
+    public function initializeInputArray($noun=12, $verb=2): void
     {
         $this->inputArray[1] = $noun;
         $this->inputArray[2] = $verb;
@@ -74,7 +74,7 @@ class IntCodeComputer
         return $this->inputArray[0];
     }
 
-    private function handleOpCodes($opCode, $valueOneAddress, $valueTwoAddress, $resultAddress)
+    private function handleOpCodes($opCode, $valueOneAddress, $valueTwoAddress, $resultAddress): void
     {
         switch ($opCode) {
             case 1:
@@ -89,7 +89,7 @@ class IntCodeComputer
     }
 
 
-    private function printOpCodes($i)
+    private function printOpCodes($i): void
     {
         if (($i >= 0) && (($i+3) < count($this->inputArray))) {
             print ( $this->inputArray[$i] . " ");
