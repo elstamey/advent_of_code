@@ -13,7 +13,7 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
     public function testExecute() : void
     {
         $application = new Application();
-        $application->add(new DayThreeCommand());
+        $application->addCommand(new DayThreeCommand());
 
         $command = $application->find('day3');
         $commandTester = new CommandTester($command);
@@ -37,7 +37,7 @@ class DayThreeCommandTest extends PHPUnit\Framework\TestCase
 //    public function testExecutePartTwo()
 //    {
 //        $application = new Application();
-//        $application->add(new DayThreeCommand());
+//        $application->addCommand(new DayThreeCommand());
 //
 //        $command = $application->find('day3');
 //        $commandTester = new CommandTester($command);

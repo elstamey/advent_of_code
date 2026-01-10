@@ -12,7 +12,7 @@ class DayFiveCommandTest extends PHPUnit\Framework\TestCase
     public function testExecute() : void
     {
         $application = new Application();
-        $application->add(new DayFiveCommand());
+        $application->addCommand(new DayFiveCommand());
 
         $command = $application->find('day5');
         $commandTester = new CommandTester($command);

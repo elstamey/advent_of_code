@@ -12,7 +12,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
     public function testExecute(): void
     {
         $application = new Application();
-        $application->add(new DayTwoCommand());
+        $application->addCommand(new DayTwoCommand());
 
         $command = $application->find('day2');
         $commandTester = new CommandTester($command);
@@ -135,7 +135,7 @@ class DayTwoCommandTest extends PHPUnit\Framework\TestCase
     public function testExecutePartTwo() : void
     {
         $application = new Application();
-        $application->add(new DayTwoCommand());
+        $application->addCommand(new DayTwoCommand());
 
         $command = $application->find('day2');
         $commandTester = new CommandTester($command);
