@@ -24,8 +24,8 @@ class DayOneCommand extends Command
     {
         $this
             ->setName('day1')
-            ->setDescription('Day 1: Report Repair')
-            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'day1.txt')
+            ->setDescription('Day 1: Secret Entrance')
+            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'input-day1.txt')
             ->addOption(
                 'part2',
                 null,
