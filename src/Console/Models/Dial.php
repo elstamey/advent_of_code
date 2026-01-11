@@ -26,7 +26,15 @@ class Dial {
         return $this->pointer;
     }
 
-    public function getFacePointer(): int
+    /**
+     * @param int $pointerValue
+     */
+    public function setPointerAtFaceValue(int $pointerValue): void
+    {
+        $this->pointer = array_search($pointerValue, $this->face);
+    }
+
+    public function getFaceValue(): int
     {
         return $this->face[$this->pointer];
     }
