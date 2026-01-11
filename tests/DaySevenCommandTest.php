@@ -11,7 +11,7 @@ class DaySevenCommandTest extends PHPUnit\Framework\TestCase
     public function testExecute(): void
     {
         $application = new Application();
-        $application->add(new DaySevenCommand());
+        $application->addCommand(new DaySevenCommand());
 
         $command = $application->find('day7');
         $commandTester = new CommandTester($command);
@@ -35,7 +35,7 @@ class DaySevenCommandTest extends PHPUnit\Framework\TestCase
     public function testExecutePartTwoFirstRules(): void
     {
         $application = new Application();
-        $application->add(new DaySevenCommand());
+        $application->addCommand(new DaySevenCommand());
 
         $command = $application->find('day7');
         $commandTester = new CommandTester($command);
@@ -60,7 +60,7 @@ class DaySevenCommandTest extends PHPUnit\Framework\TestCase
     public function testExecutePartTwoSecondRules(): void
     {
         $application = new Application();
-        $application->add(new DaySevenCommand());
+        $application->addCommand(new DaySevenCommand());
 
         $command = $application->find('day7');
         $commandTester = new CommandTester($command);

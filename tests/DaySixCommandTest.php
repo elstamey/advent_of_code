@@ -11,7 +11,7 @@ class DaySixCommandTest extends PHPUnit\Framework\TestCase
     public function testExecute() :void
     {
         $application = new Application();
-        $application->add(new DaySixCommand());
+        $application->addCommand(new DaySixCommand());
 
         $command = $application->find('day6');
         $commandTester = new CommandTester($command);
@@ -34,7 +34,7 @@ class DaySixCommandTest extends PHPUnit\Framework\TestCase
     public function testExecutePartTwo() : void
     {
         $application = new Application();
-        $application->add(new DaySixCommand());
+        $application->addCommand(new DaySixCommand());
 
         $command = $application->find('day6');
         $commandTester = new CommandTester($command);

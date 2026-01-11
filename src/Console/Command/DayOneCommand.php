@@ -2,6 +2,7 @@
 
 namespace Acme\Console\Command;
 
+use Acme\Console\Models\Dial;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,8 +25,8 @@ class DayOneCommand extends Command
     {
         $this
             ->setName('day1')
-            ->setDescription('Day 1: Report Repair')
-            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'day1.txt')
+            ->setDescription('Day 1: Secret Entrance')
+            ->addArgument('inputFile', InputArgument::OPTIONAL, 'newFile', 'input-day1.txt')
             ->addOption(
                 'part2',
                 null,
@@ -40,63 +41,56 @@ class DayOneCommand extends Command
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $file = $input->getArgument('inputFile');
         if (is_string($file) )
             $this->inputString = file_get_contents($file);
 
-        if (isset($this->inputString) && is_string($this->inputString) && $input->getOption('part2')) {
+        if ($input->getOption('part2')) {
 
             $result = $this->findProductOfThreeSumTwentyTwenty( $this->inputString );
             $output->writeln('<fg=green>result part 2 = ' . $result . "\n");
             return Command::SUCCESS;
 
-        } elseif (isset($this->inputString)) {
+        } else {
 
-            $result = $this->findProductOfTwoSumTwentyTwenty($this->inputString);
+            $result = $this->findDialPointerPosition($this->inputString, 0, 99);
             $output->writeln('<fg=green>result part 1 = ' . $result . '</>');
             return Command::SUCCESS;
         }
-
-        $output->writeln('<error>Could not execute</error>');
-        return Command::FAILURE;
     }
 
 
     /**
      * @param string $inputString
      *
-     * @return int[]
+     * @return string[]
      */
     private function splitInputByLinesToArray(string $inputString) : array
     {
-        return array_map('intval', preg_split("/[\n]/", $inputString));
+        return preg_split("/[\n]/", $inputString);
     }
 
     /**
-     *  Method to get the the product of the digits that add up to 2020
+     *  Method to get the position of the arrow on the dial face
      *
-     * @param string $inputString
-     *
-     * @return int
      */
-    private function findProductOfTwoSumTwentyTwenty(string $inputString)
+    private function findDialPointerPosition(string $inputString, int $lowestDialNumber=0, int $highestDialNumber=99): int
     {
-        $digits = $this->splitInputByLinesToArray($inputString);
-        $count = count($digits) - 1;
-        for ($i=0; $i < $count; $i++) {
-            if ($digits[$i] !== null) {
-                $numberNeeded = 2020 - $digits[$i];
-                $key = array_search($numberNeeded, $digits);
-                if ($key && ($key !== $i)) {
-                    return ($digits[$i] * $digits[$key]);
-                }
+        $myDial = new Dial($lowestDialNumber, $highestDialNumber);
+        $myDial->setPointerAtFaceValue(50);
+
+        $directions = $this->splitInputByLinesToArray($inputString);
+
+        foreach ($directions as $direction) {
+            if ($direction !== null) {
+                $myDial->movePointer($direction);
             }
         }
 
-        return 50;
+        return $myDial->getDialPassword();
     }
 
     /**
