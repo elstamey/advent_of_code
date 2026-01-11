@@ -6,11 +6,13 @@ class Dial {
 
     private array $face;
     private int $pointer;
+    private int $password;
 
     public function __construct(int $lowestFaceNumber, int $highestFaceNumber)
     {
         $this->face = range($lowestFaceNumber,$highestFaceNumber, 1);
         $this->pointer = $lowestFaceNumber;
+        $this->password = 0;
     }
 
     public function getFace(): array
@@ -51,6 +53,10 @@ class Dial {
                 $this->decreasePointer($amount);
                 break;
         }
+
+        print("The dial is rotated " . $movementDirection . " to point at " . $this->getFaceValue() . "\n");
+
+        $this->checkDialPointsToZero();
     }
 
     public function increasePointer( int $amount ): void
@@ -83,5 +89,20 @@ class Dial {
         } else {
             $this->pointer = $currentPointer - $amount;
         }
+    }
+
+    private function checkDialPointsToZero()
+    {
+        if ($this->getFaceValue() === 0) $this->updatePassword();
+    }
+
+    private function updatePassword()
+    {
+        $this->password++;
+    }
+
+    public function getDialPassword(): int
+    {
+        return $this->password;
     }
 }

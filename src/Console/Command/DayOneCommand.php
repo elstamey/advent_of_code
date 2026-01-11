@@ -80,6 +80,7 @@ class DayOneCommand extends Command
     private function findDialPointerPosition(string $inputString, int $lowestDialNumber=0, int $highestDialNumber=99): int
     {
         $myDial = new Dial($lowestDialNumber, $highestDialNumber);
+        $myDial->setPointerAtFaceValue(50);
 
         $directions = $this->splitInputByLinesToArray($inputString);
 
@@ -89,7 +90,7 @@ class DayOneCommand extends Command
             }
         }
 
-        return $myDial->getFaceValue();
+        return $myDial->getDialPassword();
     }
 
     /**
