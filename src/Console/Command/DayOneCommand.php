@@ -66,11 +66,11 @@ class DayOneCommand extends Command
     /**
      * @param string $inputString
      *
-     * @return int[]
+     * @return string[]
      */
     private function splitInputByLinesToArray(string $inputString) : array
     {
-        return array_map('intval', preg_split("/[\n]/", $inputString));
+        return preg_split("/[\n]/", $inputString);
     }
 
     /**
@@ -82,15 +82,14 @@ class DayOneCommand extends Command
         $myDial = new Dial($lowestDialNumber, $highestDialNumber);
 
         $directions = $this->splitInputByLinesToArray($inputString);
-        $count = count($directions) - 1;
-        for ($i=0; $i < $count; $i++) {
-            if ($directions[$i] !== null) {
-                $myDial->movePointer($directions);
+
+        foreach ($directions as $direction) {
+            if ($direction !== null) {
+                $myDial->movePointer($direction);
             }
         }
 
-        return $myDial->getPointer();
-        return 50;
+        return $myDial->getFaceValue();
     }
 
     /**

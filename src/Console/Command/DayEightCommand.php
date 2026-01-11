@@ -38,7 +38,7 @@ class DayEightCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input_string = file_get_contents($input->getArgument('inputFile'));
 
@@ -63,5 +63,4 @@ class DayEightCommand extends Command
         $result = $this->countLights();
         $output->writeln("result = " . $result);
     }
-
 }
